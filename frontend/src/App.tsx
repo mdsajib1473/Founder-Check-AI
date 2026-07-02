@@ -3,6 +3,7 @@ import './App.css'
 import { generateEnhancedPDF } from './utils/enhancedPdfGenerator'
 import FinancialDashboard from './components/FinancialDashboard'
 import CollaborationHub from './components/CollaborationHub'
+import MarketIntelligenceDashboard from './components/MarketIntelligenceDashboard'
 
 const LogoIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -772,7 +773,7 @@ function App() {
               </div>
 
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'qa'].map(tab => {
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'financial', 'collaboration', 'market', 'qa'].map(tab => {
                   const tabLabels: {[key: string]: string} = {
                     overview: '📊 Overview',
                     demand: '📈 Demand',
@@ -786,6 +787,7 @@ function App() {
                     founder: '👤 Founder Fit',
                     financial: '💰 Financial',
                     collaboration: '🤝 Collaborate',
+                    market: '🌍 Market Intel',
                     qa: '🎤 Interview'
                   };
                   return (
@@ -1430,6 +1432,12 @@ function App() {
                 {activeTab === 'collaboration' && (
                   <CollaborationHub
                     analysis_id={analysis.analysis_id}
+                  />
+                )}
+
+                {activeTab === 'market' && (
+                  <MarketIntelligenceDashboard
+                    sector={analysis.idea_extraction?.sector}
                   />
                 )}
 
