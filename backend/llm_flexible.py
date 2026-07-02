@@ -83,7 +83,142 @@ DEMO_RESPONSES = {
         {"question": "How much funding do you need?", "category": "financials"},
         {"question": "Who is your team?", "category": "team"},
         {"question": "What is your growth target for year 1?", "category": "market"}
-    ]
+    ],
+    "competitor_analysis": {
+        "market_overview": {
+            "total_market": "৳2-5 billion annual",
+            "growth_rate": "15% YoY",
+            "key_regions": "Dhaka, Chittagong, Sylhet"
+        },
+        "direct_competitors": [
+            {
+                "rank": 1,
+                "name": "Foodpanda",
+                "market_share": 35,
+                "market_share_display": "35%",
+                "estimated_revenue": "৳700Cr+",
+                "strength": "Strong logistics network",
+                "weakness": "High commission rates (25-30%)",
+                "impact": "Market leader, set industry standards",
+                "users": "2M+ active users",
+                "coverage": "Nationwide"
+            },
+            {
+                "rank": 2,
+                "name": "Uber Eats",
+                "market_share": 25,
+                "market_share_display": "25%",
+                "estimated_revenue": "৳500Cr+",
+                "strength": "Global brand, tech expertise",
+                "weakness": "International pricing model",
+                "impact": "Brought premium positioning to market",
+                "users": "1.5M+ active users",
+                "coverage": "Major cities"
+            },
+            {
+                "rank": 3,
+                "name": "Shyam's Delivery",
+                "market_share": 20,
+                "market_share_display": "20%",
+                "estimated_revenue": "৳400Cr+",
+                "strength": "Local expertise, cultural fit",
+                "weakness": "Limited geographic expansion",
+                "impact": "Local preference builder, community trust",
+                "users": "800K+ active users",
+                "coverage": "Dhaka metro only"
+            },
+            {
+                "rank": 4,
+                "name": "NowNow (Grameenphone)",
+                "market_share": 12,
+                "market_share_display": "12%",
+                "estimated_revenue": "৳240Cr+",
+                "strength": "Telecom integration, payment leverage",
+                "weakness": "Limited restaurant partners",
+                "impact": "Leveraging telco ecosystem advantages",
+                "users": "400K+ active users",
+                "coverage": "Select areas"
+            },
+            {
+                "rank": 5,
+                "name": "Other Local Players",
+                "market_share": 8,
+                "market_share_display": "8%",
+                "estimated_revenue": "৳160Cr+",
+                "strength": "Niche focus, hyper-local",
+                "weakness": "Limited resources",
+                "impact": "Specialized delivery for neighborhoods",
+                "users": "Variable",
+                "coverage": "Specific zones"
+            }
+        ],
+        "indirect_competitors": [
+            {"type": "Traditional Restaurants", "impact": "HOME DELIVERY - 30% margin loss to aggregators"},
+            {"type": "QR Code Ordering", "impact": "ZERO COMMISSION - but limited reach"},
+            {"type": "WhatsApp Groups", "impact": "ORGANIC - community-based ordering"},
+            {"type": "Hotel Room Service", "impact": "CAPTIVE MARKET - hotels control distribution"},
+            {"type": "Cloud Kitchens", "impact": "DIRECT TO CONSUMER - own delivery"},
+            {"type": "Subscription Services", "impact": "RECURRING REVENUE - change buying patterns"}
+        ],
+        "market_trends": {
+            "trend_1": "Consolidation: Large players acquiring smaller ones",
+            "trend_2": "Hyper-personalization: AI-driven recommendations",
+            "trend_3": "Ghost Kitchens: Emergence of delivery-only restaurants",
+            "trend_4": "Sustainability: Eco-friendly packaging focus"
+        },
+        "competitive_advantage": "Hyper-local focus in Mirpur with same-day delivery guarantee + transparent pricing (15% lower commission)",
+        "market_gaps": [
+            "Evening convenience meals (6-11 PM) for professionals",
+            "Corporate bulk orders (100+ meals)",
+            "Subscription meal plans",
+            "Diabetic/Health-conscious meal options"
+        ],
+        "threat_level": "HIGH",
+        "threat_details": "Foodpanda has ৳700Cr+ revenue, deep pockets for expansion. Uber Eats has global backing. Difficult to compete on logistics alone.",
+        "opportunity_level": "MEDIUM-HIGH",
+        "opportunity_details": "Serve underserved neighborhoods, focus on niche segments (health-conscious, corporate, budget-conscious)"
+    },
+    "bangladesh_impact": {
+        "local_regulations": ["BSTI food safety", "City Corporation license", "NBR tax registration", "Child labor compliance"],
+        "market_potential": "৳2-5 billion annual market, 15% YoY growth",
+        "cultural_factors": "High preference for home-cooked food, religious dietary restrictions, mobile-first adoption",
+        "economic_factors": "Rising middle class, increasing urbanization, growing digital payments",
+        "supply_chain": "Abundant local ingredients, developing cold chain infrastructure",
+        "impact_score": 8.2,
+        "localization_recommendations": ["Partner with local suppliers", "Offer payment flexibility", "Train Bangladeshi drivers"]
+    },
+    "swot_analysis": {
+        "strengths": ["Local market knowledge", "Low initial investment", "High demand"],
+        "weaknesses": ["No capital for marketing", "Limited tech team", "No delivery fleet"],
+        "opportunities": ["Expand to other cities", "B2B corporate meals", "Subscription model"],
+        "threats": ["Competition from established players", "Economic downturn", "Supply chain disruption"]
+    },
+    "go_to_market": {
+        "phase_1": "Pilot in 2 Mirpur zones for 30 days, target 50 orders/day",
+        "phase_2": "Expand to 5 Dhaka zones within 60 days, hire 3 delivery partners",
+        "phase_3": "Launch corporate tie-ups, introduce subscription (90 days)",
+        "customer_acquisition": "Instagram + TikTok (80%), referral (15%), partnerships (5%)",
+        "pricing_strategy": "15% lower than Foodpanda for first 100 orders",
+        "partnership_targets": ["IT companies", "BPO offices", "University hostels"]
+    },
+    "risk_assessment": {
+        "high_risks": [
+            {"risk": "Logistics failure", "probability": "HIGH", "impact": "Customer churn", "mitigation": "Backup delivery partners"},
+            {"risk": "Food poisoning incident", "probability": "MEDIUM", "impact": "Legal action", "mitigation": "Insurance + BSTI certified kitchen"}
+        ],
+        "medium_risks": [
+            {"risk": "Market saturation", "probability": "MEDIUM", "impact": "Price wars", "mitigation": "Premium positioning"},
+            {"risk": "Funding shortage", "probability": "HIGH", "impact": "Shutdown", "mitigation": "Bootstrap + pre-sales"}
+        ],
+        "overall_risk_score": 6.8
+    },
+    "founder_fit": {
+        "required_skills": ["Operations management", "Food industry knowledge", "Digital marketing"],
+        "team_recommendations": "Need co-founder with supply chain expertise",
+        "experience_gaps": "No previous startup experience, limited food industry knowledge",
+        "fit_score": 6.5,
+        "improvement_areas": ["Get food business internship", "Take digital marketing course", "Build advisory board"]
+    }
 }
 
 # ============================================================================
@@ -310,3 +445,217 @@ def generate_investor_questions(idea_text: str, sector: str) -> list:
         return json.loads(response)
     except:
         return DEMO_RESPONSES["investor_questions"]
+
+
+def analyze_competitors(idea_text: str, sector: str) -> dict:
+    if PROVIDER == "demo":
+        return DEMO_RESPONSES["competitor_analysis"]
+
+    prompt = f"""
+    Analyze competitors for this Bangladesh startup:
+    {idea_text} ({sector})
+
+    Return JSON with: direct_competitors (list with name, market_share, strength, weakness), indirect_competitors (list), competitive_advantage, market_gaps, threat_level.
+    All market shares as percentages.
+    RETURN ONLY JSON.
+    """
+
+    if PROVIDER == "openai":
+        response = call_openai(prompt, 1000)
+    elif PROVIDER == "anthropic":
+        from anthropic import Anthropic
+        client = Anthropic(api_key=API_KEY)
+        msg = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = msg.content[0].text
+    else:
+        return DEMO_RESPONSES["competitor_analysis"]
+
+    if not response:
+        return DEMO_RESPONSES["competitor_analysis"]
+
+    try:
+        return json.loads(response)
+    except:
+        return DEMO_RESPONSES["competitor_analysis"]
+
+
+def analyze_bangladesh_impact(idea_text: str, sector: str) -> dict:
+    if PROVIDER == "demo":
+        return DEMO_RESPONSES["bangladesh_impact"]
+
+    prompt = f"""
+    Analyze Bangladesh-specific impact and localization for this startup:
+    {idea_text} ({sector})
+
+    Consider: Local regulations, market potential in BDT, cultural factors, economic factors, supply chain, localization recommendations.
+    Return JSON with all above fields + impact_score (1-10).
+    RETURN ONLY JSON.
+    """
+
+    if PROVIDER == "openai":
+        response = call_openai(prompt, 1000)
+    elif PROVIDER == "anthropic":
+        from anthropic import Anthropic
+        client = Anthropic(api_key=API_KEY)
+        msg = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = msg.content[0].text
+    else:
+        return DEMO_RESPONSES["bangladesh_impact"]
+
+    if not response:
+        return DEMO_RESPONSES["bangladesh_impact"]
+
+    try:
+        return json.loads(response)
+    except:
+        return DEMO_RESPONSES["bangladesh_impact"]
+
+
+def analyze_swot(idea_text: str, sector: str) -> dict:
+    if PROVIDER == "demo":
+        return DEMO_RESPONSES["swot_analysis"]
+
+    prompt = f"""
+    Generate comprehensive SWOT analysis for this startup:
+    {idea_text} ({sector})
+
+    Return JSON with: strengths (list), weaknesses (list), opportunities (list), threats (list).
+    Each list item should be a short string (max 50 chars).
+    RETURN ONLY JSON.
+    """
+
+    if PROVIDER == "openai":
+        response = call_openai(prompt, 1000)
+    elif PROVIDER == "anthropic":
+        from anthropic import Anthropic
+        client = Anthropic(api_key=API_KEY)
+        msg = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = msg.content[0].text
+    else:
+        return DEMO_RESPONSES["swot_analysis"]
+
+    if not response:
+        return DEMO_RESPONSES["swot_analysis"]
+
+    try:
+        return json.loads(response)
+    except:
+        return DEMO_RESPONSES["swot_analysis"]
+
+
+def generate_gtm_strategy(idea_text: str, sector: str) -> dict:
+    if PROVIDER == "demo":
+        return DEMO_RESPONSES["go_to_market"]
+
+    prompt = f"""
+    Create a Go-to-Market strategy for this Bangladesh startup:
+    {idea_text} ({sector})
+
+    Return JSON with: phase_1, phase_2, phase_3 (execution plan), customer_acquisition (channels), pricing_strategy, partnership_targets.
+    Make it practical and Bangladesh-focused.
+    RETURN ONLY JSON.
+    """
+
+    if PROVIDER == "openai":
+        response = call_openai(prompt, 1200)
+    elif PROVIDER == "anthropic":
+        from anthropic import Anthropic
+        client = Anthropic(api_key=API_KEY)
+        msg = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1200,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = msg.content[0].text
+    else:
+        return DEMO_RESPONSES["go_to_market"]
+
+    if not response:
+        return DEMO_RESPONSES["go_to_market"]
+
+    try:
+        return json.loads(response)
+    except:
+        return DEMO_RESPONSES["go_to_market"]
+
+
+def assess_risks(idea_text: str, sector: str) -> dict:
+    if PROVIDER == "demo":
+        return DEMO_RESPONSES["risk_assessment"]
+
+    prompt = f"""
+    Assess critical risks for this Bangladesh startup:
+    {idea_text} ({sector})
+
+    Return JSON with: high_risks (list of {risk, probability, impact, mitigation}), medium_risks (same format), overall_risk_score (1-10).
+    RETURN ONLY JSON.
+    """
+
+    if PROVIDER == "openai":
+        response = call_openai(prompt, 1000)
+    elif PROVIDER == "anthropic":
+        from anthropic import Anthropic
+        client = Anthropic(api_key=API_KEY)
+        msg = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = msg.content[0].text
+    else:
+        return DEMO_RESPONSES["risk_assessment"]
+
+    if not response:
+        return DEMO_RESPONSES["risk_assessment"]
+
+    try:
+        return json.loads(response)
+    except:
+        return DEMO_RESPONSES["risk_assessment"]
+
+
+def assess_founder_fit(idea_text: str, sector: str) -> dict:
+    if PROVIDER == "demo":
+        return DEMO_RESPONSES["founder_fit"]
+
+    prompt = f"""
+    Assess founder fit for this startup idea:
+    {idea_text} ({sector})
+
+    Return JSON with: required_skills (list), team_recommendations (string), experience_gaps (string), fit_score (1-10), improvement_areas (list).
+    RETURN ONLY JSON.
+    """
+
+    if PROVIDER == "openai":
+        response = call_openai(prompt, 1000)
+    elif PROVIDER == "anthropic":
+        from anthropic import Anthropic
+        client = Anthropic(api_key=API_KEY)
+        msg = client.messages.create(
+            model="claude-3-5-sonnet-20241022",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        response = msg.content[0].text
+    else:
+        return DEMO_RESPONSES["founder_fit"]
+
+    if not response:
+        return DEMO_RESPONSES["founder_fit"]
+
+    try:
+        return json.loads(response)
+    except:
+        return DEMO_RESPONSES["founder_fit"]

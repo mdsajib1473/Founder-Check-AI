@@ -1,46 +1,48 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { generateEnhancedPDF } from './utils/enhancedPdfGenerator'
 
-interface AnalysisResult {
-  analysis_id?: number
-  idea_extraction: { title: string; description: string; sector: string; target_customer: string; revenue_model: string; location: string }
-  demand_analysis: { score: number; market_size: string; competition: string; opportunities: string[]; threats: string[] }
-  regulatory_analysis: { risk_score: number; key_regulators: string[]; critical_approvals: string; estimated_timeline: number; cost_estimate: number; warnings: string }
-  business_canvas: { key_partners: string[]; key_activities: string[]; key_resources: Record<string, unknown>; value_proposition: string; customer_segments: string[]; channels: string[]; customer_relationships: string[]; revenue_streams: Record<string, unknown>; cost_structure: Record<string, unknown> }
-  investor_questions: Array<{ question: string; category: string }>
-  overall_readiness_score: number
-  analysis_status: string
-}
+const LogoIcon = ({ size = 24 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Background circle */}
+    <rect width="24" height="24" rx="6" fill="url(#logoGradient)" opacity="0.1" />
 
-interface HistoryItem {
-  id: number
-  title: string
-  sector: string
-  overall_readiness_score: number
-  qa_completed: number
-  created_at: string
-}
+    {/* Check mark */}
+    <path d="M7 12L10.5 15.5L17 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+    {/* Upward arrow */}
+    <path d="M12 5V13M12 5L10 7M12 5L14 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+
+    <defs>
+      <linearGradient id="logoGradient" x1="0" y1="0" x2="24" y2="24">
+        <stop offset="0%" stopColor="#2563eb" />
+        <stop offset="100%" stopColor="#3b82f6" />
+      </linearGradient>
+    </defs>
+  </svg>
+)
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const [page, setPage] = useState<'home' | 'history' | 'qa'>('home')
   const [idea, setIdea] = useState('')
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
+  const [analysis, setAnalysis] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [backendHealth, setBackendHealth] = useState(false)
-  const [history, setHistory] = useState<HistoryItem[]>([])
-
-  // Q&A state
+  const [history, setHistory] = useState<any[]>([])
   const [qaSession, setQASession] = useState<any>(null)
   const [qaAnswer, setQAAnswer] = useState('')
-  const [qaLoading, setQALoading] = useState(false)
   const [qaResults, setQAResults] = useState<any[]>([])
-
   const [activeTab, setActiveTab] = useState('overview')
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
 
   useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
     checkBackendHealth()
-  }, [])
+  }, [isDarkMode])
 
   const checkBackendHealth = async () => {
     try {
@@ -51,7 +53,35 @@ function App() {
     }
   }
 
-  // ===== ANALYSIS =====
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (loginEmail && loginPassword) {
+      setIsLoggedIn(true)
+      setLoginEmail('')
+      setLoginPassword('')
+    }
+  }
+
+  const handleLogout = () => {
+    setIsLoggedIn(false)
+    setAnalysis(null)
+    setPage('home')
+  }
+
+  const exportToPDF = () => {
+    if (!analysis) {
+      alert('No analysis to export')
+      return
+    }
+    try {
+      generateEnhancedPDF(analysis)
+      alert('✓ Enterprise-grade PDF report generated successfully!')
+    } catch (err) {
+      console.error('PDF export error:', err)
+      alert('Failed to export PDF. Please try again.')
+    }
+  }
+
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!idea.trim() || idea.length < 10) {
@@ -74,17 +104,16 @@ function App() {
       setAnalysis(data)
       setActiveTab('overview')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed')
+      setError('Failed to analyze idea')
     } finally {
       setLoading(false)
     }
   }
 
-  // ===== HISTORY =====
   const loadHistory = async () => {
     try {
       const res = await fetch('http://localhost:8000/api/v1/analyses')
-      if (!res.ok) throw new Error('Failed to load')
+      if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setHistory(data)
       setPage('history')
@@ -93,7 +122,7 @@ function App() {
     }
   }
 
-  const loadAnalysisFromHistory = async (id: number) => {
+  const loadAnalysis = async (id: number) => {
     try {
       const res = await fetch(`http://localhost:8000/api/v1/analyses/${id}`)
       if (!res.ok) throw new Error('Failed')
@@ -106,10 +135,9 @@ function App() {
     }
   }
 
-  // ===== Q&A =====
   const startQA = async () => {
     if (!analysis?.analysis_id) {
-      setError('Save analysis first')
+      setError('Analysis not saved')
       return
     }
 
@@ -132,7 +160,6 @@ function App() {
     e.preventDefault()
     if (!qaAnswer.trim()) return
 
-    setQALoading(true)
     try {
       const res = await fetch('http://localhost:8000/api/v1/qa/answer', {
         method: 'POST',
@@ -143,7 +170,6 @@ function App() {
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
 
-      // Store result
       setQAResults([
         ...qaResults,
         {
@@ -167,141 +193,488 @@ function App() {
       }
     } catch (err) {
       setError('Failed to submit answer')
-    } finally {
-      setQALoading(false)
     }
   }
 
-  // ===== RENDER =====
-
-  if (page === 'history') {
+  // ===== LANDING PAGE / LOGIN =====
+  if (!isLoggedIn) {
     return (
-      <div className="app">
-        <header className="header">
-          <div className="header-content">
-            <div className="logo-section">
-              <h1>FounderCheck</h1>
-              <p>Bangladesh Startup Validator</p>
+      <div className="landing">
+        <div className="landing-header">
+          <div className="landing-content">
+            <div className="landing-logo">
+              <LogoIcon size={28} />
+              FounderCheck
             </div>
-            <button className="nav-btn active" onClick={() => setPage('home')}>
-              ← Back to Analyze
-            </button>
+            <div className="landing-nav-links">
+              <button className="nav-link">Features</button>
+              <button className="nav-link">Pricing</button>
+              <button className="nav-link">About</button>
+            </div>
+            <div className="landing-right">
+              <button onClick={() => setIsDarkMode(!isDarkMode)} className="landing-theme">
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
+            </div>
           </div>
-        </header>
+        </div>
 
-        <main className="main-content">
-          <div className="container">
-            <div className="input-card">
-              <h2>Analysis History</h2>
-              {history.length === 0 ? (
-                <p className="subtitle">No analyses yet. Create your first one!</p>
-              ) : (
-                <div className="history-list">
-                  {history.map((item) => (
-                    <div key={item.id} className="history-item" onClick={() => loadAnalysisFromHistory(item.id)}>
-                      <div className="history-left">
-                        <h4>{item.title}</h4>
-                        <p>{item.sector} • Score: {item.overall_readiness_score}/10</p>
-                        <span className="history-date">{new Date(item.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <div className="history-right">
-                        {item.qa_completed ? <span className="badge-done">✓ Q&A Done</span> : <span className="badge-pending">○ Pending Q&A</span>}
-                      </div>
-                    </div>
-                  ))}
+        <main className="landing-main">
+          <section className="hero">
+            <div className="hero-wrapper">
+              <h1>Validate Your Startup Idea</h1>
+              <p className="hero-subtitle">Get AI-powered market insights, regulatory guidance, and investor readiness assessment in 60 seconds</p>
+
+              <div className="hero-stats">
+                <div className="stat">
+                  <div className="stat-value">5</div>
+                  <div className="stat-label">Analysis Modules</div>
                 </div>
-              )}
+                <div className="stat">
+                  <div className="stat-value">10</div>
+                  <div className="stat-label">Investor Questions</div>
+                </div>
+                <div className="stat">
+                  <div className="stat-value">60s</div>
+                  <div className="stat-label">Fast Results</div>
+                </div>
+              </div>
+
+              <div className="demo-inputs">
+                <button onClick={() => setIdea('AI-powered meal delivery in Dhaka')} className="demo-tag">Meal Delivery</button>
+                <button onClick={() => setIdea('FinTech microloans for Bangladesh')} className="demo-tag">FinTech</button>
+                <button onClick={() => setIdea('AgriTech for farmers')} className="demo-tag">AgriTech</button>
+              </div>
+
+              <button
+                onClick={() => document.getElementById('features-section')?.scrollIntoView({behavior: 'smooth'})}
+                className="hero-cta"
+              >
+                Start Validating Free
+              </button>
             </div>
-          </div>
+          </section>
+
+          <section className="features-showcase" id="features-section">
+            <h2 className="section-title">Comprehensive Startup Analysis</h2>
+            <div className="features-grid">
+              <div className="feature-card">
+                <div className="feature-icon">📊</div>
+                <h3>Market Demand</h3>
+                <p>Deep-dive analysis with TAM/SAM/SOM breakdown, customer needs assessment, and competitive landscape evaluation.</p>
+                <ul className="feature-list">
+                  <li>Market size estimation</li>
+                  <li>Customer pain points</li>
+                  <li>Competitive analysis</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">⚖️</div>
+                <h3>Regulatory Insights</h3>
+                <p>Bangladesh-specific compliance requirements, licensing needs, and legal considerations for your startup.</p>
+                <ul className="feature-list">
+                  <li>Regulatory compliance</li>
+                  <li>Risk assessment</li>
+                  <li>Legal requirements</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🎯</div>
+                <h3>Business Model</h3>
+                <p>Structured business model validation using the proven business canvas framework and methodology.</p>
+                <ul className="feature-list">
+                  <li>Value proposition</li>
+                  <li>Revenue streams</li>
+                  <li>Key partnerships</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🎤</div>
+                <h3>Investor Interview</h3>
+                <p>Practice pitching with AI-powered questions and receive detailed feedback on your startup idea.</p>
+                <ul className="feature-list">
+                  <li>10 critical questions</li>
+                  <li>Real-time scoring</li>
+                  <li>Expert feedback</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">📈</div>
+                <h3>Readiness Score</h3>
+                <p>Get a comprehensive readiness score and actionable insights to improve your startup idea.</p>
+                <ul className="feature-list">
+                  <li>Overall readiness score</li>
+                  <li>Detailed breakdown</li>
+                  <li>Action items</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">📑</div>
+                <h3>PDF Export</h3>
+                <p>Download your complete analysis as a professional PDF report to share with investors.</p>
+                <ul className="feature-list">
+                  <li>Professional PDF</li>
+                  <li>Shareable format</li>
+                  <li>Print-ready</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🔥</div>
+                <h3>Competitor Analysis</h3>
+                <p>Identify direct & indirect competitors, analyze their strengths/weaknesses, and find market gaps.</p>
+                <ul className="feature-list">
+                  <li>Competitor mapping</li>
+                  <li>Market share analysis</li>
+                  <li>Competitive advantage</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🇧🇩</div>
+                <h3>Bangladesh Impact</h3>
+                <p>Deep local market analysis including regulations, cultural factors, supply chain, and economic opportunity.</p>
+                <ul className="feature-list">
+                  <li>Local regulations</li>
+                  <li>Cultural insights</li>
+                  <li>Market potential</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🎯</div>
+                <h3>SWOT Analysis</h3>
+                <p>Complete SWOT matrix to identify strengths, weaknesses, opportunities and threats for your startup.</p>
+                <ul className="feature-list">
+                  <li>Strength assessment</li>
+                  <li>Growth opportunities</li>
+                  <li>Risk mitigation</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">🚀</div>
+                <h3>Go-to-Market Strategy</h3>
+                <p>Phased GTM plan with customer acquisition channels, pricing strategy, and partnership targets.</p>
+                <ul className="feature-list">
+                  <li>3-phase launch plan</li>
+                  <li>Pricing guidance</li>
+                  <li>Partnership opportunities</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">⚠️</div>
+                <h3>Risk Assessment</h3>
+                <p>Identify critical risks with probability analysis, impact assessment, and mitigation strategies.</p>
+                <ul className="feature-list">
+                  <li>Risk prioritization</li>
+                  <li>Impact analysis</li>
+                  <li>Mitigation plans</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">👤</div>
+                <h3>Founder Fit</h3>
+                <p>Assess your startup idea against founder expertise, identify gaps, and get improvement recommendations.</p>
+                <ul className="feature-list">
+                  <li>Skill assessment</li>
+                  <li>Experience gaps</li>
+                  <li>Team recommendations</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section className="pricing-section" id="pricing-section">
+            <div className="pricing-section-title">
+              <h2 className="section-title">Simple Pricing</h2>
+            </div>
+            <div className="pricing-grid">
+              <div className="pricing-card">
+                <div className="pricing-name">Starter</div>
+                <div className="pricing-desc">Perfect for early-stage founders</div>
+                <div className="pricing-amount">Free</div>
+                <ul className="pricing-features">
+                  <li>5 analyses per month</li>
+                  <li>Basic market analysis</li>
+                  <li>Regulatory insights</li>
+                  <li>Q&A interview</li>
+                </ul>
+                <button className="pricing-btn" onClick={() => document.getElementById('login-section')?.scrollIntoView({behavior: 'smooth'})}>Get Started</button>
+              </div>
+
+              <div className="pricing-card featured">
+                <div className="pricing-badge">Most Popular</div>
+                <div className="pricing-name">Professional</div>
+                <div className="pricing-desc">For serious entrepreneurs</div>
+                <div className="pricing-amount">$29<span style={{fontSize: '14px', color: 'var(--text-3)'}}>/ month</span></div>
+                <ul className="pricing-features">
+                  <li>Unlimited analyses</li>
+                  <li>Advanced market analysis</li>
+                  <li>PDF export</li>
+                  <li>Priority support</li>
+                  <li>Analysis history</li>
+                </ul>
+                <button className="pricing-btn" onClick={() => document.getElementById('login-section')?.scrollIntoView({behavior: 'smooth'})}>Subscribe Now</button>
+              </div>
+
+              <div className="pricing-card">
+                <div className="pricing-name">Enterprise</div>
+                <div className="pricing-desc">For organizations</div>
+                <div className="pricing-amount">Custom</div>
+                <ul className="pricing-features">
+                  <li>Team accounts</li>
+                  <li>API access</li>
+                  <li>Custom integrations</li>
+                  <li>Dedicated support</li>
+                </ul>
+                <button className="pricing-btn">Contact Sales</button>
+              </div>
+            </div>
+          </section>
+
+          <section className="highlights">
+            <div className="highlight-item">
+              <div className="highlight-number">60s</div>
+              <div className="highlight-label">Fast validation</div>
+            </div>
+            <div className="highlight-item">
+              <div className="highlight-number">5</div>
+              <div className="highlight-label">Analysis modules</div>
+            </div>
+            <div className="highlight-item">
+              <div className="highlight-number">10</div>
+              <div className="highlight-label">Investor questions</div>
+            </div>
+            <div className="highlight-item">
+              <div className="highlight-number">Free</div>
+              <div className="highlight-label">Forever</div>
+            </div>
+          </section>
+
+          <section className="modules">
+            <h2>What We Analyze</h2>
+            <div className="modules-grid">
+              <div className="module">
+                <h3>📊 Market Demand</h3>
+                <p>TAM/SAM/SOM analysis, customer needs, competitive landscape</p>
+              </div>
+              <div className="module">
+                <h3>⚖️ Regulatory Risk</h3>
+                <p>Bangladesh compliance, licensing, legal requirements</p>
+              </div>
+              <div className="module">
+                <h3>🎯 Business Model</h3>
+                <p>Value proposition, revenue streams, key partnerships</p>
+              </div>
+              <div className="module">
+                <h3>🎤 Investor Pitch</h3>
+                <p>Answer 10 critical questions and get AI investor feedback</p>
+              </div>
+              <div className="module">
+                <h3>🔥 Competitors</h3>
+                <p>Direct/indirect competitor analysis, market gaps, positioning</p>
+              </div>
+              <div className="module">
+                <h3>🇧🇩 Bangladesh Impact</h3>
+                <p>Local market potential, cultural factors, supply chain insights</p>
+              </div>
+              <div className="module">
+                <h3>🎯 SWOT Analysis</h3>
+                <p>Comprehensive strengths, weaknesses, opportunities, threats</p>
+              </div>
+              <div className="module">
+                <h3>🚀 Go-to-Market</h3>
+                <p>Phased GTM strategy, customer acquisition, pricing approach</p>
+              </div>
+              <div className="module">
+                <h3>⚠️ Risk Assessment</h3>
+                <p>High/medium priority risks with mitigation strategies</p>
+              </div>
+              <div className="module">
+                <h3>👤 Founder Fit</h3>
+                <p>Skills assessment, experience gaps, team recommendations</p>
+              </div>
+              <div className="module">
+                <h3>💰 Financial Projections</h3>
+                <p>3-year revenue projections, unit economics, runway</p>
+              </div>
+              <div className="module">
+                <h3>📈 Readiness Score</h3>
+                <p>Overall startup readiness with 5-10 actionable improvements</p>
+              </div>
+            </div>
+          </section>
+
+          <section className="login-section" id="login-section">
+            <div className="login-wrapper">
+              <form onSubmit={handleLogin} className="login-form">
+                <h2>Start Your Validation</h2>
+
+                <div className="form-field">
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="Email address"
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <input
+                    type="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Password"
+                    required
+                  />
+                </div>
+
+                <button type="submit" className="form-submit">Sign In & Validate</button>
+              </form>
+              <p className="form-hint">Use any email and password to get started</p>
+            </div>
+          </section>
         </main>
 
-        <footer className="footer">
-          <p>FounderCheck | Bangladesh Startup Intelligence Platform</p>
+        <footer className="landing-footer">
+          <p>© 2026 FounderCheck</p>
         </footer>
       </div>
     )
   }
 
+  // ===== HISTORY PAGE =====
+  if (page === 'history') {
+    return (
+      <div className="app">
+        <header className="header">
+          <div className="header-left">
+            <div className="logo">
+              <LogoIcon size={20} />
+              FounderCheck
+            </div>
+          </div>
+          <nav className="nav">
+            <button className="nav-item active">📋 History</button>
+          </nav>
+          <div className="header-right">
+            <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          </div>
+        </header>
+
+        <main className="main">
+          <div className="container">
+            <div className="card">
+              <h2>📋 Analysis History</h2>
+              {history.length === 0 ? (
+                <p className="empty-state">No analyses yet</p>
+              ) : (
+                <div className="history-grid">
+                  {history.map((item) => (
+                    <div key={item.id} className="history-card" onClick={() => loadAnalysis(item.id)}>
+                      <h4>{item.title}</h4>
+                      <p>{item.sector}</p>
+                      <div className="history-meta">
+                        <span className="score-badge">{item.overall_readiness_score}/10</span>
+                        {item.qa_completed ? <span className="qa-badge">✓ QA Done</span> : <span className="qa-badge pending">○ Pending</span>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button className="btn-secondary" onClick={() => setPage('home')}>← Back</button>
+            </div>
+          </div>
+        </main>
+
+        <footer className="footer">
+          <p>© 2026 FounderCheck. Empowering Bangladesh Entrepreneurs.</p>
+        </footer>
+      </div>
+    )
+  }
+
+  // ===== Q&A PAGE =====
   if (page === 'qa') {
     return (
       <div className="app">
         <header className="header">
-          <div className="header-content">
-            <div className="logo-section">
-              <h1>FounderCheck - Investor Q&A</h1>
-              <p>{qaSession?.question_number || 0}/{qaSession?.total_questions || 10}</p>
+          <div className="header-left">
+            <div className="logo">
+              <LogoIcon size={20} />
+              FounderCheck
             </div>
-            <button className="nav-btn" onClick={() => setPage('home')}>← Back</button>
+          </div>
+          <nav className="nav">
+            <button className="nav-item">🎤 Investor Q&A</button>
+          </nav>
+          <div className="header-right">
+            <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </header>
 
-        <main className="main-content">
-          <div className="container">
+        <main className="main">
+          <div className="container qa-container">
             {qaSession?.completed ? (
-              <div className="input-card">
-                <h2>Q&A Complete! ✓</h2>
-                <div className="qa-summary">
-                  <div className="score-box">
-                    <p className="label">Final Q&A Score</p>
-                    <p className="big-score">{qaSession.final_score?.toFixed(1)}/10</p>
+              <div className="card qa-complete">
+                <h2>✓ Interview Complete!</h2>
+                <div className="score-display">
+                  <div className="score-item">
+                    <p>Q&A Score</p>
+                    <div className="big-score">{qaSession.final_score?.toFixed(1)}/10</div>
                   </div>
-                  <div className="score-box">
-                    <p className="label">Adjusted Readiness</p>
-                    <p className="big-score">{qaSession.readiness_score?.toFixed(1)}/10</p>
+                  <div className="score-item">
+                    <p>Adjusted Readiness</p>
+                    <div className="big-score">{qaSession.readiness_score?.toFixed(1)}/10</div>
                   </div>
                 </div>
-
-                <h3>Your Answers:</h3>
-                <div className="qa-results">
-                  {qaResults.map((r, i) => (
-                    <div key={i} className="qa-result-item">
-                      <p><strong>Q{i+1}: {r.question}</strong></p>
-                      <p className="answer">A: {r.answer}</p>
-                      <p className="score">Score: {r.score}/10 - {r.feedback}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <button className="submit-btn" onClick={() => setPage('home')}>
-                  View Final Report
-                </button>
+                <button className="btn-primary" onClick={() => setPage('home')}>View Report</button>
               </div>
             ) : (
-              <div className="input-card">
-                <h3>Question {qaSession?.question_number || 1}/{qaSession?.total_questions || 10}</h3>
-                <p className="qa-question">{qaSession?.question}</p>
+              <div className="card qa-card">
+                <div className="qa-progress">
+                  <p>Question {qaSession?.question_number || 1}/{qaSession?.total_questions || 10}</p>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{width: `${((qaSession?.question_number || 1) / 10) * 100}%`}}></div>
+                  </div>
+                </div>
+
+                <h3 className="qa-question">{qaSession?.question}</h3>
 
                 <form onSubmit={submitAnswer}>
                   <textarea
                     value={qaAnswer}
                     onChange={(e) => setQAAnswer(e.target.value)}
                     placeholder="Your answer..."
-                    rows={5}
-                    disabled={qaLoading}
-                    className="textarea"
+                    rows={6}
+                    className="qa-textarea"
                   />
-                  <button type="submit" disabled={qaLoading || !qaAnswer.trim()} className="submit-btn">
-                    {qaLoading ? 'Evaluating...' : 'Submit Answer'}
+                  <button type="submit" className="btn-primary" disabled={!qaAnswer.trim()}>
+                    Submit Answer
                   </button>
                 </form>
-
-                {qaResults.length > 0 && (
-                  <div className="qa-progress">
-                    <h4>Previous Answers:</h4>
-                    {qaResults.map((r, i) => (
-                      <div key={i} className="mini-result">
-                        <span>Q{i+1}: {r.score}/10</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             )}
           </div>
         </main>
 
         <footer className="footer">
-          <p>FounderCheck | Investor Interview Mode</p>
+          <p>© 2026 FounderCheck. Practice pitching to AI investors.</p>
         </footer>
       </div>
     )
@@ -311,159 +684,745 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <div className="header-content">
-          <div className="logo-section">
-            <h1>FounderCheck</h1>
-            <p>Bangladesh Startup Validator</p>
-          </div>
-          <div className="header-right">
-            <button className="nav-btn" onClick={() => { loadHistory() }}>
-              📋 History
-            </button>
-            <span className={`status-badge ${backendHealth ? 'active' : 'inactive'}`}>
-              {backendHealth ? '● Online' : '● Offline'}
-            </span>
-          </div>
+        <div className="header-left">
+          <div className="logo">🚀 FounderCheck</div>
+        </div>
+        <nav className="nav">
+          <button className="nav-item active">📊 Analyze</button>
+          <button className="nav-item" onClick={loadHistory}>📋 History</button>
+        </nav>
+        <div className="header-right">
+          <span className={`status ${backendHealth ? 'online' : 'offline'}`}>
+            {backendHealth ? '● Online' : '● Offline'}
+          </span>
+          <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
+            {isDarkMode ? '☀️' : '🌙'}
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
-      <main className="main-content">
+      <main className="main">
         <div className="container">
           {!analysis ? (
-            <div className="input-section">
-              <div className="input-card">
-                <h2>Validate Your Startup Idea</h2>
-                <p className="subtitle">Get comprehensive regulatory, market, and financial analysis</p>
+            <div className="card input-card">
+              <h2>Validate Your Startup Idea</h2>
+              <p className="subtitle">AI-powered analysis for Bangladesh entrepreneurs</p>
 
-                <form onSubmit={handleAnalyze} className="form">
-                  <div className="form-group">
-                    <label htmlFor="idea">Describe your startup idea</label>
-                    <textarea
-                      id="idea"
-                      value={idea}
-                      onChange={(e) => setIdea(e.target.value)}
-                      placeholder="E.g., A cloud kitchen in Mirpur serving working professionals..."
-                      rows={6}
-                      disabled={loading}
-                      className="textarea"
-                    />
-                    <span className="char-count">{idea.length}/500</span>
-                  </div>
+              <form onSubmit={handleAnalyze} className="form">
+                <div className="form-group">
+                  <label>Your Startup Idea</label>
+                  <textarea
+                    value={idea}
+                    onChange={(e) => setIdea(e.target.value)}
+                    placeholder="E.g., Cloud kitchen in Mirpur serving office workers..."
+                    rows={6}
+                    disabled={loading}
+                    className="textarea"
+                  />
+                  <span className="char-count">{idea.length}/500</span>
+                </div>
 
-                  <button type="submit" disabled={loading || !idea.trim()} className="submit-btn">
-                    {loading ? <><span className="spinner"></span> Analyzing...</> : <>📊 Analyze My Idea</>}
-                  </button>
-                </form>
+                <button type="submit" disabled={loading || !idea.trim()} className="btn-primary btn-large">
+                  {loading ? '⏳ Analyzing...' : '🚀 Analyze My Idea'}
+                </button>
+              </form>
 
-                {error && <div className="error-box">❌ {error}</div>}
+              {error && <div className="error-box">⚠️ {error}</div>}
 
-                <div className="demo-ideas">
-                  <p className="demo-label">Try a demo:</p>
-                  <div className="demo-buttons">
-                    {['Cloud kitchen in Mirpur', 'AgriTech for Bogura', 'Fintech lending'].map((d) => (
-                      <button key={d} type="button" onClick={() => setIdea(d)} className="demo-btn">
-                        {d}
-                      </button>
-                    ))}
-                  </div>
+              <div className="demo-section">
+                <p className="demo-title">Try a demo:</p>
+                <div className="demo-buttons">
+                  {['Cloud kitchen in Mirpur', 'AgriTech for farmers', 'Fintech lending'].map((d) => (
+                    <button key={d} onClick={() => setIdea(d)} className="demo-btn">
+                      {d}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="results-section">
+            <div className="results-container">
               <div className="results-header">
                 <div>
-                  <h2>{analysis.idea_extraction.title}</h2>
-                  <p className="result-subtitle">{analysis.idea_extraction.description}</p>
+                  <h2>{analysis.idea_extraction?.title || 'Analysis'}</h2>
+                  <p>{analysis.idea_extraction?.description}</p>
                 </div>
-                <button onClick={() => setAnalysis(null)} className="back-btn">← New Analysis</button>
+                <button onClick={() => setAnalysis(null)} className="btn-secondary">← New Analysis</button>
               </div>
 
-              {/* Score */}
-              <div className="score-card">
-                <div className="score-content">
-                  <div className="score-circle" style={{background: `conic-gradient(#6366f1 ${analysis.overall_readiness_score * 10}%, #e5e7eb 0)`}}>
-                    <span className="score-number">{analysis.overall_readiness_score}</span>
-                  </div>
-                  <div className="score-text">
-                    <h3>Overall Readiness</h3>
-                    <p className="score-label">{analysis.overall_readiness_score >= 8 ? '✓ Strong' : analysis.overall_readiness_score >= 6 ? '⚠ Moderate' : '✗ Needs Work'}</p>
-                    <p className="score-desc">Based on market, regulatory & business analysis</p>
+              <div className="score-card-main">
+                <div className="score-circle" style={{background: `conic-gradient(#2563eb ${(analysis.overall_readiness_score || 0) * 10}%, #e5e7eb 0)`}}>
+                  <span className="score-num">{analysis.overall_readiness_score?.toFixed(1) || '0'}</span>
+                </div>
+                <div className="score-info">
+                  <h3>Readiness Score</h3>
+                  <p>{analysis.overall_readiness_score >= 8 ? '✓ Strong' : analysis.overall_readiness_score >= 6 ? '⚠ Moderate' : '✗ Needs Work'}</p>
+                  <div className="action-buttons">
+                    <button onClick={exportToPDF} className="action-btn">📥 Export Report</button>
+                    <button onClick={() => {
+                      const text = `Check out this startup analysis: ${analysis.idea_extraction?.title}\n\nReadiness Score: ${analysis.overall_readiness_score}/10\n\nAnalyzed with FounderCheck - The startup validator for Bangladesh\nhttps://foundercheck.io`;
+                      navigator.share?.({ title: 'FounderCheck Analysis', text }) || alert('Share: ' + text);
+                    }} className="action-btn">📤 Share</button>
+                    <button onClick={() => alert('✓ Analysis saved to your history!')} className="action-btn">💾 Save</button>
                   </div>
                 </div>
               </div>
 
-              {/* Tabs */}
               <div className="tabs">
-                {['overview', 'demand', 'regulatory', 'canvas', 'qa'].map(tab => (
-                  <button key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </button>
-                ))}
+                {['overview', 'demand', 'regulatory', 'canvas', 'competitors', 'bangladesh', 'swot', 'gtm', 'risks', 'founder', 'qa'].map(tab => {
+                  const tabLabels: {[key: string]: string} = {
+                    overview: '📊 Overview',
+                    demand: '📈 Demand',
+                    regulatory: '⚖️ Regulatory',
+                    canvas: '🎯 Canvas',
+                    competitors: '🔥 Competitors',
+                    bangladesh: '🇧🇩 BD Impact',
+                    swot: '🎯 SWOT',
+                    gtm: '🚀 GTM',
+                    risks: '⚠️ Risks',
+                    founder: '👤 Founder Fit',
+                    qa: '🎤 Interview'
+                  };
+                  return (
+                    <button key={tab} className={`tab ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
+                      {tabLabels[tab]}
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Content */}
               <div className="tab-content">
                 {activeTab === 'overview' && (
-                  <div className="overview-grid">
-                    <div className="info-card"><h4>Sector</h4><p className="value">{analysis.idea_extraction.sector}</p></div>
-                    <div className="info-card"><h4>Customer</h4><p className="value">{analysis.idea_extraction.target_customer}</p></div>
-                    <div className="info-card"><h4>Revenue</h4><p className="value">{analysis.idea_extraction.revenue_model}</p></div>
-                    <div className="info-card"><h4>Location</h4><p className="value">{analysis.idea_extraction.location}</p></div>
+                  <div className="grid-2">
+                    <div className="stat-box"><p>Sector</p><p className="stat-value">{analysis.idea_extraction?.sector}</p></div>
+                    <div className="stat-box"><p>Customer</p><p className="stat-value">{analysis.idea_extraction?.target_customer}</p></div>
+                    <div className="stat-box"><p>Revenue</p><p className="stat-value">{analysis.idea_extraction?.revenue_model}</p></div>
+                    <div className="stat-box"><p>Location</p><p className="stat-value">{analysis.idea_extraction?.location}</p></div>
                   </div>
                 )}
 
                 {activeTab === 'demand' && (
                   <div className="section">
-                    <div className="metric">
-                      <span>Demand Score: {analysis.demand_analysis.score}/10</span>
-                      <div className="score-bar"><div className="bar-fill" style={{width: `${analysis.demand_analysis.score * 10}%`, backgroundColor: '#10b981'}}></div></div>
+                    <h3>Market Demand Analysis</h3>
+
+                    <div className="grid-2" style={{marginBottom: '30px'}}>
+                      <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
+                        <h4 style={{color: '#2196F3', marginBottom: '8px'}}>📊 Market Size</h4>
+                        <p style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41'}}>{analysis.demand_analysis?.market_size}</p>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
+                        <h4 style={{color: '#F44336', marginBottom: '8px'}}>🎯 Competition</h4>
+                        <p style={{fontSize: '16px', color: '#ccc'}}>{analysis.demand_analysis?.competition}</p>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
+                        <h4 style={{color: '#4CAF50', marginBottom: '8px'}}>📈 Market Score</h4>
+                        <svg viewBox="0 0 100 100" style={{width: '100%', height: '80px', margin: '10px 0'}}>
+                          <circle cx="50" cy="50" r="45" fill="none" stroke="#333" strokeWidth="8" opacity="0.2"/>
+                          <circle
+                            cx="50"
+                            cy="50"
+                            r="45"
+                            fill="none"
+                            stroke="#4CAF50"
+                            strokeWidth="8"
+                            strokeDasharray={`${(analysis.demand_analysis?.score || 0) * 28.27} 282.7`}
+                            opacity="0.9"
+                          />
+                          <text x="50" y="58" textAnchor="middle" fill="#4CAF50" fontSize="24" fontWeight="bold">
+                            {analysis.demand_analysis?.score}/10
+                          </text>
+                        </svg>
+                      </div>
                     </div>
-                    <p><strong>Market:</strong> {analysis.demand_analysis.market_size}</p>
-                    <p><strong>Competition:</strong> {analysis.demand_analysis.competition}</p>
-                    <div className="two-col">
-                      <div><h4>Opportunities</h4><ul>{analysis.demand_analysis.opportunities.map((o, i) => <li key={i}>✓ {o}</li>)}</ul></div>
-                      <div><h4>Threats</h4><ul>{analysis.demand_analysis.threats.map((t, i) => <li key={i}>⚠ {t}</li>)}</ul></div>
+
+                    <div className="grid-2">
+                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
+                        <h4 style={{color: '#4CAF50', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                          <span>✨</span>
+                          Key Opportunities
+                        </h4>
+                        <ul style={{listStyle: 'none', padding: 0}}>
+                          {analysis.demand_analysis?.opportunities?.map((o: string, i: number) => (
+                            <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
+                              ✓ {o}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
+                        <h4 style={{color: '#FF9800', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                          <span>⚡</span>
+                          Key Threats
+                        </h4>
+                        <ul style={{listStyle: 'none', padding: 0}}>
+                          {analysis.demand_analysis?.threats?.map((t: string, i: number) => (
+                            <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '6px', borderLeft: '3px solid #FF9800', color: '#ccc', fontSize: '13'}}>
+                              ⚠️ {t}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'regulatory' && (
                   <div className="section">
-                    <div className="metric">
-                      <span>Regulatory Risk: {10 - analysis.regulatory_analysis.risk_score}/10</span>
-                      <div className="score-bar"><div className="bar-fill" style={{width: `${(10 - analysis.regulatory_analysis.risk_score) * 10}%`, backgroundColor: '#ef4444'}}></div></div>
-                    </div>
-                    <div className="reg-grid">
-                      <div><h4>Regulators</h4><div className="tags">{analysis.regulatory_analysis.key_regulators.map((r, i) => <span key={i} className="tag">{r}</span>)}</div></div>
-                      <div><h4>Approvals</h4><p>{analysis.regulatory_analysis.critical_approvals}</p></div>
-                      <div><h4>Timeline</h4><p className="highlight">~{analysis.regulatory_analysis.estimated_timeline} days</p></div>
-                      <div><h4>Cost</h4><p className="highlight">৳{analysis.regulatory_analysis.cost_estimate.toLocaleString()}</p></div>
-                    </div>
-                    <div className="warning-box"><strong>⚠️</strong> {analysis.regulatory_analysis.warnings}</div>
+                    <p><strong>Regulators:</strong> {analysis.regulatory_analysis?.key_regulators?.join(', ')}</p>
+                    <p><strong>Timeline:</strong> ~{analysis.regulatory_analysis?.estimated_timeline} days</p>
+                    <p><strong>Cost:</strong> ৳{analysis.regulatory_analysis?.cost_estimate?.toLocaleString()}</p>
+                    <div className="warning">⚠️ {analysis.regulatory_analysis?.warnings}</div>
                   </div>
                 )}
 
                 {activeTab === 'canvas' && (
-                  <div className="canvas-section">
-                    <div className="canvas-grid">
-                      <div className="canvas-block"><h4>Partners</h4><ul>{analysis.business_canvas.key_partners?.map((p, i) => <li key={i}>{p}</li>)}</ul></div>
-                      <div className="canvas-block"><h4>Activities</h4><ul>{analysis.business_canvas.key_activities?.map((a, i) => <li key={i}>{a}</li>)}</ul></div>
-                      <div className="canvas-block"><h4>Segments</h4><ul>{analysis.business_canvas.customer_segments?.map((c, i) => <li key={i}>{c}</li>)}</ul></div>
-                      <div className="canvas-block highlight-block"><h4>Value Prop</h4><p>{analysis.business_canvas.value_proposition}</p></div>
+                  <div className="section">
+                    <h3>Business Model Canvas</h3>
+                    <svg viewBox="0 0 1200 700" className="canvas-svg">
+                      {/* Key Partners */}
+                      <rect x="20" y="20" width="200" height="140" fill="rgba(33, 150, 243, 0.1)" stroke="#2196F3" strokeWidth="2" rx="6"/>
+                      <text x="120" y="45" textAnchor="middle" fill="#2196F3" fontSize="14" fontWeight="bold">KEY PARTNERS</text>
+                      <text x="30" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[0]}</text>
+                      <text x="30" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[1]}</text>
+                      <text x="30" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[2]}</text>
+                      <text x="30" y="130" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[3]}</text>
+                      <text x="30" y="150" fill="#ccc" fontSize="11">...</text>
+
+                      {/* Key Activities */}
+                      <rect x="240" y="20" width="200" height="140" fill="rgba(76, 175, 80, 0.1)" stroke="#4CAF50" strokeWidth="2" rx="6"/>
+                      <text x="340" y="45" textAnchor="middle" fill="#4CAF50" fontSize="14" fontWeight="bold">KEY ACTIVITIES</text>
+                      <text x="250" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[0]}</text>
+                      <text x="250" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[1]}</text>
+                      <text x="250" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[2]}</text>
+                      <text x="250" y="130" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[3]}</text>
+                      <text x="250" y="150" fill="#ccc" fontSize="11">...</text>
+
+                      {/* Value Proposition - CENTER */}
+                      <rect x="460" y="240" width="280" height="200" fill="rgba(255, 193, 7, 0.1)" stroke="#FFC107" strokeWidth="3" rx="8"/>
+                      <text x="600" y="270" textAnchor="middle" fill="#FFC107" fontSize="16" fontWeight="bold">VALUE PROPOSITION</text>
+                      <text x="600" y="380" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="600">{analysis.business_canvas?.value_proposition}</text>
+
+                      {/* Customer Segments */}
+                      <rect x="780" y="20" width="200" height="140" fill="rgba(244, 67, 54, 0.1)" stroke="#F44336" strokeWidth="2" rx="6"/>
+                      <text x="880" y="45" textAnchor="middle" fill="#F44336" fontSize="14" fontWeight="bold">SEGMENTS</text>
+                      <text x="790" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[0]}</text>
+                      <text x="790" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[1]}</text>
+                      <text x="790" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[2]}</text>
+                      <text x="790" y="130" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[3]}</text>
+                      <text x="790" y="150" fill="#ccc" fontSize="11">...</text>
+
+                      {/* Channels */}
+                      <rect x="1000" y="20" width="180" height="140" fill="rgba(156, 39, 176, 0.1)" stroke="#9C27B0" strokeWidth="2" rx="6"/>
+                      <text x="1090" y="45" textAnchor="middle" fill="#9C27B0" fontSize="14" fontWeight="bold">CHANNELS</text>
+                      <text x="1010" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.channels?.[0]}</text>
+                      <text x="1010" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.channels?.[1]}</text>
+                      <text x="1010" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.channels?.[2]}</text>
+                      <text x="1010" y="130" fill="#ccc" fontSize="11">...</text>
+
+                      {/* Revenue Streams */}
+                      <rect x="780" y="540" width="200" height="140" fill="rgba(0, 255, 65, 0.1)" stroke="#00FF41" strokeWidth="2" rx="6"/>
+                      <text x="880" y="565" textAnchor="middle" fill="#00FF41" fontSize="14" fontWeight="bold">REVENUE</text>
+                      {Object.entries(analysis.business_canvas?.revenue_streams || {}).map((item: any, i: number) => (
+                        <text key={i} x="790" y={590 + i * 20} fill="#ccc" fontSize="11">{item[0]}: {item[1]}</text>
+                      ))}
+
+                      {/* Cost Structure */}
+                      <rect x="20" y="540" width="200" height="140" fill="rgba(255, 87, 34, 0.1)" stroke="#FF5722" strokeWidth="2" rx="6"/>
+                      <text x="120" y="565" textAnchor="middle" fill="#FF5722" fontSize="14" fontWeight="bold">COST STRUCTURE</text>
+                      {Object.entries(analysis.business_canvas?.cost_structure || {}).slice(0, 3).map((item: any, i: number) => (
+                        <text key={i} x="30" y={590 + i * 20} fill="#ccc" fontSize="11">{item[0]}: {item[1]}</text>
+                      ))}
+
+                      {/* Customer Relationships */}
+                      <rect x="240" y="540" width="200" height="140" fill="rgba(0, 188, 212, 0.1)" stroke="#00BCD4" strokeWidth="2" rx="6"/>
+                      <text x="340" y="565" textAnchor="middle" fill="#00BCD4" fontSize="14" fontWeight="bold">RELATIONSHIPS</text>
+                      {analysis.business_canvas?.customer_relationships?.slice(0, 3).map((rel: string, i: number) => (
+                        <text key={i} x="250" y={590 + i * 20} fill="#ccc" fontSize="11">{rel}</text>
+                      ))}
+
+                      {/* Resources */}
+                      <rect x="460" y="540" width="280" height="140" fill="rgba(103, 58, 183, 0.1)" stroke="#673AB7" strokeWidth="2" rx="6"/>
+                      <text x="600" y="565" textAnchor="middle" fill="#673AB7" fontSize="14" fontWeight="bold">KEY RESOURCES</text>
+                      {Object.entries(analysis.business_canvas?.key_resources || {}).map((item: any, i: number) => (
+                        <text key={i} x="470" y={590 + i * 20} fill="#ccc" fontSize="11">• {item[0]}: ৳{item[1]}</text>
+                      ))}
+                    </svg>
+                  </div>
+                )}
+
+                {activeTab === 'competitors' && (
+                  <div className="section">
+                    <h3>🔥 Competitive Landscape Analysis</h3>
+
+                    {/* Market Overview */}
+                    <div style={{marginBottom: '30px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px'}}>
+                      <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid #2196F3'}}>
+                        <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Total Market Size</p>
+                        <p style={{fontSize: '22px', fontWeight: 'bold', color: '#2196F3'}}>{analysis.competitor_analysis?.market_overview?.total_market}</p>
+                      </div>
+                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid #4CAF50'}}>
+                        <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Growth Rate</p>
+                        <p style={{fontSize: '22px', fontWeight: 'bold', color: '#4CAF50'}}>{analysis.competitor_analysis?.market_overview?.growth_rate}</p>
+                      </div>
+                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '1px solid #FF9800'}}>
+                        <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Key Regions</p>
+                        <p style={{fontSize: '16px', fontWeight: 'bold', color: '#FF9800'}}>{analysis.competitor_analysis?.market_overview?.key_regions}</p>
+                      </div>
+                    </div>
+
+                    {/* Market Share Bar Chart */}
+                    <h4 style={{marginBottom: '20px', color: '#fff'}}>📊 Market Share Distribution</h4>
+                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)'}}>
+                      {analysis.competitor_analysis?.direct_competitors?.map((c: any, i: number) => (
+                        <div key={i} style={{marginBottom: '20px'}}>
+                          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1}}>
+                              <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', width: '24px'}}>#{c.rank}</span>
+                              <div>
+                                <p style={{fontSize: '14px', fontWeight: 'bold', color: '#fff', margin: 0}}>{c.name}</p>
+                                <p style={{fontSize: '11px', color: '#999', margin: '2px 0'}}>{c.users}</p>
+                              </div>
+                            </div>
+                            <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', minWidth: '60px', textAlign: 'right'}}>{c.market_share_display}</span>
+                          </div>
+
+                          {/* Progress bar */}
+                          <div style={{height: '8px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '10px', border: '1px solid rgba(0, 255, 65, 0.2)'}}>
+                            <div
+                              style={{
+                                height: '100%',
+                                background: `linear-gradient(90deg, hsl(${120 - c.market_share}, 100%, 50%), hsl(${120 - c.market_share}, 100%, 60%))`,
+                                width: `${c.market_share}%`,
+                                transition: 'width 0.3s'
+                              }}
+                            ></div>
+                          </div>
+
+                          {/* Competitor Details */}
+                          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px'}}>
+                            <div style={{fontSize: '12px', color: '#ccc'}}>
+                              <span style={{color: '#4CAF50', fontWeight: 'bold'}}>💰</span> {c.estimated_revenue}
+                            </div>
+                            <div style={{fontSize: '12px', color: '#ccc'}}>
+                              <span style={{color: '#2196F3', fontWeight: 'bold'}}>🌍</span> {c.coverage}
+                            </div>
+                          </div>
+
+                          {/* Strength & Weakness */}
+                          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px'}}>
+                            <div style={{padding: '10px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', border: '1px solid rgba(76, 175, 80, 0.2)', fontSize: '11px', color: '#4CAF50'}}>
+                              <strong>💪 Strength:</strong> {c.strength}
+                            </div>
+                            <div style={{padding: '10px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '6px', border: '1px solid rgba(255, 152, 0, 0.2)', fontSize: '11px', color: '#FF9800'}}>
+                              <strong>⚠️ Weakness:</strong> {c.weakness}
+                            </div>
+                          </div>
+
+                          {/* Market Impact */}
+                          <div style={{padding: '12px', background: 'rgba(0, 255, 65, 0.05)', borderRadius: '6px', marginTop: '10px', borderLeft: '3px solid #00ff41', fontSize: '12px', color: '#ccc'}}>
+                            <strong style={{color: '#00ff41'}}>📈 Market Impact:</strong> {c.impact}
+                          </div>
+
+                          {i < analysis.competitor_analysis?.direct_competitors.length - 1 && (
+                            <div style={{borderBottom: '1px solid rgba(255, 255, 255, 0.1)', margin: '16px 0'}}></div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Indirect Competitors */}
+                    <div style={{marginBottom: '30px'}}>
+                      <h4 style={{marginBottom: '16px', color: '#fff'}}>🎯 Indirect Competitors</h4>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px'}}>
+                        {analysis.competitor_analysis?.indirect_competitors?.map((ic: any, i: number) => (
+                          <div key={i} style={{padding: '14px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.2)'}}>
+                            <p style={{fontSize: '13px', fontWeight: 'bold', color: '#9C27B0', margin: '0 0 6px 0'}}>{ic.type}</p>
+                            <p style={{fontSize: '12px', color: '#ccc', margin: 0}}>💥 {ic.impact}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Market Trends */}
+                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
+                      <h4 style={{color: '#2196F3', marginBottom: '14px'}}>📈 Market Trends</h4>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
+                        {Object.values(analysis.competitor_analysis?.market_trends || {}).map((trend: any, i: number) => (
+                          <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', fontSize: '12px', color: '#ccc', display: 'flex', gap: '8px', alignItems: 'flex-start'}}>
+                            <span style={{color: '#2196F3', fontWeight: 'bold', marginTop: '2px'}}>→</span>
+                            {trend}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Competitive Advantage */}
+                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '2px solid #00ff41'}}>
+                      <h4 style={{color: '#00ff41', marginBottom: '12px'}}>💡 Your Competitive Advantage</h4>
+                      <p style={{color: '#ccc', fontSize: '14px', lineHeight: '1.6', margin: 0}}>{analysis.competitor_analysis?.competitive_advantage}</p>
+                    </div>
+
+                    {/* Market Gaps & Opportunities */}
+                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
+                      <h4 style={{color: '#4CAF50', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                        <span>✨</span>
+                        Market Gaps & Opportunities
+                      </h4>
+                      <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                        {analysis.competitor_analysis?.market_gaps?.map((gap: string, i: number) => (
+                          <li key={i} style={{padding: '10px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
+                            ✓ {gap}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Threat Assessment */}
+                    <div style={{padding: '20px', background: analysis.competitor_analysis?.threat_level === 'HIGH' ? 'rgba(244, 67, 54, 0.1)' : 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: `2px solid ${analysis.competitor_analysis?.threat_level === 'HIGH' ? '#F44336' : '#FF9800'}`}}>
+                      <div style={{display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px'}}>
+                        <div style={{fontSize: '24px'}}>⚠️</div>
+                        <div>
+                          <p style={{fontSize: '12px', color: '#999', margin: '0 0 4px 0', textTransform: 'uppercase'}}>Threat Level</p>
+                          <p style={{fontSize: '18px', fontWeight: 'bold', color: analysis.competitor_analysis?.threat_level === 'HIGH' ? '#F44336' : '#FF9800', margin: 0}}>
+                            {analysis.competitor_analysis?.threat_level}
+                          </p>
+                        </div>
+                      </div>
+                      <p style={{color: '#ccc', fontSize: '13px', margin: 0}}>{analysis.competitor_analysis?.threat_details}</p>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'bangladesh' && (
+                  <div className="section">
+                    <h3>🇧🇩 Bangladesh Market Impact Assessment</h3>
+
+                    <div style={{marginBottom: '30px', padding: '30px', background: 'linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(0, 255, 65, 0.1))', borderRadius: '12px', border: '2px solid #2196F3'}}>
+                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <div>
+                          <p style={{color: '#999', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase'}}>Market Impact Score</p>
+                          <p style={{fontSize: '40px', fontWeight: 'bold', color: '#00ff41'}}>{analysis.bangladesh_impact?.impact_score}/10</p>
+                        </div>
+                        <div style={{fontSize: '64px'}}>🇧🇩</div>
+                      </div>
+                    </div>
+
+                    <div className="grid-2" style={{marginBottom: '30px'}}>
+                      <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
+                        <h4 style={{color: '#F44336', marginBottom: '14px'}}>⚖️ Local Regulations</h4>
+                        <ul style={{listStyle: 'none', padding: 0}}>
+                          {analysis.bangladesh_impact?.local_regulations?.map((r: string, i: number) => (
+                            <li key={i} style={{padding: '8px 0', borderBottom: '1px solid rgba(244, 67, 54, 0.2)', color: '#ccc', fontSize: '13'}}>
+                              ✓ {r}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
+                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>💰 Market Potential</h4>
+                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{analysis.bangladesh_impact?.market_potential}</p>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
+                        <h4 style={{color: '#9C27B0', marginBottom: '14px'}}>🎭 Cultural Factors</h4>
+                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{analysis.bangladesh_impact?.cultural_factors}</p>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
+                        <h4 style={{color: '#FF9800', marginBottom: '14px'}}>📊 Economic Factors</h4>
+                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{analysis.bangladesh_impact?.economic_factors}</p>
+                      </div>
+                    </div>
+
+                    <div style={{padding: '24px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '12px', border: '2px solid #00ff41'}}>
+                      <h4 style={{color: '#00ff41', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px'}}>
+                        <span>✨</span>
+                        Localization Strategy for Bangladesh
+                      </h4>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px'}}>
+                        {analysis.bangladesh_impact?.localization_recommendations?.map((r: string, i: number) => (
+                          <div key={i} style={{padding: '14px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '1px solid #00ff41', display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
+                            <span style={{color: '#00ff41', fontWeight: 'bold', fontSize: '16px', marginTop: '2px'}}>✓</span>
+                            <span style={{color: '#ccc', fontSize: '13', lineHeight: '1.5'}}>{r}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'swot' && (
+                  <div className="section">
+                    <h3>SWOT Analysis</h3>
+                    <svg viewBox="0 0 800 600" className="swot-matrix">
+                      {/* Quadrants */}
+                      <rect x="10" y="10" width="390" height="280" fill="rgba(76, 175, 80, 0.08)" stroke="#4CAF50" strokeWidth="2" rx="6"/>
+                      <rect x="400" y="10" width="390" height="280" fill="rgba(255, 152, 0, 0.08)" stroke="#FF9800" strokeWidth="2" rx="6"/>
+                      <rect x="10" y="290" width="390" height="300" fill="rgba(33, 150, 243, 0.08)" stroke="#2196F3" strokeWidth="2" rx="6"/>
+                      <rect x="400" y="290" width="390" height="300" fill="rgba(244, 67, 54, 0.08)" stroke="#F44336" strokeWidth="2" rx="6"/>
+
+                      {/* Headers */}
+                      <text x="205" y="40" textAnchor="middle" fill="#4CAF50" fontSize="18" fontWeight="bold">💪 STRENGTHS</text>
+                      <text x="595" y="40" textAnchor="middle" fill="#FF9800" fontSize="18" fontWeight="bold">⚠️ WEAKNESSES</text>
+                      <text x="205" y="320" textAnchor="middle" fill="#2196F3" fontSize="18" fontWeight="bold">🎯 OPPORTUNITIES</text>
+                      <text x="595" y="320" textAnchor="middle" fill="#F44336" fontSize="18" fontWeight="bold">🔥 THREATS</text>
+
+                      {/* Strengths content */}
+                      {analysis.swot_analysis?.strengths?.slice(0, 3).map((s: string, i: number) => (
+                        <text key={i} x="30" y={70 + i * 60} fill="#ccc" fontSize="13">• {s}</text>
+                      ))}
+
+                      {/* Weaknesses content */}
+                      {analysis.swot_analysis?.weaknesses?.slice(0, 3).map((w: string, i: number) => (
+                        <text key={i} x="420" y={70 + i * 60} fill="#ccc" fontSize="13">• {w}</text>
+                      ))}
+
+                      {/* Opportunities content */}
+                      {analysis.swot_analysis?.opportunities?.slice(0, 3).map((o: string, i: number) => (
+                        <text key={i} x="30" y={350 + i * 60} fill="#ccc" fontSize="13">• {o}</text>
+                      ))}
+
+                      {/* Threats content */}
+                      {analysis.swot_analysis?.threats?.slice(0, 3).map((t: string, i: number) => (
+                        <text key={i} x="420" y={350 + i * 60} fill="#ccc" fontSize="13">• {t}</text>
+                      ))}
+                    </svg>
+                  </div>
+                )}
+
+                {activeTab === 'gtm' && (
+                  <div className="section">
+                    <h3>Go-to-Market Strategy</h3>
+
+                    <svg viewBox="0 0 900 300" className="gtm-timeline">
+                      {/* Timeline line */}
+                      <line x1="50" y1="150" x2="850" y2="150" stroke="#00ff41" strokeWidth="2"/>
+
+                      {/* Phase 1 */}
+                      <circle cx="150" cy="150" r="30" fill="#2196F3" opacity="0.9"/>
+                      <text x="150" y="160" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">1</text>
+                      <text x="150" y="220" textAnchor="middle" fill="#2196F3" fontSize="13" fontWeight="bold">LAUNCH</text>
+                      <text x="150" y="240" textAnchor="middle" fill="#ccc" fontSize="11">30 days</text>
+                      <rect x="30" y="260" width="240" height="30" fill="rgba(33, 150, 243, 0.1)" stroke="#2196F3" strokeWidth="1" rx="4"/>
+                      <text x="150" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{analysis.go_to_market?.phase_1?.substring(0, 40)}</text>
+
+                      {/* Phase 2 */}
+                      <circle cx="450" cy="150" r="30" fill="#FF9800" opacity="0.9"/>
+                      <text x="450" y="160" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">2</text>
+                      <text x="450" y="220" textAnchor="middle" fill="#FF9800" fontSize="13" fontWeight="bold">GROWTH</text>
+                      <text x="450" y="240" textAnchor="middle" fill="#ccc" fontSize="11">60 days</text>
+                      <rect x="330" y="260" width="240" height="30" fill="rgba(255, 152, 0, 0.1)" stroke="#FF9800" strokeWidth="1" rx="4"/>
+                      <text x="450" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{analysis.go_to_market?.phase_2?.substring(0, 40)}</text>
+
+                      {/* Phase 3 */}
+                      <circle cx="750" cy="150" r="30" fill="#4CAF50" opacity="0.9"/>
+                      <text x="750" y="160" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">3</text>
+                      <text x="750" y="220" textAnchor="middle" fill="#4CAF50" fontSize="13" fontWeight="bold">SCALE</text>
+                      <text x="750" y="240" textAnchor="middle" fill="#ccc" fontSize="11">90 days</text>
+                      <rect x="630" y="260" width="240" height="30" fill="rgba(76, 175, 80, 0.1)" stroke="#4CAF50" strokeWidth="1" rx="4"/>
+                      <text x="750" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{analysis.go_to_market?.phase_3?.substring(0, 40)}</text>
+                    </svg>
+
+                    <div className="grid-2" style={{marginTop: '40px'}}>
+                      <div>
+                        <h4>📊 Customer Acquisition Channels</h4>
+                        <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
+                          {analysis.go_to_market?.customer_acquisition}
+                        </p>
+                      </div>
+                      <div>
+                        <h4>💰 Pricing Strategy</h4>
+                        <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
+                          {analysis.go_to_market?.pricing_strategy}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div style={{marginTop: '30px', padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
+                      <h4 style={{color: '#9C27B0', marginBottom: '16px'}}>🤝 Key Partnership Targets</h4>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
+                        {analysis.go_to_market?.partnership_targets?.map((p: string, i: number) => (
+                          <div key={i} style={{padding: '12px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '6px', border: '1px solid rgba(156, 39, 176, 0.2)', display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            <span style={{fontSize: '18px'}}>🤝</span>
+                            <span style={{color: '#ccc', fontSize: '13'}}>{p}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'risks' && (
+                  <div className="section">
+                    <h3>Risk Assessment & Heat Map</h3>
+
+                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid #FF9800'}}>
+                      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <div>
+                          <p style={{color: '#999', fontSize: '12px', marginBottom: '4px'}}>Overall Risk Score</p>
+                          <p style={{fontSize: '32px', fontWeight: 'bold', color: '#FF9800'}}>{analysis.risk_assessment?.overall_risk_score}/10</p>
+                        </div>
+                        <div style={{fontSize: '48px'}}>📊</div>
+                      </div>
+                    </div>
+
+                    <svg viewBox="0 0 800 500" className="risk-heatmap">
+                      {/* Risk Matrix Grid */}
+                      <defs>
+                        <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="rgba(76, 175, 80, 0.3)"/>
+                          <stop offset="50%" stopColor="rgba(255, 152, 0, 0.3)"/>
+                          <stop offset="100%" stopColor="rgba(244, 67, 54, 0.3)"/>
+                        </linearGradient>
+                      </defs>
+
+                      {/* Background */}
+                      <rect x="100" y="50" width="650" height="350" fill="url(#riskGradient)" stroke="#444" strokeWidth="1"/>
+
+                      {/* Grid lines */}
+                      <line x1="100" y1="216" x2="750" y2="216" stroke="#444" strokeWidth="1" opacity="0.5"/>
+                      <line x1="425" y1="50" x2="425" y2="400" stroke="#444" strokeWidth="1" opacity="0.5"/>
+
+                      {/* Axes */}
+                      <text x="50" y="410" fontSize="12" fill="#999">Low</text>
+                      <text x="700" y="410" fontSize="12" fill="#999">High</text>
+                      <text x="50" y="70" fontSize="12" fill="#999">High</text>
+                      <text x="50" y="400" fontSize="12" fill="#999">Low</text>
+                      <text x="350" y="440" fontSize="12" fill="#999" textAnchor="middle">PROBABILITY →</text>
+                      <text x="20" y="220" fontSize="12" fill="#999" textAnchor="middle" transform="rotate(-90 20 220)">IMPACT ↑</text>
+
+                      {/* Quadrant Labels */}
+                      <text x="250" y="80" fontSize="11" fill="#4CAF50" fontWeight="bold" textAnchor="middle">Low Priority</text>
+                      <text x="600" y="80" fontSize="11" fill="#FF9800" fontWeight="bold" textAnchor="middle">Medium Priority</text>
+                      <text x="250" y="370" fontSize="11" fill="#FF9800" fontWeight="bold" textAnchor="middle">Medium Priority</text>
+                      <text x="600" y="370" fontSize="11" fill="#F44336" fontWeight="bold" textAnchor="middle">🔴 Critical</text>
+
+                      {/* Risk bubbles */}
+                      {analysis.risk_assessment?.high_risks?.map((_: any, i: number) => (
+                        <g key={i}>
+                          <circle cx={600 + (i * 20)} cy={120 + (i * 30)} r="25" fill="#F44336" opacity="0.7"/>
+                          <text x={600 + (i * 20)} y={125 + (i * 30)} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">{i + 1}</text>
+                        </g>
+                      ))}
+                      {analysis.risk_assessment?.medium_risks?.map((_: any, i: number) => (
+                        <g key={i}>
+                          <circle cx={450 - (i * 25)} cy={250 + (i * 20)} r="22" fill="#FF9800" opacity="0.7"/>
+                          <text x={450 - (i * 25)} y={255 + (i * 20)} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">{i + 4}</text>
+                        </g>
+                      ))}
+                    </svg>
+
+                    <div className="grid-2" style={{marginTop: '30px'}}>
+                      <div>
+                        <h4>🔴 High Priority Risks</h4>
+                        {analysis.risk_assessment?.high_risks?.map((r: any, i: number) => (
+                          <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(244, 67, 54, 0.12)', borderRadius: '6px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
+                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#F44336', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 1}</span>
+                              <strong style={{color: '#F44336'}}>{r.risk}</strong>
+                            </div>
+                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>📊 {r.probability} probability | 💥 {r.impact}</p>
+                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>✓ Mitigation: {r.mitigation}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div>
+                        <h4>🟡 Medium Priority Risks</h4>
+                        {analysis.risk_assessment?.medium_risks?.map((r: any, i: number) => (
+                          <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(255, 152, 0, 0.12)', borderRadius: '6px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
+                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#FF9800', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 4}</span>
+                              <strong style={{color: '#FF9800'}}>{r.risk}</strong>
+                            </div>
+                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>📊 {r.probability} probability | 💥 {r.impact}</p>
+                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>✓ Mitigation: {r.mitigation}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'founder' && (
+                  <div className="section">
+                    <h3>Founder-Market Fit Assessment</h3>
+
+                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '30px'}}>
+                      <div style={{textAlign: 'center', padding: '30px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '12px', border: '2px solid #00ff41'}}>
+                        <p style={{fontSize: '12px', color: '#999', marginBottom: '12px'}}>Founder Fit Score</p>
+                        <svg viewBox="0 0 200 200" style={{width: '180px', height: '180px'}}>
+                          <circle cx="100" cy="100" r="90" fill="none" stroke="#333" strokeWidth="8" opacity="0.2"/>
+                          <circle
+                            cx="100"
+                            cy="100"
+                            r="90"
+                            fill="none"
+                            stroke="#00ff41"
+                            strokeWidth="8"
+                            strokeDasharray={`${(analysis.founder_fit?.fit_score || 0) * 5.65} 565`}
+                            opacity="0.9"
+                            style={{transition: 'stroke-dasharray 0.3s'}}
+                          />
+                          <text x="100" y="110" textAnchor="middle" fill="#00ff41" fontSize="48" fontWeight="bold">
+                            {analysis.founder_fit?.fit_score}
+                          </text>
+                          <text x="100" y="140" textAnchor="middle" fill="#999" fontSize="14">/10</text>
+                        </svg>
+                      </div>
+
+                      <div style={{padding: '20px'}}>
+                        <h4 style={{marginBottom: '16px', color: '#fff'}}>Required Skills</h4>
+                        {analysis.founder_fit?.required_skills?.map((s: string, i: number) => (
+                          <div key={i} style={{marginBottom: '12px'}}>
+                            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px'}}>
+                              <span style={{fontSize: '13px', color: '#ccc'}}>📌 {s}</span>
+                            </div>
+                            <div style={{height: '6px', background: 'rgba(22, 25, 47, 0.9)', borderRadius: '3px', overflow: 'hidden', border: '1px solid var(--border)'}}>
+                              <div style={{height: '100%', background: 'linear-gradient(90deg, #00ff41, #00ffee)', width: `${50 + i * 15}%`, transition: 'width 0.3s'}}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid-2">
+                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
+                        <h4 style={{color: '#FF9800', marginBottom: '12px'}}>⚠️ Experience Gaps</h4>
+                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{analysis.founder_fit?.experience_gaps}</p>
+                      </div>
+
+                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
+                        <h4 style={{color: '#4CAF50', marginBottom: '12px'}}>👥 Team Recommendations</h4>
+                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{analysis.founder_fit?.team_recommendations}</p>
+                      </div>
+                    </div>
+
+                    <div style={{marginTop: '30px', padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
+                      <h4 style={{color: '#2196F3', marginBottom: '16px'}}>📚 How to Improve Your Fit</h4>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px'}}>
+                        {analysis.founder_fit?.improvement_areas?.map((a: string, i: number) => (
+                          <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.2)', display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
+                            <span style={{fontSize: '18px', marginTop: '2px'}}>📚</span>
+                            <span style={{color: '#ccc', fontSize: '13'}}>{a}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
 
                 {activeTab === 'qa' && (
                   <div className="qa-section">
+                    <p>Practice pitching to investors with AI-powered Q&A</p>
                     {analysis.overall_readiness_score >= 5 ? (
-                      <>
-                        <p className="qa-intro">Ready to practice pitching to investors?</p>
-                        <button className="submit-btn" onClick={startQA}>Start Investor Q&A Interview →</button>
-                      </>
+                      <button onClick={startQA} className="btn-primary btn-large">🎤 Start Interview</button>
                     ) : (
-                      <p style={{color: '#ef4444'}}>⚠️ Improve your readiness score first (target: 5+)</p>
+                      <p className="warning">Improve readiness score to 5+ for Q&A</p>
                     )}
                   </div>
                 )}
@@ -474,7 +1433,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>FounderCheck | Bangladesh Startup Intelligence Platform</p>
+        <p>© 2026 FounderCheck. Empowering Bangladesh Entrepreneurs with AI Insights.</p>
       </footer>
     </div>
   )
