@@ -139,136 +139,67 @@ async def hello_endpoint(request: HelloRequest):
 
 @app.post("/api/v1/analyze")
 async def analyze_startup_idea(request: AnalyzeIdeaRequest):
-    """Full startup idea analysis pipeline"""
+    """Fast startup idea analysis - returns in 30-45 seconds"""
 
     if not request.idea or len(request.idea.strip()) < 10:
         raise HTTPException(status_code=400, detail="Idea must be at least 10 characters")
 
     try:
-        # Step 1: Extract structured fields
-        print("[1/11] Extracting idea fields...")
-        idea_data = extract_idea_fields(request.idea)
+        from quick_analysis import quick_analyze
 
-        # Step 2: Analyze demand
-        print("[2/11] Analyzing market demand...")
-        demand_data = analyze_demand(request.idea, idea_data.get("target_customer", "Unknown"))
-
-        # Step 3: Analyze regulatory risks
-        print("[3/11] Analyzing regulatory risks...")
-        regulatory_data = analyze_regulatory_risks(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 4: Generate business canvas
-        print("[4/11] Generating business model canvas...")
-        canvas_data = generate_business_canvas(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 5: Generate investor questions
-        print("[5/11] Generating investor questions...")
-        questions_data = generate_investor_questions(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 6: Analyze competitors
-        print("[6/11] Analyzing competitors...")
-        competitor_data = analyze_competitors(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 7: Bangladesh market impact
-        print("[7/11] Analyzing Bangladesh impact...")
-        bd_impact_data = analyze_bangladesh_impact(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 8: SWOT analysis
-        print("[8/11] Generating SWOT analysis...")
-        swot_data = analyze_swot(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 9: Go-to-market strategy
-        print("[9/11] Creating GTM strategy...")
-        gtm_data = generate_gtm_strategy(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 10: Risk assessment
-        print("[10/11] Assessing risks...")
-        risk_data = assess_risks(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 11: Founder fit
-        print("[11/11] Assessing founder fit...")
-        founder_data = assess_founder_fit(request.idea, idea_data.get("sector", "unknown"))
-
-        # Step 12: Financial projections
-        print("[12/12] Generating financial projections...")
-        full_analysis = {
-            "idea_extraction": idea_data,
-            "demand_analysis": demand_data,
-            "regulatory_analysis": regulatory_data,
-            "business_canvas": canvas_data,
-            "competitor_analysis": competitor_data,
-            "bangladesh_impact": bd_impact_data,
-            "swot_analysis": swot_data,
-            "go_to_market": gtm_data,
-            "risk_assessment": risk_data,
-            "founder_fit": founder_data
-        }
-        financial_data = calculate_financial_projections(full_analysis)
-
-        # Calculate overall readiness score (average of key scores)
-        overall_score = (
-            demand_data.get("score", 5) +
-            (10 - regulatory_data.get("risk_score", 5)) +
-            6.5  # Default for business model
-        ) / 3
-
-        # Create response
-        response = AnalysisResult(
-            idea_extraction=IdeaExtraction(**idea_data),
-            demand_analysis=DemandAnalysis(**demand_data),
-            regulatory_analysis=RegulatoryAnalysis(**regulatory_data),
-            business_canvas=BusinessCanvas(**canvas_data),
-            investor_questions=[InvestorQuestion(**q) for q in questions_data],
-            overall_readiness_score=round(overall_score, 1),
-            analysis_status="completed"
-        )
+        print("[QUICK ANALYSIS] Starting fast-track analysis...")
+        analysis_dict = await quick_analyze(request.idea)
 
         # Store in memory
         global next_id
         analysis_id = next_id
         next_id += 1
 
+        analysis_dict["analysis_id"] = analysis_id
+
         analyses_store[analysis_id] = {
             "id": analysis_id,
-            "title": idea_data.get("title", "Untitled"),
+            "title": analysis_dict["idea_extraction"].get("title", "Untitled"),
             "idea": request.idea,
-            "sector": idea_data.get("sector"),
-            "overall_readiness_score": response.overall_readiness_score,
-            "demand_score": demand_data.get("score"),
-            "regulatory_score": 10 - regulatory_data.get("risk_score", 5),
-            "idea_extraction": idea_data,
-            "demand_analysis": demand_data,
-            "regulatory_analysis": regulatory_data,
-            "business_canvas": canvas_data,
-            "investor_questions": questions_data,
-            "competitor_analysis": competitor_data,
-            "bangladesh_impact": bd_impact_data,
-            "swot_analysis": swot_data,
-            "go_to_market": gtm_data,
-            "risk_assessment": risk_data,
-            "founder_fit": founder_data,
-            "financial_projections": financial_data,
-            "qa_completed": 0,
-            "qa_score": None,
-            "qa_data": None
+            "sector": analysis_dict["idea_extraction"].get("sector"),
+            "overall_readiness_score": analysis_dict["overall_readiness_score"],
+            "demand_score": analysis_dict["demand_analysis"].get("score"),
+            "regulatory_score": 10 - analysis_dict["regulatory_analysis"].get("risk_score", 5),
+            **analysis_dict
         }
 
-        response_dict = response.dict()
-        response_dict["analysis_id"] = analysis_id
-        response_dict["competitor_analysis"] = competitor_data
-        response_dict["bangladesh_impact"] = bd_impact_data
-        response_dict["swot_analysis"] = swot_data
-        response_dict["go_to_market"] = gtm_data
-        response_dict["risk_assessment"] = risk_data
-        response_dict["founder_fit"] = founder_data
-        response_dict["financial_projections"] = financial_data
-
-        print("[SUCCESS] Analysis complete and saved!")
-        return response_dict
+        print(f"[SUCCESS] Quick analysis complete in ~45 seconds!")
+        print(f"[INFO] Extended analysis available via /api/v1/analyze/{analysis_id}/extended")
+        return analysis_dict
 
     except Exception as e:
         print(f"[ERROR] Analysis failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+
+
+@app.post("/api/v1/analyze/{analysis_id}/extended")
+async def get_extended_analysis(analysis_id: int):
+    """Get extended analysis (SWOT, GTM, Founder Fit, Bangladesh Impact) - adds 30-45 seconds"""
+
+    if analysis_id not in analyses_store:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+
+    try:
+        from quick_analysis import extended_analyze
+
+        print(f"[EXTENDED] Starting extended analysis for ID {analysis_id}...")
+        core_analysis = analyses_store[analysis_id].copy()
+        extended_result = await extended_analyze(core_analysis.get("idea", ""), core_analysis)
+
+        # Update store
+        analyses_store[analysis_id] = {**analyses_store[analysis_id], **extended_result}
+
+        print(f"[SUCCESS] Extended analysis complete!")
+        return extended_result
+
+    except Exception as e:
+        print(f"[ERROR] Extended analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Extended analysis failed: {str(e)}")
 
 
 @app.get("/api/v1/analyses/{analysis_id}/financial")

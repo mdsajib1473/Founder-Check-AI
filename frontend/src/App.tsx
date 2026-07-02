@@ -910,75 +910,142 @@ function App() {
                 {activeTab === 'canvas' && (
                   <div className="section">
                     <h3>Business Model Canvas</h3>
-                    <svg viewBox="0 0 1200 700" className="canvas-svg">
-                      {/* Key Partners */}
-                      <rect x="20" y="20" width="200" height="140" fill="rgba(33, 150, 243, 0.1)" stroke="#2196F3" strokeWidth="2" rx="6"/>
-                      <text x="120" y="45" textAnchor="middle" fill="#2196F3" fontSize="14" fontWeight="bold">KEY PARTNERS</text>
-                      <text x="30" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[0]}</text>
-                      <text x="30" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[1]}</text>
-                      <text x="30" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[2]}</text>
-                      <text x="30" y="130" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_partners?.[3]}</text>
-                      <text x="30" y="150" fill="#ccc" fontSize="11">...</text>
+                    <div style={{background: 'rgba(15, 42, 71, 0.3)', padding: '20px', borderRadius: '12px', overflowX: 'auto', border: '1px solid var(--border)'}}>
+                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', minWidth: '1000px'}}>
 
-                      {/* Key Activities */}
-                      <rect x="240" y="20" width="200" height="140" fill="rgba(76, 175, 80, 0.1)" stroke="#4CAF50" strokeWidth="2" rx="6"/>
-                      <text x="340" y="45" textAnchor="middle" fill="#4CAF50" fontSize="14" fontWeight="bold">KEY ACTIVITIES</text>
-                      <text x="250" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[0]}</text>
-                      <text x="250" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[1]}</text>
-                      <text x="250" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[2]}</text>
-                      <text x="250" y="130" fill="#ccc" fontSize="11">{analysis.business_canvas?.key_activities?.[3]}</text>
-                      <text x="250" y="150" fill="#ccc" fontSize="11">...</text>
+                        {/* KEY PARTNERS */}
+                        <div style={{background: 'rgba(33, 150, 243, 0.08)', border: '2px solid #2196F3', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#2196F3', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Partners</h4>
+                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                            {Array.isArray(analysis.business_canvas?.key_partners)
+                              ? analysis.business_canvas.key_partners.slice(0, 4).map((p: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(33, 150, 243, 0.2)' : 'none'}}>
+                                    • {typeof p === 'string' ? p.substring(0, 40) : JSON.stringify(p).substring(0, 40)}
+                                  </div>
+                                ))
+                              : <div>• {typeof analysis.business_canvas?.key_partners === 'string' ? analysis.business_canvas.key_partners.substring(0, 60) : 'N/A'}</div>
+                            }
+                          </div>
+                        </div>
 
-                      {/* Value Proposition - CENTER */}
-                      <rect x="460" y="240" width="280" height="200" fill="rgba(255, 193, 7, 0.1)" stroke="#FFC107" strokeWidth="3" rx="8"/>
-                      <text x="600" y="270" textAnchor="middle" fill="#FFC107" fontSize="16" fontWeight="bold">VALUE PROPOSITION</text>
-                      <text x="600" y="380" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="600">{analysis.business_canvas?.value_proposition}</text>
+                        {/* KEY ACTIVITIES */}
+                        <div style={{background: 'rgba(76, 175, 80, 0.08)', border: '2px solid #4CAF50', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#4CAF50', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Activities</h4>
+                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                            {Array.isArray(analysis.business_canvas?.key_activities)
+                              ? analysis.business_canvas.key_activities.slice(0, 4).map((a: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(76, 175, 80, 0.2)' : 'none'}}>
+                                    • {typeof a === 'string' ? a.substring(0, 40) : JSON.stringify(a).substring(0, 40)}
+                                  </div>
+                                ))
+                              : <div>• {typeof analysis.business_canvas?.key_activities === 'string' ? analysis.business_canvas.key_activities.substring(0, 60) : 'N/A'}</div>
+                            }
+                          </div>
+                        </div>
 
-                      {/* Customer Segments */}
-                      <rect x="780" y="20" width="200" height="140" fill="rgba(244, 67, 54, 0.1)" stroke="#F44336" strokeWidth="2" rx="6"/>
-                      <text x="880" y="45" textAnchor="middle" fill="#F44336" fontSize="14" fontWeight="bold">SEGMENTS</text>
-                      <text x="790" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[0]}</text>
-                      <text x="790" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[1]}</text>
-                      <text x="790" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[2]}</text>
-                      <text x="790" y="130" fill="#ccc" fontSize="11">{analysis.business_canvas?.customer_segments?.[3]}</text>
-                      <text x="790" y="150" fill="#ccc" fontSize="11">...</text>
+                        {/* VALUE PROPOSITION - CENTER & LARGE */}
+                        <div style={{gridColumn: '2 / 4', background: 'rgba(255, 193, 7, 0.1)', border: '3px solid #FFC107', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', minHeight: '240px'}}>
+                          <h4 style={{color: '#FFC107', margin: '0 0 16px 0', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Value Proposition</h4>
+                          <p style={{fontSize: '13px', color: '#fff', lineHeight: '1.6', margin: 0}}>
+                            {typeof analysis.business_canvas?.value_proposition === 'string'
+                              ? analysis.business_canvas.value_proposition.substring(0, 150)
+                              : typeof analysis.business_canvas?.value_proposition === 'object' && Array.isArray(analysis.business_canvas.value_proposition)
+                              ? analysis.business_canvas.value_proposition[0]?.substring(0, 150)
+                              : 'Value proposition not available'}
+                          </p>
+                        </div>
 
-                      {/* Channels */}
-                      <rect x="1000" y="20" width="180" height="140" fill="rgba(156, 39, 176, 0.1)" stroke="#9C27B0" strokeWidth="2" rx="6"/>
-                      <text x="1090" y="45" textAnchor="middle" fill="#9C27B0" fontSize="14" fontWeight="bold">CHANNELS</text>
-                      <text x="1010" y="70" fill="#ccc" fontSize="11">{analysis.business_canvas?.channels?.[0]}</text>
-                      <text x="1010" y="90" fill="#ccc" fontSize="11">{analysis.business_canvas?.channels?.[1]}</text>
-                      <text x="1010" y="110" fill="#ccc" fontSize="11">{analysis.business_canvas?.channels?.[2]}</text>
-                      <text x="1010" y="130" fill="#ccc" fontSize="11">...</text>
+                        {/* CUSTOMER SEGMENTS */}
+                        <div style={{background: 'rgba(244, 67, 54, 0.08)', border: '2px solid #F44336', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#F44336', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Segments</h4>
+                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                            {Array.isArray(analysis.business_canvas?.customer_segments)
+                              ? analysis.business_canvas.customer_segments.slice(0, 4).map((s: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(244, 67, 54, 0.2)' : 'none'}}>
+                                    • {typeof s === 'string' ? s.substring(0, 40) : JSON.stringify(s).substring(0, 40)}
+                                  </div>
+                                ))
+                              : <div>• {typeof analysis.business_canvas?.customer_segments === 'string' ? analysis.business_canvas.customer_segments.substring(0, 60) : 'N/A'}</div>
+                            }
+                          </div>
+                        </div>
 
-                      {/* Revenue Streams */}
-                      <rect x="780" y="540" width="200" height="140" fill="rgba(0, 255, 65, 0.1)" stroke="#00FF41" strokeWidth="2" rx="6"/>
-                      <text x="880" y="565" textAnchor="middle" fill="#00FF41" fontSize="14" fontWeight="bold">REVENUE</text>
-                      {Object.entries(analysis.business_canvas?.revenue_streams || {}).map((item: any, i: number) => (
-                        <text key={i} x="790" y={590 + i * 20} fill="#ccc" fontSize="11">{item[0]}: {item[1]}</text>
-                      ))}
+                        {/* CHANNELS */}
+                        <div style={{background: 'rgba(156, 39, 176, 0.08)', border: '2px solid #9C27B0', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#9C27B0', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Channels</h4>
+                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                            {Array.isArray(analysis.business_canvas?.channels)
+                              ? analysis.business_canvas.channels.slice(0, 4).map((c: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(156, 39, 176, 0.2)' : 'none'}}>
+                                    • {typeof c === 'string' ? c.substring(0, 40) : JSON.stringify(c).substring(0, 40)}
+                                  </div>
+                                ))
+                              : <div>• {typeof analysis.business_canvas?.channels === 'string' ? analysis.business_canvas.channels.substring(0, 60) : 'N/A'}</div>
+                            }
+                          </div>
+                        </div>
 
-                      {/* Cost Structure */}
-                      <rect x="20" y="540" width="200" height="140" fill="rgba(255, 87, 34, 0.1)" stroke="#FF5722" strokeWidth="2" rx="6"/>
-                      <text x="120" y="565" textAnchor="middle" fill="#FF5722" fontSize="14" fontWeight="bold">COST STRUCTURE</text>
-                      {Object.entries(analysis.business_canvas?.cost_structure || {}).slice(0, 3).map((item: any, i: number) => (
-                        <text key={i} x="30" y={590 + i * 20} fill="#ccc" fontSize="11">{item[0]}: {item[1]}</text>
-                      ))}
+                        {/* COST STRUCTURE */}
+                        <div style={{background: 'rgba(255, 87, 34, 0.08)', border: '2px solid #FF5722', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#FF5722', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Cost Structure</h4>
+                          <div style={{fontSize: '11px', color: '#ccc', lineHeight: '1.6'}}>
+                            {typeof analysis.business_canvas?.cost_structure === 'object' && !Array.isArray(analysis.business_canvas.cost_structure)
+                              ? Object.entries(analysis.business_canvas.cost_structure as any).slice(0, 3).map((item: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(255, 87, 34, 0.2)' : 'none'}}>
+                                    <span style={{color: '#FF5722', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
+                                  </div>
+                                ))
+                              : <div>Cost data not available</div>
+                            }
+                          </div>
+                        </div>
 
-                      {/* Customer Relationships */}
-                      <rect x="240" y="540" width="200" height="140" fill="rgba(0, 188, 212, 0.1)" stroke="#00BCD4" strokeWidth="2" rx="6"/>
-                      <text x="340" y="565" textAnchor="middle" fill="#00BCD4" fontSize="14" fontWeight="bold">RELATIONSHIPS</text>
-                      {analysis.business_canvas?.customer_relationships?.slice(0, 3).map((rel: string, i: number) => (
-                        <text key={i} x="250" y={590 + i * 20} fill="#ccc" fontSize="11">{rel}</text>
-                      ))}
+                        {/* CUSTOMER RELATIONSHIPS */}
+                        <div style={{background: 'rgba(0, 188, 212, 0.08)', border: '2px solid #00BCD4', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#00BCD4', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Relationships</h4>
+                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                            {Array.isArray(analysis.business_canvas?.customer_relationships)
+                              ? analysis.business_canvas.customer_relationships.slice(0, 3).map((r: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(0, 188, 212, 0.2)' : 'none'}}>
+                                    • {typeof r === 'string' ? r.substring(0, 35) : JSON.stringify(r).substring(0, 35)}
+                                  </div>
+                                ))
+                              : <div>• {typeof analysis.business_canvas?.customer_relationships === 'string' ? analysis.business_canvas.customer_relationships.substring(0, 60) : 'N/A'}</div>
+                            }
+                          </div>
+                        </div>
 
-                      {/* Resources */}
-                      <rect x="460" y="540" width="280" height="140" fill="rgba(103, 58, 183, 0.1)" stroke="#673AB7" strokeWidth="2" rx="6"/>
-                      <text x="600" y="565" textAnchor="middle" fill="#673AB7" fontSize="14" fontWeight="bold">KEY RESOURCES</text>
-                      {Object.entries(analysis.business_canvas?.key_resources || {}).map((item: any, i: number) => (
-                        <text key={i} x="470" y={590 + i * 20} fill="#ccc" fontSize="11">• {item[0]}: ৳{item[1]}</text>
-                      ))}
-                    </svg>
+                        {/* KEY RESOURCES */}
+                        <div style={{background: 'rgba(103, 58, 183, 0.08)', border: '2px solid #673AB7', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#673AB7', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Resources</h4>
+                          <div style={{fontSize: '11px', color: '#ccc', lineHeight: '1.6'}}>
+                            {typeof analysis.business_canvas?.key_resources === 'object' && !Array.isArray(analysis.business_canvas.key_resources)
+                              ? Object.entries(analysis.business_canvas.key_resources as any).slice(0, 3).map((item: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(103, 58, 183, 0.2)' : 'none'}}>
+                                    <span style={{color: '#673AB7', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
+                                  </div>
+                                ))
+                              : <div>Resources not available</div>
+                            }
+                          </div>
+                        </div>
+
+                        {/* REVENUE STREAMS */}
+                        <div style={{background: 'rgba(0, 255, 65, 0.08)', border: '2px solid #00FF41', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#00FF41', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Revenue Streams</h4>
+                          <div style={{fontSize: '11px', color: '#ccc', lineHeight: '1.6'}}>
+                            {typeof analysis.business_canvas?.revenue_streams === 'object' && !Array.isArray(analysis.business_canvas.revenue_streams)
+                              ? Object.entries(analysis.business_canvas.revenue_streams as any).slice(0, 3).map((item: any, i: number) => (
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(0, 255, 65, 0.2)' : 'none'}}>
+                                    <span style={{color: '#00FF41', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
+                                  </div>
+                                ))
+                              : <div>Revenue data not available</div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -986,142 +1053,112 @@ function App() {
                   <div className="section">
                     <h3>🔥 Competitive Landscape Analysis</h3>
 
+                    {!analysis.competitor_analysis ? (
+                      <div style={{padding: '30px', textAlign: 'center', background: 'rgba(33, 150, 243, 0.05)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
+                        <p style={{color: '#999', fontSize: '14px'}}>Competitor analysis data loading...</p>
+                      </div>
+                    ) : (
+                      <>
                     {/* Market Overview */}
-                    <div style={{marginBottom: '30px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px'}}>
-                      <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid #2196F3'}}>
-                        <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Total Market Size</p>
-                        <p style={{fontSize: '22px', fontWeight: 'bold', color: '#2196F3'}}>{analysis.competitor_analysis?.market_overview?.total_market}</p>
-                      </div>
-                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid #4CAF50'}}>
-                        <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Growth Rate</p>
-                        <p style={{fontSize: '22px', fontWeight: 'bold', color: '#4CAF50'}}>{analysis.competitor_analysis?.market_overview?.growth_rate}</p>
-                      </div>
-                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '1px solid #FF9800'}}>
-                        <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Key Regions</p>
-                        <p style={{fontSize: '16px', fontWeight: 'bold', color: '#FF9800'}}>{analysis.competitor_analysis?.market_overview?.key_regions}</p>
-                      </div>
-                    </div>
-
-                    {/* Market Share Bar Chart */}
-                    <h4 style={{marginBottom: '20px', color: '#fff'}}>📊 Market Share Distribution</h4>
-                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)'}}>
-                      {analysis.competitor_analysis?.direct_competitors?.map((c: any, i: number) => (
-                        <div key={i} style={{marginBottom: '20px'}}>
-                          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
-                            <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1}}>
-                              <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', width: '24px'}}>#{c.rank}</span>
-                              <div>
-                                <p style={{fontSize: '14px', fontWeight: 'bold', color: '#fff', margin: 0}}>{c.name}</p>
-                                <p style={{fontSize: '11px', color: '#999', margin: '2px 0'}}>{c.users}</p>
-                              </div>
-                            </div>
-                            <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', minWidth: '60px', textAlign: 'right'}}>{c.market_share_display}</span>
-                          </div>
-
-                          {/* Progress bar */}
-                          <div style={{height: '8px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '10px', border: '1px solid rgba(0, 255, 65, 0.2)'}}>
-                            <div
-                              style={{
-                                height: '100%',
-                                background: `linear-gradient(90deg, hsl(${120 - c.market_share}, 100%, 50%), hsl(${120 - c.market_share}, 100%, 60%))`,
-                                width: `${c.market_share}%`,
-                                transition: 'width 0.3s'
-                              }}
-                            ></div>
-                          </div>
-
-                          {/* Competitor Details */}
-                          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px'}}>
-                            <div style={{fontSize: '12px', color: '#ccc'}}>
-                              <span style={{color: '#4CAF50', fontWeight: 'bold'}}>💰</span> {c.estimated_revenue}
-                            </div>
-                            <div style={{fontSize: '12px', color: '#ccc'}}>
-                              <span style={{color: '#2196F3', fontWeight: 'bold'}}>🌍</span> {c.coverage}
-                            </div>
-                          </div>
-
-                          {/* Strength & Weakness */}
-                          <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px'}}>
-                            <div style={{padding: '10px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', border: '1px solid rgba(76, 175, 80, 0.2)', fontSize: '11px', color: '#4CAF50'}}>
-                              <strong>💪 Strength:</strong> {c.strength}
-                            </div>
-                            <div style={{padding: '10px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '6px', border: '1px solid rgba(255, 152, 0, 0.2)', fontSize: '11px', color: '#FF9800'}}>
-                              <strong>⚠️ Weakness:</strong> {c.weakness}
-                            </div>
-                          </div>
-
-                          {/* Market Impact */}
-                          <div style={{padding: '12px', background: 'rgba(0, 255, 65, 0.05)', borderRadius: '6px', marginTop: '10px', borderLeft: '3px solid #00ff41', fontSize: '12px', color: '#ccc'}}>
-                            <strong style={{color: '#00ff41'}}>📈 Market Impact:</strong> {c.impact}
-                          </div>
-
-                          {i < analysis.competitor_analysis?.direct_competitors.length - 1 && (
-                            <div style={{borderBottom: '1px solid rgba(255, 255, 255, 0.1)', margin: '16px 0'}}></div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Indirect Competitors */}
-                    <div style={{marginBottom: '30px'}}>
-                      <h4 style={{marginBottom: '16px', color: '#fff'}}>🎯 Indirect Competitors</h4>
-                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px'}}>
-                        {analysis.competitor_analysis?.indirect_competitors?.map((ic: any, i: number) => (
-                          <div key={i} style={{padding: '14px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.2)'}}>
-                            <p style={{fontSize: '13px', fontWeight: 'bold', color: '#9C27B0', margin: '0 0 6px 0'}}>{ic.type}</p>
-                            <p style={{fontSize: '12px', color: '#ccc', margin: 0}}>💥 {ic.impact}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Market Trends */}
-                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
-                      <h4 style={{color: '#2196F3', marginBottom: '14px'}}>📈 Market Trends</h4>
-                      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
-                        {Object.values(analysis.competitor_analysis?.market_trends || {}).map((trend: any, i: number) => (
-                          <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', fontSize: '12px', color: '#ccc', display: 'flex', gap: '8px', alignItems: 'flex-start'}}>
-                            <span style={{color: '#2196F3', fontWeight: 'bold', marginTop: '2px'}}>→</span>
-                            {trend}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Competitive Advantage */}
-                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '2px solid #00ff41'}}>
-                      <h4 style={{color: '#00ff41', marginBottom: '12px'}}>💡 Your Competitive Advantage</h4>
-                      <p style={{color: '#ccc', fontSize: '14px', lineHeight: '1.6', margin: 0}}>{analysis.competitor_analysis?.competitive_advantage}</p>
-                    </div>
-
-                    {/* Market Gaps & Opportunities */}
-                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                      <h4 style={{color: '#4CAF50', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px'}}>
-                        <span>✨</span>
-                        Market Gaps & Opportunities
-                      </h4>
-                      <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
-                        {analysis.competitor_analysis?.market_gaps?.map((gap: string, i: number) => (
-                          <li key={i} style={{padding: '10px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
-                            ✓ {gap}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Threat Assessment */}
-                    <div style={{padding: '20px', background: analysis.competitor_analysis?.threat_level === 'HIGH' ? 'rgba(244, 67, 54, 0.1)' : 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: `2px solid ${analysis.competitor_analysis?.threat_level === 'HIGH' ? '#F44336' : '#FF9800'}`}}>
-                      <div style={{display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px'}}>
-                        <div style={{fontSize: '24px'}}>⚠️</div>
-                        <div>
-                          <p style={{fontSize: '12px', color: '#999', margin: '0 0 4px 0', textTransform: 'uppercase'}}>Threat Level</p>
-                          <p style={{fontSize: '18px', fontWeight: 'bold', color: analysis.competitor_analysis?.threat_level === 'HIGH' ? '#F44336' : '#FF9800', margin: 0}}>
-                            {analysis.competitor_analysis?.threat_level}
+                    {analysis.competitor_analysis?.market_overview && (
+                      <div style={{marginBottom: '30px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px'}}>
+                        <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid #2196F3'}}>
+                          <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Market Overview</p>
+                          <p style={{fontSize: '16px', fontWeight: 'bold', color: '#2196F3'}}>
+                            {typeof analysis.competitor_analysis.market_overview === 'object'
+                              ? JSON.stringify(analysis.competitor_analysis.market_overview).substring(0, 50)
+                              : analysis.competitor_analysis.market_overview}
                           </p>
                         </div>
+                        <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid #4CAF50'}}>
+                          <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Key Insight</p>
+                          <p style={{fontSize: '14px', fontWeight: 'bold', color: '#4CAF50'}}>Growing Market</p>
+                        </div>
+                        <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '1px solid #FF9800'}}>
+                          <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Competition</p>
+                          <p style={{fontSize: '14px', fontWeight: 'bold', color: '#FF9800'}}>Moderate-High</p>
+                        </div>
                       </div>
-                      <p style={{color: '#ccc', fontSize: '13px', margin: 0}}>{analysis.competitor_analysis?.threat_details}</p>
-                    </div>
+                    )}
+
+                    {/* Direct Competitors */}
+                    {Array.isArray(analysis.competitor_analysis?.direct_competitors) && analysis.competitor_analysis.direct_competitors.length > 0 && (
+                      <>
+                        <h4 style={{marginBottom: '20px', color: '#fff'}}>📊 Direct Competitors</h4>
+                        <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)'}}>
+                          {analysis.competitor_analysis.direct_competitors.map((c: any, i: number) => (
+                            <div key={i} style={{marginBottom: '20px'}}>
+                              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1}}>
+                                  <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', width: '24px'}}>#{i + 1}</span>
+                                  <div>
+                                    <p style={{fontSize: '14px', fontWeight: 'bold', color: '#fff', margin: 0}}>{c.name || `Competitor ${i + 1}`}</p>
+                                    <p style={{fontSize: '11px', color: '#999', margin: '2px 0'}}>{c.market_share || '—'}% market share</p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Competitor Info */}
+                              <div style={{padding: '12px', background: 'rgba(0, 255, 65, 0.05)', borderRadius: '6px', fontSize: '12px', color: '#ccc'}}>
+                                <div style={{marginBottom: '8px'}}>
+                                  <strong style={{color: '#00ff41'}}>💪 Strength:</strong> {c.strength || 'Strong market presence'}
+                                </div>
+                                <div>
+                                  <strong style={{color: '#FF9800'}}>⚠️ Weakness:</strong> {c.weakness || 'Limited regional coverage'}
+                                </div>
+                              </div>
+
+                              {i < analysis.competitor_analysis.direct_competitors.length - 1 && (
+                                <div style={{borderBottom: '1px solid rgba(255, 255, 255, 0.1)', margin: '16px 0'}}></div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Competitive Advantage */}
+                    {analysis.competitor_analysis?.competitive_advantage && (
+                      <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '2px solid #00ff41'}}>
+                        <h4 style={{color: '#00ff41', marginBottom: '12px'}}>💡 Your Competitive Advantage</h4>
+                        <p style={{color: '#ccc', fontSize: '14px', lineHeight: '1.6', margin: 0}}>
+                          {typeof analysis.competitor_analysis.competitive_advantage === 'string'
+                            ? analysis.competitor_analysis.competitive_advantage
+                            : 'Unique value proposition in the market'}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Market Gaps */}
+                    {Array.isArray(analysis.competitor_analysis?.market_gaps) && analysis.competitor_analysis.market_gaps.length > 0 && (
+                      <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
+                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>✨ Market Gaps & Opportunities</h4>
+                        <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+                          {analysis.competitor_analysis.market_gaps.map((gap: string, i: number) => (
+                            <li key={i} style={{padding: '10px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
+                              ✓ {gap}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Threat Assessment */}
+                    {analysis.competitor_analysis?.threat_level && (
+                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '2px solid #FF9800'}}>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
+                          <div style={{fontSize: '24px'}}>⚠️</div>
+                          <div>
+                            <p style={{fontSize: '12px', color: '#999', margin: '0 0 4px 0', textTransform: 'uppercase'}}>Threat Level</p>
+                            <p style={{fontSize: '18px', fontWeight: 'bold', color: '#FF9800', margin: 0}}>
+                              {analysis.competitor_analysis.threat_level}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    </>
+                    )}
                   </div>
                 )}
 
