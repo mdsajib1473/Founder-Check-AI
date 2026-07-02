@@ -56,7 +56,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const loadIntegrations = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/integrations/active');
+      const response = await fetch('http://localhost:9001/api/integrations/active');
       const data = await response.json();
       setIntegrations(data.integrations || []);
     } catch (error) {
@@ -66,7 +66,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const loadMilestones = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/integrations/calendar/milestones');
+      const response = await fetch('http://localhost:9001/api/integrations/calendar/milestones');
       const data = await response.json();
       setMilestones(data.milestones || []);
     } catch (error) {
@@ -76,7 +76,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const loadReminders = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/integrations/reminders/pending');
+      const response = await fetch('http://localhost:9001/api/integrations/reminders/pending');
       const data = await response.json();
       setReminders(data.reminders || []);
     } catch (error) {
@@ -86,7 +86,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const loadAPIKeys = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/integrations/api-keys');
+      const response = await fetch('http://localhost:9001/api/integrations/api-keys');
       const data = await response.json();
       setApiKeys(data.keys || []);
     } catch (error) {
@@ -96,7 +96,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const connectIntegration = async (platform: string) => {
     try {
-      const response = await fetch('http://localhost:8000/api/integrations/connect', {
+      const response = await fetch('http://localhost:9001/api/integrations/connect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ platform, config: {} })
@@ -113,7 +113,7 @@ const PlatformIntegrationsDashboard = () => {
   const createMilestone = async () => {
     try {
       const tomorrow = new Date(Date.now() + 86400000).toISOString();
-      const response = await fetch('http://localhost:8000/api/integrations/calendar/event', {
+      const response = await fetch('http://localhost:9001/api/integrations/calendar/event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -136,7 +136,7 @@ const PlatformIntegrationsDashboard = () => {
   const createReminder = async () => {
     try {
       const tomorrow = new Date(Date.now() + 86400000).toISOString();
-      const response = await fetch('http://localhost:8000/api/integrations/reminders/create', {
+      const response = await fetch('http://localhost:9001/api/integrations/reminders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -158,7 +158,7 @@ const PlatformIntegrationsDashboard = () => {
 
   const generateAPIKey = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/integrations/api-keys/generate', {
+      const response = await fetch('http://localhost:9001/api/integrations/api-keys/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

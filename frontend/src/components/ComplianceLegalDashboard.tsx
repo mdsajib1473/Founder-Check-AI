@@ -23,7 +23,7 @@ const ComplianceLegalDashboard = () => {
 
   const loadChecklist = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/compliance/checklist');
+      const response = await fetch('http://localhost:9001/api/compliance/checklist');
       const data = await response.json();
       setItems(data.items || []);
     } catch (error) {
@@ -33,7 +33,7 @@ const ComplianceLegalDashboard = () => {
 
   const loadTemplates = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/compliance/templates');
+      const response = await fetch('http://localhost:9001/api/compliance/templates');
       const data = await response.json();
       setTemplates(data.templates || []);
     } catch (error) {

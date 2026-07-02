@@ -58,7 +58,7 @@ function App() {
 
   const checkBackendHealth = async () => {
     try {
-      const res = await fetch('http://localhost:8000/health')
+      const res = await fetch('http://localhost:9001/health')
       setBackendHealth(res.ok)
     } catch {
       setBackendHealth(false)
@@ -105,7 +105,7 @@ function App() {
     setError(null)
 
     try {
-      const res = await fetch('http://localhost:8000/api/v1/analyze', {
+      const res = await fetch('http://localhost:9001/api/v1/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idea, language: 'english' }),
@@ -124,7 +124,7 @@ function App() {
 
   const loadHistory = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/v1/analyses')
+      const res = await fetch('http://localhost:9001/api/v1/analyses')
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setHistory(data)
@@ -136,7 +136,7 @@ function App() {
 
   const loadAnalysis = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/v1/analyses/${id}`)
+      const res = await fetch(`http://localhost:9001/api/v1/analyses/${id}`)
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setAnalysis(data)
@@ -154,7 +154,7 @@ function App() {
     }
 
     try {
-      const res = await fetch(`http://localhost:8000/api/v1/qa/start/${analysis.analysis_id}`, {
+      const res = await fetch(`http://localhost:9001/api/v1/qa/start/${analysis.analysis_id}`, {
         method: 'POST',
       })
       if (!res.ok) throw new Error('Failed')
@@ -173,7 +173,7 @@ function App() {
     if (!qaAnswer.trim()) return
 
     try {
-      const res = await fetch('http://localhost:8000/api/v1/qa/answer', {
+      const res = await fetch('http://localhost:9001/api/v1/qa/answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: qaSession.session_id, answer: qaAnswer }),

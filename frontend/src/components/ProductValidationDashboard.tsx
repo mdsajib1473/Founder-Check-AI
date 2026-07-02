@@ -76,7 +76,7 @@ const ProductValidationDashboard = () => {
 
   const loadPriorityMatrix = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/validation/priority-matrix');
+      const response = await fetch('http://localhost:9001/api/validation/priority-matrix');
       const data = await response.json();
       setPriorityMatrix(data.matrix);
     } catch (error) {
@@ -88,7 +88,7 @@ const ProductValidationDashboard = () => {
     if (!newFeature.name) return;
 
     try {
-      const response = await fetch('http://localhost:8000/api/validation/features/add', {
+      const response = await fetch('http://localhost:9001/api/validation/features/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -115,7 +115,7 @@ const ProductValidationDashboard = () => {
     if (!respondentName) return;
 
     try {
-      const response = await fetch('http://localhost:8000/api/validation/interview/create', {
+      const response = await fetch('http://localhost:9001/api/validation/interview/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -139,7 +139,7 @@ const ProductValidationDashboard = () => {
     if (!mvpData.productName || !mvpData.coreFeatures) return;
 
     try {
-      const response = await fetch('http://localhost:8000/api/validation/mvp/define', {
+      const response = await fetch('http://localhost:9001/api/validation/mvp/define', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

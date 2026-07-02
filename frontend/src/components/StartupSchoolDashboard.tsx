@@ -47,7 +47,7 @@ const StartupSchoolDashboard = () => {
 
   const loadCourses = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/school/courses');
+      const response = await fetch('http://localhost:9001/api/school/courses');
       const data = await response.json();
       setCourses(data.courses || []);
     } catch (error) {
@@ -57,7 +57,7 @@ const StartupSchoolDashboard = () => {
 
   const loadMentors = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/school/mentors');
+      const response = await fetch('http://localhost:9001/api/school/mentors');
       const data = await response.json();
       setMentors(data.mentors || []);
     } catch (error) {
@@ -67,7 +67,7 @@ const StartupSchoolDashboard = () => {
 
   const loadThreads = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/school/forum/threads');
+      const response = await fetch('http://localhost:9001/api/school/forum/threads');
       const data = await response.json();
       setThreads(data.threads || []);
     } catch (error) {

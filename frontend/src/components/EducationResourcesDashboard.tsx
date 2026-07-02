@@ -47,7 +47,7 @@ const EducationResourcesDashboard = () => {
 
   const loadModules = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/education/modules');
+      const response = await fetch('http://localhost:9001/api/education/modules');
       const data = await response.json();
       setModules(data.modules || []);
     } catch (error) {
@@ -57,7 +57,7 @@ const EducationResourcesDashboard = () => {
 
   const loadArticles = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/education/articles');
+      const response = await fetch('http://localhost:9001/api/education/articles');
       const data = await response.json();
       setArticles(data.articles || []);
     } catch (error) {
@@ -67,7 +67,7 @@ const EducationResourcesDashboard = () => {
 
   const loadGlossary = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/education/glossary');
+      const response = await fetch('http://localhost:9001/api/education/glossary');
       const data = await response.json();
       setGlossaryTerms(data.terms || []);
     } catch (error) {
@@ -77,7 +77,7 @@ const EducationResourcesDashboard = () => {
 
   const loadFAQs = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/education/faqs');
+      const response = await fetch('http://localhost:9001/api/education/faqs');
       const data = await response.json();
       setFaqs(data.faqs || []);
     } catch (error) {
@@ -152,7 +152,7 @@ const EducationResourcesDashboard = () => {
             <div
               key={module.id}
               onClick={async () => {
-                const response = await fetch(`http://localhost:8000/api/education/modules/${module.id}`);
+                const response = await fetch(`http://localhost:9001/api/education/modules/${module.id}`);
                 const data = await response.json();
                 setSelectedModule(data.module);
               }}
@@ -258,7 +258,7 @@ const EducationResourcesDashboard = () => {
             <div
               key={article.id}
               onClick={async () => {
-                const response = await fetch(`http://localhost:8000/api/education/articles/${article.id}`);
+                const response = await fetch(`http://localhost:9001/api/education/articles/${article.id}`);
                 const data = await response.json();
                 setSelectedArticle(data.article);
               }}
@@ -321,7 +321,7 @@ const EducationResourcesDashboard = () => {
               if (!searchQuery) {
                 loadGlossary();
               } else {
-                const response = await fetch(`http://localhost:8000/api/education/glossary/search?q=${encodeURIComponent(searchQuery)}`);
+                const response = await fetch(`http://localhost:9001/api/education/glossary/search?q=${encodeURIComponent(searchQuery)}`);
                 const data = await response.json();
                 setGlossaryTerms(data.results || []);
               }
