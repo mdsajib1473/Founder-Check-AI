@@ -16,6 +16,7 @@ from app.routes.product_validation import router as product_validation_router
 from app.routes.platform_integrations import router as platform_integrations_router
 from app.routes.education_resources import router as education_resources_router
 from app.routes.startup_school import router as startup_school_router
+from app.routes.compliance_legal import router as compliance_legal_router
 import os
 import json
 from datetime import datetime
