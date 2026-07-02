@@ -18,6 +18,7 @@ from app.routes.education_resources import router as education_resources_router
 from app.routes.startup_school import router as startup_school_router
 from app.routes.compliance_legal import router as compliance_legal_router
 from app.routes.advanced_analytics import router as advanced_analytics_router
+from app.routes.mobile_offline import router as mobile_offline_router
 import os
 import json
 from datetime import datetime
@@ -74,6 +75,9 @@ app.include_router(compliance_legal_router)
 
 # Include advanced analytics routes
 app.include_router(advanced_analytics_router)
+
+# Include mobile & offline routes
+app.include_router(mobile_offline_router)
 
 # ============================================================================
 # Models
