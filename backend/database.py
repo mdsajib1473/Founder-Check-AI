@@ -7,9 +7,20 @@ import os
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5432/foundercheck")
+# Use SQLite for development if PostgreSQL not configured
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./foundercheck.db")
 
-engine = create_engine(DATABASE_URL)
+# Only use PostgreSQL if explicitly configured
+if "postgresql" in DATABASE_URL:
+    try:
+        engine = create_engine(DATABASE_URL)
+    except Exception as e:
+        print(f"Warning: PostgreSQL not available, using SQLite instead: {e}")
+        DATABASE_URL = "sqlite:///./foundercheck.db"
+        engine = create_engine(DATABASE_URL)
+else:
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
