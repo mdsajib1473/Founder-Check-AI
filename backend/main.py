@@ -1,8 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from dotenv import load_dotenv
-from models import get_db, AnalysisRecord, QASession
+from models import get_db, AnalysisRecord, QASession, User
+from auth import (
+    hash_password, verify_password, create_access_token,
+    get_current_user, require_owner_or_admin
+)
 from sqlalchemy.orm import Session
 from schemas import AnalyzeIdeaRequest, AnalysisResult, DemandAnalysis, RegulatoryAnalysis, BusinessCanvas, InvestorQuestion, IdeaExtraction
 from llm_flexible import (
@@ -135,11 +139,68 @@ async def hello_endpoint(request: HelloRequest):
     }
 
 # ============================================================================
+# Auth Endpoints
+# ============================================================================
+
+class RegisterRequest(BaseModel):
+    """Registration payload. Email format and minimum password length enforced."""
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=128)
+
+
+class LoginRequest(BaseModel):
+    """Login payload."""
+    email: EmailStr
+    password: str
+
+
+@app.post("/api/v1/auth/register")
+async def register(request: RegisterRequest, db: Session = Depends(get_db)):
+    """Create a user account and return an access token (auto-login)."""
+    email = request.email.lower().strip()
+    if db.query(User).filter(User.email == email).first() is not None:
+        raise HTTPException(status_code=409, detail="An account with this email already exists")
+
+    user = User(email=email, hashed_password=hash_password(request.password), role="founder")
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "access_token": create_access_token(user),
+        "token_type": "bearer",
+        "user": {"email": user.email, "role": user.role},
+    }
+
+
+@app.post("/api/v1/auth/login")
+async def login(request: LoginRequest, db: Session = Depends(get_db)):
+    """Verify credentials and return an access token."""
+    email = request.email.lower().strip()
+    user = db.query(User).filter(User.email == email).first()
+    # Same error for unknown email and wrong password, no account probing
+    if user is None or not verify_password(request.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+
+    return {
+        "access_token": create_access_token(user),
+        "token_type": "bearer",
+        "user": {"email": user.email, "role": user.role},
+    }
+
+
+@app.get("/api/v1/auth/me")
+async def get_me(user: User = Depends(get_current_user)):
+    """Return the logged-in user's profile (used for session restore)."""
+    return {"email": user.email, "role": user.role}
+
+
+# ============================================================================
 # Analysis Endpoints
 # ============================================================================
 
 @app.post("/api/v1/analyze")
-async def analyze_startup_idea(request: AnalyzeIdeaRequest, db: Session = Depends(get_db)):
+async def analyze_startup_idea(request: AnalyzeIdeaRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Fast startup idea analysis - returns in 30-45 seconds.
 
     Persists every run to the analyses table (input, scores, timestamp)
@@ -157,6 +218,7 @@ async def analyze_startup_idea(request: AnalyzeIdeaRequest, db: Session = Depend
 
         risk_score = analysis_dict["regulatory_analysis"].get("risk_score")
         record = AnalysisRecord(
+            user_id=user.id,
             title=analysis_dict["idea_extraction"].get("title", "Untitled"),
             idea=request.idea,
             sector=analysis_dict["idea_extraction"].get("sector"),
@@ -191,12 +253,13 @@ async def analyze_startup_idea(request: AnalyzeIdeaRequest, db: Session = Depend
 
 
 @app.post("/api/v1/analyze/{analysis_id}/extended")
-async def get_extended_analysis(analysis_id: int, db: Session = Depends(get_db)):
+async def get_extended_analysis(analysis_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Get extended analysis (SWOT, GTM, Founder Fit, Bangladesh Impact) - adds 30-45 seconds"""
 
     record = db.get(AnalysisRecord, analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
 
     try:
         from quick_analysis import extended_analyze
@@ -219,11 +282,12 @@ async def get_extended_analysis(analysis_id: int, db: Session = Depends(get_db))
 
 
 @app.get("/api/v1/analyses/{analysis_id}/financial")
-async def get_financial_projections(analysis_id: int, db: Session = Depends(get_db)):
+async def get_financial_projections(analysis_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Get detailed financial projections for an analysis"""
     record = db.get(AnalysisRecord, analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
 
     financial_data = (record.result or {}).get("financial_projections")
     if not financial_data:
@@ -242,11 +306,12 @@ class FinancialAssumptionsRequest(BaseModel):
 
 
 @app.post("/api/v1/financial/custom")
-async def calculate_custom_financial(analysis_id: int, assumptions: FinancialAssumptionsRequest, db: Session = Depends(get_db)):
+async def calculate_custom_financial(analysis_id: int, assumptions: FinancialAssumptionsRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Calculate financial projections with custom assumptions"""
     record = db.get(AnalysisRecord, analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
 
     analysis = record.result or {}
 
@@ -289,9 +354,12 @@ async def calculate_custom_financial(analysis_id: int, assumptions: FinancialAss
 # ============================================================================
 
 @app.get("/api/v1/analyses")
-async def get_analyses(db: Session = Depends(get_db)):
-    """Get all analyses (history)"""
-    records = db.query(AnalysisRecord).order_by(AnalysisRecord.created_at.desc()).all()
+async def get_analyses(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """Get the logged-in user's analyses (admins see all)"""
+    query = db.query(AnalysisRecord)
+    if user.role != "admin":
+        query = query.filter(AnalysisRecord.user_id == user.id)
+    records = query.order_by(AnalysisRecord.created_at.desc()).all()
     return [
         {
             "id": r.id,
@@ -306,22 +374,24 @@ async def get_analyses(db: Session = Depends(get_db)):
 
 
 @app.get("/api/v1/analyses/{analysis_id}")
-async def get_analysis(analysis_id: int, db: Session = Depends(get_db)):
-    """Get single analysis by ID"""
+async def get_analysis(analysis_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """Get single analysis by ID (owner or admin only)"""
     record = db.get(AnalysisRecord, analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
     result = dict(record.result or {})
     result["analysis_id"] = record.id
     return result
 
 
 @app.get("/api/v1/analyses/{analysis_id}/report")
-async def get_analysis_report(analysis_id: int, db: Session = Depends(get_db)):
+async def get_analysis_report(analysis_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Get analysis as formatted report (for PDF export)"""
     record = db.get(AnalysisRecord, analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
 
     # Column metadata plus the stored payload, shaped like the old store dict
     analysis = {"title": record.title, "idea": record.idea, "sector": record.sector, **(record.result or {})}
@@ -403,11 +473,12 @@ async def get_analysis_report(analysis_id: int, db: Session = Depends(get_db)):
 # ============================================================================
 
 @app.post("/api/v1/qa/start/{analysis_id}")
-async def start_qa(analysis_id: int, db: Session = Depends(get_db)):
-    """Start Q&A session for an analysis"""
+async def start_qa(analysis_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """Start Q&A session for an analysis (owner or admin only)"""
     record = db.get(AnalysisRecord, analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
 
     session = QASession(analysis_id=analysis_id, current_question=0, answers={})
     db.add(session)
@@ -429,8 +500,8 @@ class AnswerRequest(BaseModel):
 
 
 @app.post("/api/v1/qa/answer")
-async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db)):
-    """Submit answer to Q&A question"""
+async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """Submit answer to Q&A question (owner or admin only)"""
     session = db.get(QASession, request.session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -438,6 +509,7 @@ async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db)):
     record = db.get(AnalysisRecord, session.analysis_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
+    require_owner_or_admin(record.user_id, user)
 
     questions = (record.result or {}).get("investor_questions") or []
     question_index = session.current_question

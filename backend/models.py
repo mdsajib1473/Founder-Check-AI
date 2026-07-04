@@ -40,6 +40,17 @@ Base = declarative_base()
 # Models
 # ============================================================================
 
+class User(Base):
+    """Registered user. Role is founder or admin; admin is set manually in the DB."""
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False, default="founder")  # founder | admin
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class AnalysisRecord(Base):
     """One row per analysis run.
 
@@ -50,6 +61,12 @@ class AnalysisRecord(Base):
     __tablename__ = "analyses"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     title = Column(String(255), nullable=False)
     idea = Column(Text, nullable=False)
     sector = Column(String(100), nullable=True)

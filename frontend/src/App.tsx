@@ -95,6 +95,9 @@ function App() {
   const [loginEmail, setLoginEmail] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [extendedStatus, setExtendedStatus] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle')
+  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('fc_token'))
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
+  const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
@@ -110,19 +113,70 @@ function App() {
     }
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Restore the session on load if a stored token is still valid
+  useEffect(() => {
+    if (!authToken) return
+    fetch('http://localhost:9001/api/v1/auth/me', {
+      headers: { Authorization: `Bearer ${authToken}` },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setIsLoggedIn(true)
+        } else {
+          localStorage.removeItem('fc_token')
+          setAuthToken(null)
+        }
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  /** fetch with the Bearer token attached; logs out on 401. */
+  const authFetch = async (url: string, options: RequestInit = {}) => {
+    const headers: Record<string, string> = { ...((options.headers as Record<string, string>) || {}) }
+    if (authToken) headers['Authorization'] = `Bearer ${authToken}`
+    const res = await fetch(url, { ...options, headers })
+    if (res.status === 401) {
+      localStorage.removeItem('fc_token')
+      setAuthToken(null)
+      setIsLoggedIn(false)
+      setAuthError('Session expired, please log in again')
+    }
+    return res
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (loginEmail && loginPassword) {
+    setAuthError(null)
+    const endpoint = authMode === 'register' ? 'register' : 'login'
+    try {
+      const res = await fetch(`http://localhost:9001/api/v1/auth/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setAuthError(typeof data.detail === 'string' ? data.detail : 'Enter a valid email and a password of at least 8 characters')
+        return
+      }
+      localStorage.setItem('fc_token', data.access_token)
+      setAuthToken(data.access_token)
       setIsLoggedIn(true)
       setLoginEmail('')
       setLoginPassword('')
+    } catch {
+      setAuthError('Could not reach the server')
     }
   }
 
   const handleLogout = () => {
+    localStorage.removeItem('fc_token')
+    setAuthToken(null)
     setIsLoggedIn(false)
     setAnalysis(null)
     setExtendedStatus('idle')
+    setAuthError(null)
     setPage('home')
   }
 
@@ -151,7 +205,7 @@ function App() {
     setError(null)
 
     try {
-      const res = await fetch('http://localhost:9001/api/v1/analyze', {
+      const res = await authFetch('http://localhost:9001/api/v1/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idea, language: 'english' }),
@@ -181,7 +235,7 @@ function App() {
   const loadExtended = async (analysisId: number) => {
     setExtendedStatus('loading')
     try {
-      const res = await fetch(`http://localhost:9001/api/v1/analyze/${analysisId}/extended`, {
+      const res = await authFetch(`http://localhost:9001/api/v1/analyze/${analysisId}/extended`, {
         method: 'POST',
       })
       if (!res.ok) throw new Error('Extended analysis failed')
@@ -197,7 +251,7 @@ function App() {
 
   const loadHistory = async () => {
     try {
-      const res = await fetch('http://localhost:9001/api/v1/analyses')
+      const res = await authFetch('http://localhost:9001/api/v1/analyses')
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setHistory(data)
@@ -209,7 +263,7 @@ function App() {
 
   const loadAnalysis = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:9001/api/v1/analyses/${id}`)
+      const res = await authFetch(`http://localhost:9001/api/v1/analyses/${id}`)
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setAnalysis(data)
@@ -227,7 +281,7 @@ function App() {
     }
 
     try {
-      const res = await fetch(`http://localhost:9001/api/v1/qa/start/${analysis.analysis_id}`, {
+      const res = await authFetch(`http://localhost:9001/api/v1/qa/start/${analysis.analysis_id}`, {
         method: 'POST',
       })
       if (!res.ok) throw new Error('Failed')
@@ -246,7 +300,7 @@ function App() {
     if (!qaAnswer.trim()) return
 
     try {
-      const res = await fetch('http://localhost:9001/api/v1/qa/answer', {
+      const res = await authFetch('http://localhost:9001/api/v1/qa/answer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: qaSession.session_id, answer: qaAnswer }),
@@ -601,7 +655,7 @@ function App() {
           <section className="login-section" id="login-section">
             <div className="login-wrapper">
               <form onSubmit={handleLogin} className="login-form">
-                <h2>Start Your Validation</h2>
+                <h2>{authMode === 'register' ? 'Create Your Account' : 'Start Your Validation'}</h2>
 
                 <div className="form-field">
                   <input
@@ -618,14 +672,27 @@ function App() {
                     type="password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Password"
+                    placeholder={authMode === 'register' ? 'Password (at least 8 characters)' : 'Password'}
                     required
                   />
                 </div>
 
-                <button type="submit" className="form-submit">Sign In & Validate</button>
+                {authError && <p style={{ color: '#e5484d', fontSize: '13px', marginBottom: '10px' }}>{authError}</p>}
+
+                <button type="submit" className="form-submit">
+                  {authMode === 'register' ? 'Create Account' : 'Sign In'}
+                </button>
               </form>
-              <p className="form-hint">Use any email and password to get started</p>
+              <p className="form-hint">
+                {authMode === 'register' ? 'Already have an account?' : 'New to FounderCheck?'}{' '}
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode(authMode === 'register' ? 'login' : 'register'); setAuthError(null); }}
+                  style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', textDecoration: 'underline', fontSize: 'inherit', padding: 0 }}
+                >
+                  {authMode === 'register' ? 'Sign in' : 'Create an account'}
+                </button>
+              </p>
             </div>
           </section>
         </main>
