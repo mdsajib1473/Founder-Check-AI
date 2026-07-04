@@ -260,8 +260,8 @@ function App() {
         {
           question: qaSession.question,
           answer: qaAnswer,
-          score: data.last_score || 7,
-          feedback: data.last_feedback || 'Good answer'
+          score: data.last_score ?? null,
+          feedback: data.last_feedback || ''
         }
       ])
 
@@ -721,11 +721,11 @@ function App() {
                 <div className="score-display">
                   <div className="score-item">
                     <p>Q&A Score</p>
-                    <div className="big-score">{qaSession.final_score?.toFixed(1)}/10</div>
+                    <div className="big-score">{qaSession.final_score != null ? `${qaSession.final_score.toFixed(1)}/10` : 'Not scored'}</div>
                   </div>
                   <div className="score-item">
                     <p>Adjusted Readiness</p>
-                    <div className="big-score">{qaSession.readiness_score?.toFixed(1)}/10</div>
+                    <div className="big-score">{qaSession.readiness_score != null ? `${qaSession.readiness_score.toFixed(1)}/10` : 'Unchanged'}</div>
                   </div>
                 </div>
                 <button className="btn-primary" onClick={() => setPage('home')}>View Report</button>
@@ -740,6 +740,15 @@ function App() {
                 </div>
 
                 <h3 className="qa-question">{qaSession?.question}</h3>
+
+                {qaResults.length > 0 && (
+                  <div style={{ marginBottom: '16px', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '13px' }}>
+                    <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                      Previous answer: {qaResults[qaResults.length - 1].score != null ? `${qaResults[qaResults.length - 1].score}/10` : 'Not scored'}
+                    </p>
+                    <p style={{ color: '#999' }}>{qaResults[qaResults.length - 1].feedback}</p>
+                  </div>
+                )}
 
                 <form onSubmit={submitAnswer}>
                   <textarea

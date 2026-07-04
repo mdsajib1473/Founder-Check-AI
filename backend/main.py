@@ -8,8 +8,9 @@ from schemas import AnalyzeIdeaRequest, AnalysisResult, DemandAnalysis, Regulato
 from llm_flexible import (
     extract_idea_fields, analyze_demand, analyze_regulatory_risks, generate_business_canvas, generate_investor_questions,
     analyze_competitors, analyze_bangladesh_impact, analyze_swot, generate_gtm_strategy, assess_risks, assess_founder_fit,
-    LLMUnavailableError
+    score_investor_answer, LLMUnavailableError
 )
+import asyncio
 from app.services.financial_engine import calculate_financial_projections
 from app.routes.collaboration import router as collaboration_router
 from app.routes.market_intelligence import router as market_intelligence_router
@@ -438,9 +439,20 @@ async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db)):
     if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
-    # Score the answer (simple logic for speed)
-    score = 7  # Default score
-    feedback = "Good answer - shows understanding of the market"
+    questions = (record.result or {}).get("investor_questions") or []
+    question_index = session.current_question
+    question_text = questions[question_index]["question"] if question_index < len(questions) else ""
+
+    # Score the answer with the LLM. On failure, store an honest unscored
+    # state (rule 9) rather than a fabricated number.
+    try:
+        scoring = await asyncio.to_thread(score_investor_answer, question_text, request.answer, record.idea)
+        score = scoring["score"]
+        feedback = scoring["feedback"]
+    except LLMUnavailableError as e:
+        print(f"[QA] Answer scoring unavailable: {str(e)[:200]}")
+        score = None
+        feedback = "This answer could not be scored (AI provider unavailable). It does not count toward your Q&A score."
 
     # Reassign the JSON column so SQLAlchemy detects the change
     answers = dict(session.answers or {})
@@ -454,23 +466,25 @@ async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db)):
 
     # Check if done
     if session.current_question >= 10:
-        scores = [v["score"] for v in answers.values()]
-        final_qa_score = sum(scores) / len(scores) if scores else 5
+        # Average only the answers that were actually scored
+        scores = [v["score"] for v in answers.values() if isinstance(v.get("score"), (int, float))]
+        final_qa_score = round(sum(scores) / len(scores), 1) if scores else None
 
         session.completed = True
         session.final_score = final_qa_score
 
-        record.qa_completed = True
-        record.qa_score = final_qa_score
-        base_score = record.overall_readiness_score if record.overall_readiness_score is not None else final_qa_score
-        record.overall_readiness_score = (base_score + final_qa_score) / 2
+        if final_qa_score is not None:
+            record.qa_completed = True
+            record.qa_score = final_qa_score
+            base_score = record.overall_readiness_score if record.overall_readiness_score is not None else final_qa_score
+            record.overall_readiness_score = round((base_score + final_qa_score) / 2, 1)
 
-        result = dict(record.result or {})
-        result["qa_completed"] = 1
-        result["qa_score"] = final_qa_score
-        result["qa_data"] = answers
-        result["overall_readiness_score"] = record.overall_readiness_score
-        record.result = result
+            result = dict(record.result or {})
+            result["qa_completed"] = 1
+            result["qa_score"] = final_qa_score
+            result["qa_data"] = answers
+            result["overall_readiness_score"] = record.overall_readiness_score
+            record.result = result
 
         db.commit()
 
@@ -481,7 +495,6 @@ async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db)):
         }
     else:
         db.commit()
-        questions = (record.result or {}).get("investor_questions") or []
         index = session.current_question
         next_q = questions[index]["question"] if index < len(questions) else "What is your growth plan?"
         return {
