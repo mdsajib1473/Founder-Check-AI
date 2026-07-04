@@ -77,12 +77,3 @@ Exit condition: UI looks intentional and calm on camera, no placeholder or crash
 4. Scan backend logs for errors during the full walkthrough.
 
 Exit condition: one clean run through the entire app with zero crashes, zero console errors, zero backend errors.
-
-## Phase 7: Demo Prep Buffer (30 min)
-
-Reserve this time for anything that ran long, and for a final look at the app in the state it will appear in the video. Do not start new work in this window.
-
-## Notes
-
-- If time runs short, protect Phases 1 through 4 first. Phase 5 (polish) and Phase 6 (testing) can compress, but do not skip testing entirely before recording.
-- Do not attempt rate limiting or OAuth today, they are explicitly out of scope for this pass.
