@@ -2,12 +2,13 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from models import init_db, get_db, engine, Base, AnalysisRecord, QASession
+from models import get_db, AnalysisRecord, QASession
 from sqlalchemy.orm import Session
 from schemas import AnalyzeIdeaRequest, AnalysisResult, DemandAnalysis, RegulatoryAnalysis, BusinessCanvas, InvestorQuestion, IdeaExtraction
 from llm_flexible import (
     extract_idea_fields, analyze_demand, analyze_regulatory_risks, generate_business_canvas, generate_investor_questions,
-    analyze_competitors, analyze_bangladesh_impact, analyze_swot, generate_gtm_strategy, assess_risks, assess_founder_fit
+    analyze_competitors, analyze_bangladesh_impact, analyze_swot, generate_gtm_strategy, assess_risks, assess_founder_fit,
+    LLMUnavailableError
 )
 from app.services.financial_engine import calculate_financial_projections
 from app.routes.collaboration import router as collaboration_router
@@ -29,8 +30,7 @@ import base64
 
 load_dotenv()
 
-# Initialize database tables
-Base.metadata.create_all(bind=engine)
+# Database schema is managed by Alembic (alembic upgrade head), not create_all.
 
 app = FastAPI(
     title="FounderCheck API",
@@ -138,8 +138,12 @@ async def hello_endpoint(request: HelloRequest):
 # ============================================================================
 
 @app.post("/api/v1/analyze")
-async def analyze_startup_idea(request: AnalyzeIdeaRequest):
-    """Fast startup idea analysis - returns in 30-45 seconds"""
+async def analyze_startup_idea(request: AnalyzeIdeaRequest, db: Session = Depends(get_db)):
+    """Fast startup idea analysis - returns in 30-45 seconds.
+
+    Persists every run to the analyses table (input, scores, timestamp)
+    per project rule 14.
+    """
 
     if not request.idea or len(request.idea.strip()) < 10:
         raise HTTPException(status_code=400, detail="Idea must be at least 10 characters")
@@ -150,67 +154,77 @@ async def analyze_startup_idea(request: AnalyzeIdeaRequest):
         print("[QUICK ANALYSIS] Starting fast-track analysis...")
         analysis_dict = await quick_analyze(request.idea)
 
-        # Store in memory
-        global next_id
-        analysis_id = next_id
-        next_id += 1
+        risk_score = analysis_dict["regulatory_analysis"].get("risk_score")
+        record = AnalysisRecord(
+            title=analysis_dict["idea_extraction"].get("title", "Untitled"),
+            idea=request.idea,
+            sector=analysis_dict["idea_extraction"].get("sector"),
+            overall_readiness_score=analysis_dict.get("overall_readiness_score"),
+            demand_score=analysis_dict["demand_analysis"].get("score"),
+            regulatory_score=(10 - risk_score) if isinstance(risk_score, (int, float)) else None,
+            analysis_mode=analysis_dict.get("analysis_mode", "quick"),
+            # Copy so the column value never aliases analysis_dict; a later
+            # in-place mutation of an aliased dict would defeat SQLAlchemy's
+            # change detection and silently skip the UPDATE.
+            result=dict(analysis_dict),
+        )
+        db.add(record)
+        db.flush()  # assigns record.id before commit
 
-        analysis_dict["analysis_id"] = analysis_id
+        analysis_dict["analysis_id"] = record.id
+        record.result = dict(analysis_dict)
+        db.commit()
 
-        analyses_store[analysis_id] = {
-            "id": analysis_id,
-            "title": analysis_dict["idea_extraction"].get("title", "Untitled"),
-            "idea": request.idea,
-            "sector": analysis_dict["idea_extraction"].get("sector"),
-            "overall_readiness_score": analysis_dict["overall_readiness_score"],
-            "demand_score": analysis_dict["demand_analysis"].get("score"),
-            "regulatory_score": 10 - analysis_dict["regulatory_analysis"].get("risk_score", 5),
-            **analysis_dict
-        }
-
-        print(f"[SUCCESS] Quick analysis complete in ~45 seconds!")
-        print(f"[INFO] Extended analysis available via /api/v1/analyze/{analysis_id}/extended")
+        print(f"[SUCCESS] Quick analysis complete, stored as analysis {record.id}")
+        print(f"[INFO] Extended analysis available via /api/v1/analyze/{record.id}/extended")
         return analysis_dict
 
+    except LLMUnavailableError as e:
+        db.rollback()
+        print(f"[ERROR] Analysis unavailable, all LLM providers failed: {str(e)}")
+        raise HTTPException(status_code=503, detail="Analysis unavailable: the AI providers could not be reached. Please try again later.")
     except Exception as e:
+        db.rollback()
         print(f"[ERROR] Analysis failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
 
 @app.post("/api/v1/analyze/{analysis_id}/extended")
-async def get_extended_analysis(analysis_id: int):
+async def get_extended_analysis(analysis_id: int, db: Session = Depends(get_db)):
     """Get extended analysis (SWOT, GTM, Founder Fit, Bangladesh Impact) - adds 30-45 seconds"""
 
-    if analysis_id not in analyses_store:
+    record = db.get(AnalysisRecord, analysis_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
     try:
         from quick_analysis import extended_analyze
 
         print(f"[EXTENDED] Starting extended analysis for ID {analysis_id}...")
-        core_analysis = analyses_store[analysis_id].copy()
-        extended_result = await extended_analyze(core_analysis.get("idea", ""), core_analysis)
+        core_analysis = dict(record.result or {})
+        extended_result = await extended_analyze(record.idea, core_analysis)
 
-        # Update store
-        analyses_store[analysis_id] = {**analyses_store[analysis_id], **extended_result}
+        record.result = dict(extended_result)
+        record.analysis_mode = "extended"
+        db.commit()
 
         print(f"[SUCCESS] Extended analysis complete!")
         return extended_result
 
     except Exception as e:
+        db.rollback()
         print(f"[ERROR] Extended analysis failed: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Extended analysis failed: {str(e)}")
 
 
 @app.get("/api/v1/analyses/{analysis_id}/financial")
-async def get_financial_projections(analysis_id: int):
+async def get_financial_projections(analysis_id: int, db: Session = Depends(get_db)):
     """Get detailed financial projections for an analysis"""
-    if analysis_id not in analyses_store:
+    record = db.get(AnalysisRecord, analysis_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
-    analysis = analyses_store[analysis_id]
-    financial_data = analysis.get("financial_projections")
-
+    financial_data = (record.result or {}).get("financial_projections")
     if not financial_data:
         raise HTTPException(status_code=404, detail="Financial projections not available")
 
@@ -227,12 +241,13 @@ class FinancialAssumptionsRequest(BaseModel):
 
 
 @app.post("/api/v1/financial/custom")
-async def calculate_custom_financial(analysis_id: int, assumptions: FinancialAssumptionsRequest):
+async def calculate_custom_financial(analysis_id: int, assumptions: FinancialAssumptionsRequest, db: Session = Depends(get_db)):
     """Calculate financial projections with custom assumptions"""
-    if analysis_id not in analyses_store:
+    record = db.get(AnalysisRecord, analysis_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
-    analysis = analyses_store[analysis_id]
+    analysis = record.result or {}
 
     # Create full analysis dict with custom assumptions merged
     full_analysis = {
@@ -272,41 +287,43 @@ async def calculate_custom_financial(analysis_id: int, assumptions: FinancialAss
 # History & Database Endpoints
 # ============================================================================
 
-# In-memory storage (for 3-day demo)
-analyses_store = {}
-next_id = 1
-
 @app.get("/api/v1/analyses")
-async def get_analyses():
+async def get_analyses(db: Session = Depends(get_db)):
     """Get all analyses (history)"""
+    records = db.query(AnalysisRecord).order_by(AnalysisRecord.created_at.desc()).all()
     return [
         {
-            "id": a.get("id"),
-            "title": a.get("idea_extraction", {}).get("title", "Untitled"),
-            "sector": a.get("sector"),
-            "overall_readiness_score": a.get("overall_readiness_score"),
-            "qa_completed": a.get("qa_completed", 0),
-            "created_at": datetime.utcnow().isoformat()
+            "id": r.id,
+            "title": r.title,
+            "sector": r.sector,
+            "overall_readiness_score": r.overall_readiness_score,
+            "qa_completed": 1 if r.qa_completed else 0,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
         }
-        for a in analyses_store.values()
+        for r in records
     ]
 
 
 @app.get("/api/v1/analyses/{analysis_id}")
-async def get_analysis(analysis_id: int):
+async def get_analysis(analysis_id: int, db: Session = Depends(get_db)):
     """Get single analysis by ID"""
-    if analysis_id not in analyses_store:
+    record = db.get(AnalysisRecord, analysis_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
-    return analyses_store[analysis_id]
+    result = dict(record.result or {})
+    result["analysis_id"] = record.id
+    return result
 
 
 @app.get("/api/v1/analyses/{analysis_id}/report")
-async def get_analysis_report(analysis_id: int):
+async def get_analysis_report(analysis_id: int, db: Session = Depends(get_db)):
     """Get analysis as formatted report (for PDF export)"""
-    if analysis_id not in analyses_store:
+    record = db.get(AnalysisRecord, analysis_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
-    analysis = analyses_store[analysis_id]
+    # Column metadata plus the stored payload, shaped like the old store dict
+    analysis = {"title": record.title, "idea": record.idea, "sector": record.sector, **(record.result or {})}
 
     # Create formatted report data
     report = {
@@ -384,28 +401,21 @@ async def get_analysis_report(analysis_id: int):
 # Q&A Endpoints
 # ============================================================================
 
-qa_sessions = {}
-next_session_id = 1
-
 @app.post("/api/v1/qa/start/{analysis_id}")
-async def start_qa(analysis_id: int):
+async def start_qa(analysis_id: int, db: Session = Depends(get_db)):
     """Start Q&A session for an analysis"""
-    if analysis_id not in analyses_store:
+    record = db.get(AnalysisRecord, analysis_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Analysis not found")
 
-    global next_session_id
-    session_id = next_session_id
-    next_session_id += 1
+    session = QASession(analysis_id=analysis_id, current_question=0, answers={})
+    db.add(session)
+    db.commit()
+    db.refresh(session)
 
-    qa_sessions[session_id] = {
-        "analysis_id": analysis_id,
-        "current_question": 0,
-        "answers": {}
-    }
-
-    questions = analyses_store[analysis_id]["investor_questions"]
+    questions = (record.result or {}).get("investor_questions") or []
     return {
-        "session_id": session_id,
+        "session_id": session.id,
         "question_number": 1,
         "total_questions": 10,
         "question": questions[0]["question"] if questions else "What is your target market?"
@@ -418,51 +428,65 @@ class AnswerRequest(BaseModel):
 
 
 @app.post("/api/v1/qa/answer")
-async def submit_answer(request: AnswerRequest):
+async def submit_answer(request: AnswerRequest, db: Session = Depends(get_db)):
     """Submit answer to Q&A question"""
-    if request.session_id not in qa_sessions:
+    session = db.get(QASession, request.session_id)
+    if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    session = qa_sessions[request.session_id]
-    analysis_id = session["analysis_id"]
-    analysis = analyses_store[analysis_id]
+    record = db.get(AnalysisRecord, session.analysis_id)
+    if record is None:
+        raise HTTPException(status_code=404, detail="Analysis not found")
 
     # Score the answer (simple logic for speed)
     score = 7  # Default score
     feedback = "Good answer - shows understanding of the market"
 
-    # Store answer
-    session["answers"][str(session["current_question"])] = {
+    # Reassign the JSON column so SQLAlchemy detects the change
+    answers = dict(session.answers or {})
+    answers[str(session.current_question)] = {
         "answer": request.answer,
         "score": score,
         "feedback": feedback
     }
-
-    # Move to next question
-    session["current_question"] += 1
+    session.answers = answers
+    session.current_question += 1
 
     # Check if done
-    if session["current_question"] >= 10:
-        scores = [v["score"] for v in session["answers"].values()]
+    if session.current_question >= 10:
+        scores = [v["score"] for v in answers.values()]
         final_qa_score = sum(scores) / len(scores) if scores else 5
 
-        # Update analysis
-        analyses_store[analysis_id]["qa_completed"] = 1
-        analyses_store[analysis_id]["qa_score"] = final_qa_score
-        analyses_store[analysis_id]["qa_data"] = session["answers"]
-        analyses_store[analysis_id]["overall_readiness_score"] = (analysis["overall_readiness_score"] + final_qa_score) / 2
+        session.completed = True
+        session.final_score = final_qa_score
+
+        record.qa_completed = True
+        record.qa_score = final_qa_score
+        base_score = record.overall_readiness_score if record.overall_readiness_score is not None else final_qa_score
+        record.overall_readiness_score = (base_score + final_qa_score) / 2
+
+        result = dict(record.result or {})
+        result["qa_completed"] = 1
+        result["qa_score"] = final_qa_score
+        result["qa_data"] = answers
+        result["overall_readiness_score"] = record.overall_readiness_score
+        record.result = result
+
+        db.commit()
 
         return {
             "completed": True,
             "final_score": final_qa_score,
-            "readiness_score": analyses_store[analysis_id]["overall_readiness_score"]
+            "readiness_score": record.overall_readiness_score
         }
     else:
-        questions = analysis["investor_questions"]
-        next_q = questions[session["current_question"]]["question"]
+        db.commit()
+        questions = (record.result or {}).get("investor_questions") or []
+        index = session.current_question
+        next_q = questions[index]["question"] if index < len(questions) else "What is your growth plan?"
         return {
             "completed": False,
-            "question_number": session["current_question"] + 1,
+            "question_number": index + 1,
             "total_questions": 10,
             "last_score": score,
             "last_feedback": feedback,

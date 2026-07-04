@@ -21,12 +21,18 @@ async def run_parallel_analysis(idea: str, idea_data: dict):
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
+    # Per project rule 9: if a core analysis fails, surface the failure
+    # instead of substituting made-up scores that look like real results.
+    for result in results:
+        if isinstance(result, Exception):
+            raise result
+
     return {
-        "demand": results[0] if not isinstance(results[0], Exception) else {"score": 5, "market_size": "Unknown", "competition": "Unknown", "opportunities": [], "threats": []},
-        "regulatory": results[1] if not isinstance(results[1], Exception) else {"risk_score": 5, "key_regulators": [], "critical_approvals": [], "estimated_timeline": 90, "cost_estimate": "Unknown", "warnings": ""},
-        "canvas": results[2] if not isinstance(results[2], Exception) else {},
-        "questions": results[3] if not isinstance(results[3], Exception) else [],
-        "competitors": results[4] if not isinstance(results[4], Exception) else {},
+        "demand": results[0],
+        "regulatory": results[1],
+        "canvas": results[2],
+        "questions": results[3],
+        "competitors": results[4],
     }
 
 async def quick_analyze(idea: str) -> dict:

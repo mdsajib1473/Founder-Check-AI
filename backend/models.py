@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, JSON, Float
+from sqlalchemy import create_engine, text, Column, Integer, String, Text, DateTime, JSON, Float, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -7,19 +7,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./foundercheck.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "")
 
-# Use SQLite for development if PostgreSQL not available
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is not set. Configure it in .env. "
+        "Refusing to start with an implicit local database."
+    )
+
+# pool_pre_ping revalidates pooled connections, which Neon can drop when idle
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
+)
+
+# Fail fast and loud: a broken database configuration must stop startup,
+# never silently fall back to another database.
 try:
-    if "postgresql" in DATABASE_URL:
-        import psycopg2  # Check if available
-        engine = create_engine(DATABASE_URL)
-    else:
-        engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-except:
-    print("[DB] PostgreSQL unavailable, using SQLite")
-    DATABASE_URL = "sqlite:///./foundercheck.db"
-    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+    with engine.connect() as _conn:
+        _conn.execute(text("SELECT 1"))
+    print(f"[DB] Connected: {engine.url.render_as_string(hide_password=True)}")
+except Exception as e:
+    raise RuntimeError(
+        f"[DB] Could not connect to {engine.url.render_as_string(hide_password=True)}: {e}"
+    ) from e
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
@@ -29,6 +41,12 @@ Base = declarative_base()
 # ============================================================================
 
 class AnalysisRecord(Base):
+    """One row per analysis run.
+
+    Also serves as the audit log required by project rule 14: the raw
+    input, the factor scores that drove the result, and timestamps are
+    all queryable columns. The full payload lives in the result JSON.
+    """
     __tablename__ = "analyses"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -36,46 +54,62 @@ class AnalysisRecord(Base):
     idea = Column(Text, nullable=False)
     sector = Column(String(100), nullable=True)
 
-    # Scores
-    overall_readiness_score = Column(Float, default=0.0)
+    # Factor scores kept as columns so score provenance stays queryable.
+    # Nullable on purpose: null means incomplete, never a fabricated value.
+    overall_readiness_score = Column(Float, nullable=True)
     demand_score = Column(Float, nullable=True)
     regulatory_score = Column(Float, nullable=True)
 
-    # Full analysis data (JSON)
-    idea_extraction = Column(JSON, nullable=True)
-    demand_analysis = Column(JSON, nullable=True)
-    regulatory_analysis = Column(JSON, nullable=True)
-    business_canvas = Column(JSON, nullable=True)
-    investor_questions = Column(JSON, nullable=True)
+    analysis_mode = Column(String(20), nullable=False, default="quick")
+    result = Column(JSON, nullable=False)
 
-    # Q&A Results
-    qa_completed = Column(Integer, default=0)  # 0 = not done, 1 = done
+    qa_completed = Column(Boolean, nullable=False, default=False)
     qa_score = Column(Float, nullable=True)
-    qa_data = Column(JSON, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class QASession(Base):
+    """Investor Q&A session state for one analysis."""
     __tablename__ = "qa_sessions"
 
     id = Column(Integer, primary_key=True, index=True)
-    analysis_id = Column(Integer, nullable=False, index=True)
+    analysis_id = Column(
+        Integer,
+        ForeignKey("analyses.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
 
-    current_question = Column(Integer, default=0)  # 0-9
-    answers = Column(JSON, default={})  # {0: {"answer": "...", "score": 8, "feedback": "..."}, ...}
-
+    current_question = Column(Integer, nullable=False, default=0)
+    answers = Column(JSON, nullable=False, default=dict)
     final_score = Column(Float, nullable=True)
-    readiness_adjustment = Column(Float, default=0.0)  # Adjusted by Q&A
+    completed = Column(Boolean, nullable=False, default=False)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+class LLMCache(Base):
+    """Cached LLM responses keyed by prompt hash (project rule 11).
+
+    The table exists now so enabling the cache later needs no migration.
+    Nothing writes to it yet.
+    """
+    __tablename__ = "llm_cache"
+
+    id = Column(Integer, primary_key=True)
+    prompt_hash = Column(String(64), unique=True, nullable=False, index=True)
+    response = Column(JSON, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 def init_db():
+    """Create all tables. Alembic owns schema in normal operation; this
+    exists for throwaway local databases only."""
     Base.metadata.create_all(bind=engine)
-    print("✓ Database tables created")
+    print("[DB] Tables created")
 
 
 def get_db():

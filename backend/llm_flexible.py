@@ -456,27 +456,7 @@ def analyze_bangladesh_impact(idea_text: str, sector: str) -> dict:
     Use exactly these snake_case key names. RETURN ONLY JSON, NO OTHER TEXT.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1000)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["bangladesh_impact"]
-
-    if not response:
-        return DEMO_RESPONSES["bangladesh_impact"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["bangladesh_impact"]
+    return _parse_json(call_llm(prompt, 1000))
 
 
 def analyze_swot(idea_text: str, sector: str) -> dict:
@@ -492,27 +472,7 @@ def analyze_swot(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1000)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["swot_analysis"]
-
-    if not response:
-        return DEMO_RESPONSES["swot_analysis"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["swot_analysis"]
+    return _parse_json(call_llm(prompt, 1000))
 
 
 def generate_gtm_strategy(idea_text: str, sector: str) -> dict:
@@ -535,27 +495,7 @@ def generate_gtm_strategy(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON, NO OTHER TEXT.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1200)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1200,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["go_to_market"]
-
-    if not response:
-        return DEMO_RESPONSES["go_to_market"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["go_to_market"]
+    return _parse_json(call_llm(prompt, 1200))
 
 
 def assess_risks(idea_text: str, sector: str) -> dict:
@@ -570,27 +510,7 @@ def assess_risks(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1000)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["risk_assessment"]
-
-    if not response:
-        return DEMO_RESPONSES["risk_assessment"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["risk_assessment"]
+    return _parse_json(call_llm(prompt, 1000))
 
 
 def assess_founder_fit(idea_text: str, sector: str) -> dict:
@@ -605,24 +525,4 @@ def assess_founder_fit(idea_text: str, sector: str) -> dict:
     RETURN ONLY JSON.
     """
 
-    if PROVIDER == "openai":
-        response = call_openai(prompt, 1000)
-    elif PROVIDER == "anthropic":
-        from anthropic import Anthropic
-        client = Anthropic(api_key=API_KEY)
-        msg = client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}]
-        )
-        response = msg.content[0].text
-    else:
-        return DEMO_RESPONSES["founder_fit"]
-
-    if not response:
-        return DEMO_RESPONSES["founder_fit"]
-
-    try:
-        return json.loads(response)
-    except:
-        return DEMO_RESPONSES["founder_fit"]
+    return _parse_json(call_llm(prompt, 1000))
