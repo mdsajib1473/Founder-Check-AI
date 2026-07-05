@@ -1,0 +1,26 @@
+# Never copy the local virtualenv into the image.
+.venv/
+venv/
+
+# Python caches and compiled files.
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Secrets must be injected as environment variables at deploy time,
+# never baked into the image.
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases and other local-only data.
+*.db
+*.sqlite3
+
+# Docker and VCS metadata.
+Dockerfile
+.dockerignore
+.git/
+.gitignore

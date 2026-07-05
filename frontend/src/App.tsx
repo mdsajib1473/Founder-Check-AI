@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { API_BASE_URL } from './config'
 import { generateEnhancedPDF } from './utils/enhancedPdfGenerator'
 import FinancialDashboard from './components/FinancialDashboard'
 import CollaborationHub from './components/CollaborationHub'
@@ -106,7 +107,7 @@ function App() {
 
   const checkBackendHealth = async () => {
     try {
-      const res = await fetch('http://localhost:9001/health')
+      const res = await fetch(`${API_BASE_URL}/health`)
       setBackendHealth(res.ok)
     } catch {
       setBackendHealth(false)
@@ -116,7 +117,7 @@ function App() {
   // Restore the session on load if a stored token is still valid
   useEffect(() => {
     if (!authToken) return
-    fetch('http://localhost:9001/api/v1/auth/me', {
+    fetch(`${API_BASE_URL}/api/v1/auth/me`, {
       headers: { Authorization: `Bearer ${authToken}` },
     })
       .then((res) => {
@@ -150,7 +151,7 @@ function App() {
     setAuthError(null)
     const endpoint = authMode === 'register' ? 'register' : 'login'
     try {
-      const res = await fetch(`http://localhost:9001/api/v1/auth/${endpoint}`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/auth/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail, password: loginPassword }),
@@ -206,7 +207,7 @@ function App() {
     setError(null)
 
     try {
-      const res = await authFetch('http://localhost:9001/api/v1/analyze', {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idea, language: 'english' }),
@@ -236,7 +237,7 @@ function App() {
   const loadExtended = async (analysisId: number) => {
     setExtendedStatus('loading')
     try {
-      const res = await authFetch(`http://localhost:9001/api/v1/analyze/${analysisId}/extended`, {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/analyze/${analysisId}/extended`, {
         method: 'POST',
       })
       if (!res.ok) throw new Error('Extended analysis failed')
@@ -252,7 +253,7 @@ function App() {
 
   const loadHistory = async () => {
     try {
-      const res = await authFetch('http://localhost:9001/api/v1/analyses')
+      const res = await authFetch(`${API_BASE_URL}/api/v1/analyses`)
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setHistory(data)
@@ -264,7 +265,7 @@ function App() {
 
   const loadAnalysis = async (id: number) => {
     try {
-      const res = await authFetch(`http://localhost:9001/api/v1/analyses/${id}`)
+      const res = await authFetch(`${API_BASE_URL}/api/v1/analyses/${id}`)
       if (!res.ok) throw new Error('Failed')
       const data = await res.json()
       setAnalysis(data)
@@ -282,7 +283,7 @@ function App() {
     }
 
     try {
-      const res = await authFetch(`http://localhost:9001/api/v1/qa/start/${analysis.analysis_id}`, {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/qa/start/${analysis.analysis_id}`, {
         method: 'POST',
       })
       if (!res.ok) throw new Error('Failed')
@@ -301,7 +302,7 @@ function App() {
     if (!qaAnswer.trim()) return
 
     try {
-      const res = await authFetch('http://localhost:9001/api/v1/qa/answer', {
+      const res = await authFetch(`${API_BASE_URL}/api/v1/qa/answer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: qaSession.session_id, answer: qaAnswer }),

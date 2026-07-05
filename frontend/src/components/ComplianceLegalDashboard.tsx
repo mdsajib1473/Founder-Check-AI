@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_BASE_URL } from '../config';
 
 interface ComplianceItem {
   id: string;
@@ -23,7 +24,7 @@ const ComplianceLegalDashboard = () => {
 
   const loadChecklist = async () => {
     try {
-      const response = await fetch('http://localhost:9001/api/compliance/checklist');
+      const response = await fetch(`${API_BASE_URL}/api/compliance/checklist`);
       const data = await response.json();
       setItems(data.items || []);
     } catch (error) {
@@ -33,7 +34,7 @@ const ComplianceLegalDashboard = () => {
 
   const loadTemplates = async () => {
     try {
-      const response = await fetch('http://localhost:9001/api/compliance/templates');
+      const response = await fetch(`${API_BASE_URL}/api/compliance/templates`);
       const data = await response.json();
       setTemplates(data.templates || []);
     } catch (error) {
