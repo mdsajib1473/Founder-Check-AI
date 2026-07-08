@@ -5,17 +5,17 @@ const MobileOfflineDashboard = () => {
 
   return (
     <div style={{
-      backgroundColor: '#0f2a47',
-      color: '#fff',
+      backgroundColor: '#ffffff',
+      color: '#23282e',
       borderRadius: '8px',
       overflow: 'hidden',
-      border: '1px solid #00ffee',
+      border: '1px solid #5a6169',
       padding: '2rem'
     }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        borderBottom: '1px solid #00ffee',
+        borderBottom: '1px solid #5a6169',
         marginBottom: '2rem',
         paddingBottom: '1rem'
       }}>
@@ -29,8 +29,8 @@ const MobileOfflineDashboard = () => {
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             style={{
               padding: '0.75rem',
-              backgroundColor: activeTab === tab.key ? 'rgba(0, 255, 238, 0.2)' : 'transparent',
-              color: activeTab === tab.key ? '#00ffee' : '#888',
+              backgroundColor: activeTab === tab.key ? 'rgba(90, 107, 72, 0.10)' : 'transparent',
+              color: activeTab === tab.key ? '#5a6169' : '#8b9096',
               border: 'none',
               cursor: 'pointer',
               fontWeight: activeTab === tab.key ? 'bold' : 'normal'
@@ -43,7 +43,7 @@ const MobileOfflineDashboard = () => {
 
       {activeTab === 'notifications' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Push Notifications</h3>
+          <h3 style={{ color: '#5A6B48', marginTop: 0 }}>Push Notifications</h3>
 
           <div style={{
             display: 'grid',
@@ -58,14 +58,14 @@ const MobileOfflineDashboard = () => {
               { type: '', label: 'Insights', count: 8 }
             ].map((item, i) => (
               <div key={i} style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1rem',
                 borderRadius: '8px',
                 textAlign: 'center'
               }}>
                 <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{item.type}</div>
-                <div style={{ fontSize: '0.9rem', color: '#aaa' }}>{item.label}</div>
-                <div style={{ fontSize: '1.2rem', color: '#00ffee', fontWeight: 'bold', marginTop: '0.5rem' }}>
+                <div style={{ fontSize: '0.9rem', color: '#8b9096' }}>{item.label}</div>
+                <div style={{ fontSize: '1.2rem', color: '#5a6169', fontWeight: 'bold', marginTop: '0.5rem' }}>
                   {item.count}
                 </div>
               </div>
@@ -73,12 +73,12 @@ const MobileOfflineDashboard = () => {
           </div>
 
           <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             borderRadius: '8px',
             overflow: 'hidden'
           }}>
-            <div style={{ padding: '1rem', borderBottom: '1px solid rgba(0, 255, 238, 0.2)' }}>
-              <h4 style={{ margin: 0, color: '#00ff41' }}>Recent Notifications</h4>
+            <div style={{ padding: '1rem', borderBottom: '1px solid rgba(90, 107, 72, 0.10)' }}>
+              <h4 style={{ margin: 0, color: '#5A6B48' }}>Recent Notifications</h4>
             </div>
             {[
               { icon: '', title: 'Milestone Reached: Series A Funding', time: '2 hours ago' },
@@ -87,15 +87,15 @@ const MobileOfflineDashboard = () => {
             ].map((notif, i) => (
               <div key={i} style={{
                 padding: '1rem',
-                borderBottom: i < 2 ? '1px solid rgba(0, 255, 238, 0.1)' : 'none',
+                borderBottom: i < 2 ? '1px solid rgba(90, 107, 72, 0.10)' : 'none',
                 display: 'flex',
                 gap: '1rem',
                 alignItems: 'flex-start'
               }}>
                 <div style={{ fontSize: '1.2rem' }}>{notif.icon}</div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ color: '#fff', fontWeight: 'bold' }}>{notif.title}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>{notif.time}</div>
+                  <div style={{ color: '#23282e', fontWeight: 'bold' }}>{notif.title}</div>
+                  <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>{notif.time}</div>
                 </div>
               </div>
             ))}
@@ -105,26 +105,26 @@ const MobileOfflineDashboard = () => {
 
       {activeTab === 'offline' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Offline Mode</h3>
+          <h3 style={{ color: '#5A6B48', marginTop: 0 }}>Offline Mode</h3>
 
           <div style={{
-            backgroundColor: 'rgba(0, 255, 65, 0.1)',
-            border: '1px solid rgba(0, 255, 65, 0.3)',
+            backgroundColor: 'rgba(90, 107, 72, 0.10)',
+            border: '1px solid rgba(90, 107, 72, 0.10)',
             padding: '1.5rem',
             borderRadius: '8px',
             marginBottom: '2rem'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#00ff41' }}>Offline Ready</h4>
-                <p style={{ margin: 0, color: '#aaa', fontSize: '0.9rem' }}>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#5A6B48' }}>Offline Ready</h4>
+                <p style={{ margin: 0, color: '#8b9096', fontSize: '0.9rem' }}>
                   All analysis data downloaded and cached locally
                 </p>
               </div>
               <button style={{
                 padding: '0.75rem 1.5rem',
-                backgroundColor: '#0055ff',
-                color: '#fff',
+                backgroundColor: '#5a6169',
+                color: '#ffffff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
@@ -143,24 +143,24 @@ const MobileOfflineDashboard = () => {
               { label: 'Product Data', size: '0.9 MB' }
             ].map((item, i) => (
               <div key={i} style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1rem',
                 borderRadius: '8px'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#aaa' }}>{item.label}</span>
-                  <span style={{ color: '#00ffee', fontWeight: 'bold' }}>{item.size}</span>
+                  <span style={{ color: '#8b9096' }}>{item.label}</span>
+                  <span style={{ color: '#5a6169', fontWeight: 'bold' }}>{item.size}</span>
                 </div>
                 <div style={{
                   height: '4px',
-                  backgroundColor: 'rgba(0, 255, 238, 0.1)',
+                  backgroundColor: 'rgba(90, 107, 72, 0.10)',
                   borderRadius: '2px',
                   marginTop: '0.5rem',
                   overflow: 'hidden'
                 }}>
                   <div style={{
                     height: '100%',
-                    backgroundColor: '#00ff41',
+                    backgroundColor: '#5A6B48',
                     width: '100%'
                   }} />
                 </div>
@@ -169,12 +169,12 @@ const MobileOfflineDashboard = () => {
           </div>
 
           <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1.5rem',
             borderRadius: '8px'
           }}>
-            <h4 style={{ color: '#00ffee', marginTop: 0 }}>Offline Capabilities</h4>
-            <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#aaa' }}>
+            <h4 style={{ color: '#5a6169', marginTop: 0 }}>Offline Capabilities</h4>
+            <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#8b9096' }}>
               <li>View all analysis data without internet</li>
               <li>Make local changes and notes</li>
               <li>Generate reports offline</li>
@@ -186,7 +186,7 @@ const MobileOfflineDashboard = () => {
 
       {activeTab === 'sync' && (
         <div>
-          <h3 style={{ color: '#00ff41', marginTop: 0 }}>Sync Status</h3>
+          <h3 style={{ color: '#5A6B48', marginTop: 0 }}>Sync Status</h3>
 
           <div style={{
             display: 'grid',
@@ -195,12 +195,12 @@ const MobileOfflineDashboard = () => {
             marginBottom: '2rem'
           }}>
             {[
-              { label: 'Synced', value: '24', color: '#00ff41' },
-              { label: 'Pending', value: '3', color: '#ffaa00' },
-              { label: 'Conflicts', value: '0', color: '#ff5555' }
+              { label: 'Synced', value: '24', color: '#5A6B48' },
+              { label: 'Pending', value: '3', color: '#9C6B1F' },
+              { label: 'Conflicts', value: '0', color: '#9C6B1F' }
             ].map((item, i) => (
               <div key={i} style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1.5rem',
                 borderRadius: '8px',
                 textAlign: 'center'
@@ -208,19 +208,19 @@ const MobileOfflineDashboard = () => {
                 <div style={{ fontSize: '2rem', fontWeight: 'bold', color: item.color, marginBottom: '0.5rem' }}>
                   {item.value}
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#aaa' }}>{item.label}</div>
+                <div style={{ fontSize: '0.9rem', color: '#8b9096' }}>{item.label}</div>
               </div>
             ))}
           </div>
 
           <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             borderRadius: '8px',
             overflow: 'hidden',
             marginBottom: '2rem'
           }}>
-            <div style={{ padding: '1rem', borderBottom: '1px solid rgba(0, 255, 238, 0.2)' }}>
-              <h4 style={{ margin: 0, color: '#00ff41' }}>Pending Changes</h4>
+            <div style={{ padding: '1rem', borderBottom: '1px solid rgba(90, 107, 72, 0.10)' }}>
+              <h4 style={{ margin: 0, color: '#5A6B48' }}>Pending Changes</h4>
             </div>
             {[
               { entity: 'Financial Projections', action: 'Update', time: '5 min ago' },
@@ -229,19 +229,19 @@ const MobileOfflineDashboard = () => {
             ].map((item, i) => (
               <div key={i} style={{
                 padding: '1rem',
-                borderBottom: i < 2 ? '1px solid rgba(0, 255, 238, 0.1)' : 'none',
+                borderBottom: i < 2 ? '1px solid rgba(90, 107, 72, 0.10)' : 'none',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center'
               }}>
                 <div>
-                  <div style={{ color: '#fff', fontWeight: 'bold' }}>{item.entity}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>{item.time}</div>
+                  <div style={{ color: '#23282e', fontWeight: 'bold' }}>{item.entity}</div>
+                  <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>{item.time}</div>
                 </div>
                 <div style={{
                   padding: '0.25rem 0.75rem',
-                  backgroundColor: 'rgba(255, 170, 0, 0.2)',
-                  color: '#ffaa00',
+                  backgroundColor: 'rgba(156, 107, 31, 0.10)',
+                  color: '#9C6B1F',
                   borderRadius: '4px',
                   fontSize: '0.85rem',
                   fontWeight: 'bold'
@@ -255,8 +255,8 @@ const MobileOfflineDashboard = () => {
           <button style={{
             width: '100%',
             padding: '1rem',
-            backgroundColor: '#0055ff',
-            color: '#fff',
+            backgroundColor: '#5a6169',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',

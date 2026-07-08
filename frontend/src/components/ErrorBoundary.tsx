@@ -29,7 +29,7 @@ class ErrorBoundary extends React.Component<Props, State> {
       return (
         <div className="section" style={{ textAlign: 'center', padding: '60px 20px' }}>
           <h3>This section could not be displayed</h3>
-          <p style={{ color: '#999', marginTop: '10px' }}>
+          <p style={{ color: '#8b9096', marginTop: '10px' }}>
             The rest of your analysis is unaffected. Switch to another tab or try again.
           </p>
           <button

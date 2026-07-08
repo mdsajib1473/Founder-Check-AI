@@ -89,10 +89,10 @@ const CollaborationHub: React.FC<Props> = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ color: '#fff', marginBottom: '24px' }}>Collaboration & Networking</h2>
+      <h2 style={{ color: '#23282e', marginBottom: '24px' }}>Collaboration & Networking</h2>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid rgba(35, 40, 46, 0.08)', flexWrap: 'wrap' }}>
         {[
           { id: 'team' as Tab, label: 'Team Workspace' },
           { id: 'advisors' as Tab, label: 'Advisor Network' },
@@ -105,9 +105,9 @@ const CollaborationHub: React.FC<Props> = () => {
             onClick={() => setActiveTab(tab.id)}
             style={{
               padding: '10px 16px',
-              background: activeTab === tab.id ? 'rgba(0,255,65,0.2)' : 'transparent',
-              border: activeTab === tab.id ? '1px solid #00ff41' : '1px solid rgba(255,255,255,0.1)',
-              color: activeTab === tab.id ? '#00ff41' : '#ccc',
+              background: activeTab === tab.id ? 'rgba(90, 107, 72, 0.10)' : 'transparent',
+              border: activeTab === tab.id ? '1px solid #5A6B48' : '1px solid rgba(35, 40, 46, 0.08)',
+              color: activeTab === tab.id ? '#5A6B48' : '#5a6169',
               borderRadius: '6px',
               cursor: 'pointer',
               fontSize: '13px',
@@ -122,11 +122,11 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Team Tab */}
       {activeTab === 'team' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Team Members</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '16px', fontSize: '16px' }}>Team Members</h3>
 
           {/* Invite */}
-          <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-            <h4 style={{ color: '#2196F3', marginBottom: '12px', fontSize: '14px' }}>Invite Team Member</h4>
+          <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+            <h4 style={{ color: '#5a6169', marginBottom: '12px', fontSize: '14px' }}>Invite Team Member</h4>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="email"
@@ -136,10 +136,10 @@ const CollaborationHub: React.FC<Props> = () => {
                 style={{
                   flex: 1,
                   padding: '10px 12px',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(35, 40, 46, 0.08)',
+                  border: '1px solid rgba(35, 40, 46, 0.08)',
                   borderRadius: '6px',
-                  color: '#ccc',
+                  color: '#5a6169',
                   fontSize: '13px'
                 }}
               />
@@ -147,8 +147,8 @@ const CollaborationHub: React.FC<Props> = () => {
                 onClick={handleInviteMember}
                 style={{
                   padding: '10px 16px',
-                  background: '#00ff41',
-                  color: '#000',
+                  background: '#5A6B48',
+                  color: '#23282e',
                   border: 'none',
                   borderRadius: '6px',
                   fontWeight: '700',
@@ -163,12 +163,12 @@ const CollaborationHub: React.FC<Props> = () => {
           {/* Members List */}
           <div style={{ display: 'grid', gap: '12px' }}>
             {workspaceMembers.map((member, i) => (
-              <div key={i} style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={i} style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.08)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.08)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <p style={{ color: '#fff', fontWeight: '600', marginBottom: '4px' }}>{member.name}</p>
-                  <p style={{ color: '#999', fontSize: '12px' }}>Role: {member.role} • Joined {member.joined_at}</p>
+                  <p style={{ color: '#23282e', fontWeight: '600', marginBottom: '4px' }}>{member.name}</p>
+                  <p style={{ color: '#8b9096', fontSize: '12px' }}>Role: {member.role} • Joined {member.joined_at}</p>
                 </div>
-                <span style={{ padding: '4px 12px', background: member.role === 'admin' ? 'rgba(255, 152, 0, 0.2)' : 'rgba(76, 175, 80, 0.2)', color: member.role === 'admin' ? '#FF9800' : '#4CAF50', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
+                <span style={{ padding: '4px 12px', background: member.role === 'admin' ? 'rgba(156, 107, 31, 0.10)' : 'rgba(90, 107, 72, 0.10)', color: member.role === 'admin' ? '#9C6B1F' : '#5A6B48', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
                   {member.role}
                 </span>
               </div>
@@ -177,17 +177,17 @@ const CollaborationHub: React.FC<Props> = () => {
 
           {/* Workspace Stats */}
           <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-            <div style={{ padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px' }}>
-              <p style={{ color: '#999', fontSize: '12px', marginBottom: '4px' }}>Total Members</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#2196F3' }}>{workspaceMembers.length}</p>
+            <div style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px' }}>
+              <p style={{ color: '#8b9096', fontSize: '12px', marginBottom: '4px' }}>Total Members</p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5a6169' }}>{workspaceMembers.length}</p>
             </div>
-            <div style={{ padding: '16px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px' }}>
-              <p style={{ color: '#999', fontSize: '12px', marginBottom: '4px' }}>Comments</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#4CAF50' }}>{comments.length}</p>
+            <div style={{ padding: '16px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px' }}>
+              <p style={{ color: '#8b9096', fontSize: '12px', marginBottom: '4px' }}>Comments</p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5A6B48' }}>{comments.length}</p>
             </div>
-            <div style={{ padding: '16px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px' }}>
-              <p style={{ color: '#999', fontSize: '12px', marginBottom: '4px' }}>Shared Analyses</p>
-              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#9C27B0' }}>3</p>
+            <div style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px' }}>
+              <p style={{ color: '#8b9096', fontSize: '12px', marginBottom: '4px' }}>Shared Analyses</p>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5a6169' }}>3</p>
             </div>
           </div>
         </div>
@@ -196,36 +196,36 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Advisors Tab */}
       {activeTab === 'advisors' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Find Expert Advisors</h3>
-          <p style={{ color: '#999', marginBottom: '20px', fontSize: '13px' }}>Connect with experienced mentors in your sector</p>
+          <h3 style={{ color: '#23282e', marginBottom: '16px', fontSize: '16px' }}>Find Expert Advisors</h3>
+          <p style={{ color: '#8b9096', marginBottom: '20px', fontSize: '13px' }}>Connect with experienced mentors in your sector</p>
 
           <div style={{ display: 'grid', gap: '16px' }}>
             {advisors.map((advisor, i) => (
-              <div key={i} style={{ padding: '20px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)' }}>
+              <div key={i} style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ color: '#fff', marginBottom: '8px', fontSize: '15px', fontWeight: '600' }}>
+                    <h4 style={{ color: '#23282e', marginBottom: '8px', fontSize: '15px', fontWeight: '600' }}>
                       {advisor.name}
                     </h4>
-                    <p style={{ color: '#999', fontSize: '12px', marginBottom: '12px' }}>
+                    <p style={{ color: '#8b9096', fontSize: '12px', marginBottom: '12px' }}>
                       {advisor.rating} ({advisor.reviews} reviews)
                     </p>
                     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       {advisor.expertise.map((exp: string, j: number) => (
-                        <span key={j} style={{ padding: '4px 12px', background: 'rgba(0, 255, 65, 0.2)', color: '#00ff41', borderRadius: '12px', fontSize: '11px', fontWeight: '600' }}>
+                        <span key={j} style={{ padding: '4px 12px', background: 'rgba(90, 107, 72, 0.10)', color: '#5A6B48', borderRadius: '12px', fontSize: '11px', fontWeight: '600' }}>
                           {exp}
                         </span>
                       ))}
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <p style={{ color: '#9C27B0', fontWeight: '700', marginBottom: '12px' }}>৳{advisor.hourly_rate}/hour</p>
+                    <p style={{ color: '#5a6169', fontWeight: '700', marginBottom: '12px' }}>৳{advisor.hourly_rate}/hour</p>
                     <button
                       onClick={() => handleRequestConsultation(advisor)}
                       style={{
                         padding: '10px 16px',
-                        background: '#9C27B0',
-                        color: '#fff',
+                        background: '#5a6169',
+                        color: '#23282e',
                         border: 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -246,25 +246,25 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Investors Tab */}
       {activeTab === 'investors' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Investor Outreach</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '16px', fontSize: '16px' }}>Investor Outreach</h3>
 
-          <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '2px solid #00ff41' }}>
-            <h4 style={{ color: '#00ff41', marginBottom: '12px', fontSize: '14px' }}>Send to Investors</h4>
-            <p style={{ color: '#ccc', fontSize: '12px', marginBottom: '12px' }}>Share your analysis with angel investors and VCs</p>
-            <button style={{ padding: '10px 16px', background: '#00ff41', color: '#000', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}>
+          <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '2px solid #5A6B48' }}>
+            <h4 style={{ color: '#5A6B48', marginBottom: '12px', fontSize: '14px' }}>Send to Investors</h4>
+            <p style={{ color: '#5a6169', fontSize: '12px', marginBottom: '12px' }}>Share your analysis with angel investors and VCs</p>
+            <button style={{ padding: '10px 16px', background: '#5A6B48', color: '#23282e', border: 'none', borderRadius: '6px', fontWeight: '700', cursor: 'pointer' }}>
               Share with Investors
             </button>
           </div>
 
-          <h4 style={{ color: '#fff', marginBottom: '16px', fontSize: '14px' }}>Outreach Status</h4>
+          <h4 style={{ color: '#23282e', marginBottom: '16px', fontSize: '14px' }}>Outreach Status</h4>
           <div style={{ display: 'grid', gap: '12px' }}>
             {outreachStatus.map((item, i) => (
-              <div key={i} style={{ padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={i} style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <p style={{ color: '#fff', fontWeight: '600' }}>{item.investor}</p>
-                  <p style={{ color: '#999', fontSize: '12px' }}>Sent {item.sent}</p>
+                  <p style={{ color: '#23282e', fontWeight: '600' }}>{item.investor}</p>
+                  <p style={{ color: '#8b9096', fontSize: '12px' }}>Sent {item.sent}</p>
                 </div>
-                <span style={{ padding: '6px 12px', background: item.status === 'interested' ? 'rgba(0, 255, 65, 0.2)' : item.status === 'viewed' ? 'rgba(33, 150, 243, 0.2)' : 'rgba(255, 152, 0, 0.2)', color: item.status === 'interested' ? '#00ff41' : item.status === 'viewed' ? '#2196F3' : '#FF9800', borderRadius: '4px', fontSize: '12px', fontWeight: '600' }}>
+                <span style={{ padding: '6px 12px', background: item.status === 'interested' ? 'rgba(90, 107, 72, 0.10)' : item.status === 'viewed' ? 'rgba(35, 40, 46, 0.05)' : 'rgba(156, 107, 31, 0.10)', color: item.status === 'interested' ? '#5A6B48' : item.status === 'viewed' ? '#5a6169' : '#9C6B1F', borderRadius: '4px', fontSize: '12px', fontWeight: '600' }}>
                   {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                 </span>
               </div>
@@ -276,10 +276,10 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Comments Tab */}
       {activeTab === 'comments' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Team Discussion</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '16px', fontSize: '16px' }}>Team Discussion</h3>
 
           {/* New Comment */}
-          <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
+          <div style={{ marginBottom: '24px', padding: '16px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)' }}>
             <textarea
               placeholder="Add your comment..."
               value={newComment}
@@ -287,10 +287,10 @@ const CollaborationHub: React.FC<Props> = () => {
               style={{
                 width: '100%',
                 padding: '12px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
+                background: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid rgba(35, 40, 46, 0.08)',
                 borderRadius: '6px',
-                color: '#ccc',
+                color: '#5a6169',
                 fontSize: '13px',
                 marginBottom: '12px',
                 minHeight: '80px',
@@ -302,8 +302,8 @@ const CollaborationHub: React.FC<Props> = () => {
               onClick={addComment}
               style={{
                 padding: '10px 16px',
-                background: '#4CAF50',
-                color: '#fff',
+                background: '#5A6B48',
+                color: '#23282e',
                 border: 'none',
                 borderRadius: '6px',
                 fontWeight: '600',
@@ -317,12 +317,12 @@ const CollaborationHub: React.FC<Props> = () => {
           {/* Comments List */}
           <div style={{ display: 'grid', gap: '12px' }}>
             {comments.map((comment, i) => (
-              <div key={i} style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div key={i} style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.08)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.08)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <p style={{ color: '#fff', fontWeight: '600', fontSize: '13px' }}>{comment.author}</p>
-                  <p style={{ color: '#999', fontSize: '11px' }}>{comment.created_at}</p>
+                  <p style={{ color: '#23282e', fontWeight: '600', fontSize: '13px' }}>{comment.author}</p>
+                  <p style={{ color: '#8b9096', fontSize: '11px' }}>{comment.created_at}</p>
                 </div>
-                <p style={{ color: '#ccc', fontSize: '13px', lineHeight: '1.5' }}>{comment.text}</p>
+                <p style={{ color: '#5a6169', fontSize: '13px', lineHeight: '1.5' }}>{comment.text}</p>
               </div>
             ))}
           </div>
@@ -332,7 +332,7 @@ const CollaborationHub: React.FC<Props> = () => {
       {/* Activity Tab */}
       {activeTab === 'activity' && (
         <div>
-          <h3 style={{ color: '#fff', marginBottom: '16px', fontSize: '16px' }}>Team Activity</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '16px', fontSize: '16px' }}>Team Activity</h3>
 
           <div style={{ display: 'grid', gap: '12px' }}>
             {[
@@ -341,11 +341,11 @@ const CollaborationHub: React.FC<Props> = () => {
               { time: '1 day ago', action: 'Team workspace created', icon: '' },
               { time: '1 day ago', action: 'John added Sarah as team member', icon: '' }
             ].map((activity, i) => (
-              <div key={i} style={{ padding: '16px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', gap: '12px' }}>
+              <div key={i} style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.08)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.08)', display: 'flex', gap: '12px' }}>
                 <span style={{ fontSize: '20px', minWidth: '24px', textAlign: 'center' }}>{activity.icon}</span>
                 <div style={{ flex: 1 }}>
-                  <p style={{ color: '#ccc', fontSize: '13px' }}>{activity.action}</p>
-                  <p style={{ color: '#999', fontSize: '11px', marginTop: '4px' }}>{activity.time}</p>
+                  <p style={{ color: '#5a6169', fontSize: '13px' }}>{activity.action}</p>
+                  <p style={{ color: '#8b9096', fontSize: '11px', marginTop: '4px' }}>{activity.time}</p>
                 </div>
               </div>
             ))}

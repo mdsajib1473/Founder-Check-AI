@@ -64,15 +64,15 @@ const PAGE_H = 297;
 const MARGIN = 16;
 const CONTENT_W = PAGE_W - MARGIN * 2;
 
-// Palette
-const NAVY: [number, number, number] = [15, 42, 71];
-const GREEN: [number, number, number] = [0, 150, 60];
-const AMBER: [number, number, number] = [190, 130, 0];
-const RED: [number, number, number] = [200, 55, 45];
-const BLUE: [number, number, number] = [33, 120, 210];
-const GREY: [number, number, number] = [120, 120, 120];
-const DARK: [number, number, number] = [45, 45, 45];
-const LIGHT_BG: [number, number, number] = [246, 246, 246];
+// Palette: the Auditor's Ledger tokens (Agent.md section 3)
+const NAVY: [number, number, number] = [35, 40, 46];      // Iron Ink
+const GREEN: [number, number, number] = [90, 107, 72];    // Moss (status: pass)
+const AMBER: [number, number, number] = [156, 107, 31];   // Ochre (status: caution)
+const RED: [number, number, number] = [138, 46, 51];      // Ledger Red (verdict accent)
+const BLUE: [number, number, number] = [90, 97, 105];     // secondary ink
+const GREY: [number, number, number] = [139, 144, 150];
+const DARK: [number, number, number] = [35, 40, 46];
+const LIGHT_BG: [number, number, number] = [242, 240, 233]; // Archive paper
 
 const isNum = (v: unknown): v is number => typeof v === 'number' && isFinite(v);
 
@@ -141,23 +141,23 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
   };
 
   const pageTitle = (title: string) => {
-    doc.setFont('helvetica', 'bold');
+    doc.setFont('times', 'bold');
     doc.setFontSize(19);
     doc.setTextColor(...NAVY);
     doc.text(title, MARGIN, y + 6);
-    doc.setDrawColor(0, 200, 80);
-    doc.setLineWidth(1);
+    doc.setDrawColor(...NAVY);
+    doc.setLineWidth(0.8);
     doc.line(MARGIN, y + 10, MARGIN + CONTENT_W, y + 10);
     y += 18;
   };
 
   const sectionTitle = (title: string) => {
     ensure(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
+    doc.setFont('times', 'bold');
+    doc.setFontSize(12.5);
     doc.setTextColor(...NAVY);
     doc.text(title, MARGIN, y + 4);
-    doc.setDrawColor(210, 210, 210);
+    doc.setDrawColor(210, 208, 200);
     doc.setLineWidth(0.4);
     doc.line(MARGIN, y + 6.5, MARGIN + CONTENT_W, y + 6.5);
     y += 12;
@@ -213,36 +213,43 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
     doc.setTextColor(...GREY);
     doc.text(label.toUpperCase(), x + 4, y + 5.5);
     const isNa = value === NOT_AVAILABLE;
+    doc.setFont('courier', 'bold');
     doc.setFontSize(isNa ? 8 : 13);
     doc.setTextColor(...valueColor);
     doc.text(value, x + 4, y + (isNa ? 12.5 : 14));
   };
 
-  // ----- cover page ---------------------------------------------------------
+  // ----- cover page: paper ground, ink rules, one ledger-red verdict --------
 
-  doc.setFillColor(...NAVY);
+  doc.setFillColor(...LIGHT_BG);
   doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(30);
-  doc.setTextColor(0, 255, 65);
-  doc.text('FounderCheck', PAGE_W / 2, 45, { align: 'center' });
-  doc.setFontSize(11);
-  doc.setTextColor(0, 220, 220);
-  doc.text('ANALYSIS REPORT', PAGE_W / 2, 54, { align: 'center' });
+  doc.setDrawColor(...DARK);
+  doc.setLineWidth(0.6);
+  doc.line(MARGIN, 30, PAGE_W - MARGIN, 30);
 
-  doc.setFontSize(20);
-  doc.setTextColor(255, 255, 255);
+  doc.setFont('times', 'bold');
+  doc.setFontSize(28);
+  doc.setTextColor(...DARK);
+  doc.text('FounderCheck', PAGE_W / 2, 46, { align: 'center' });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(...GREY);
+  doc.text('D I L I G E N C E   R E P O R T', PAGE_W / 2, 55, { align: 'center' });
+
+  doc.setFont('times', 'bold');
+  doc.setFontSize(21);
+  doc.setTextColor(...DARK);
   const titleLines: string[] = doc.splitTextToSize(text(analysis.idea_extraction?.title, 'Startup Analysis'), 160);
   let coverY = 110;
   for (const line of titleLines.slice(0, 4)) {
     doc.text(line, PAGE_W / 2, coverY, { align: 'center' });
-    coverY += 9;
+    coverY += 10;
   }
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(200, 200, 200);
+  doc.setTextColor(...BLUE);
   const descLines: string[] = doc.splitTextToSize(text(analysis.idea_extraction?.description, ''), 150);
   coverY += 4;
   for (const line of descLines.slice(0, 3)) {
@@ -250,38 +257,42 @@ export const generateEnhancedPDF = (analysis: AnalysisData) => {
     coverY += 5.5;
   }
 
-  // Score box
-  const boxW = 70;
+  // Verdict box: hairline frame, the one ledger-red mark on the page
+  const boxW = 72;
   const boxX = (PAGE_W - boxW) / 2;
-  const boxY = coverY + 10;
-  doc.setDrawColor(0, 255, 65);
-  doc.setLineWidth(0.8);
-  doc.roundedRect(boxX, boxY, boxW, 42, 4, 4, 'S');
-  doc.setFont('helvetica', 'bold');
+  const boxY = coverY + 12;
+  doc.setDrawColor(...DARK);
+  doc.setLineWidth(0.4);
+  doc.rect(boxX, boxY, boxW, 44, 'S');
+  doc.setFont('times', 'bold');
   if (readiness !== null) {
-    doc.setFontSize(34);
-    doc.setTextColor(0, 255, 65);
+    doc.setFontSize(36);
+    doc.setTextColor(...RED);
     doc.text(readiness.toFixed(1), PAGE_W / 2, boxY + 20, { align: 'center' });
+    doc.setFont('courier', 'normal');
     doc.setFontSize(10);
-    doc.setTextColor(190, 190, 190);
+    doc.setTextColor(...GREY);
     doc.text('/ 10', PAGE_W / 2, boxY + 27, { align: 'center' });
   } else {
     doc.setFontSize(13);
-    doc.setTextColor(0, 255, 65);
+    doc.setTextColor(...RED);
     doc.text(NOT_AVAILABLE, PAGE_W / 2, boxY + 22, { align: 'center' });
   }
-  doc.setFontSize(12);
-  doc.setTextColor(0, 255, 65);
-  doc.text(statusText(readiness), PAGE_W / 2, boxY + 36, { align: 'center' });
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...DARK);
+  doc.text(statusText(readiness), PAGE_W / 2, boxY + 37, { align: 'center' });
 
+  doc.setDrawColor(...DARK);
+  doc.setLineWidth(0.6);
+  doc.line(MARGIN, 252, PAGE_W - MARGIN, 252);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(170, 170, 170);
+  doc.setTextColor(...GREY);
   const generated = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   doc.text(`Generated on ${generated}`, PAGE_W / 2, 262, { align: 'center' });
   doc.text('FounderCheck - AI-Powered Startup Validator', PAGE_W / 2, 268, { align: 'center' });
   doc.setFontSize(7.5);
-  doc.setTextColor(140, 140, 140);
   doc.text('AI-generated assessment for exploration and learning, not investment advice.', PAGE_W / 2, 276, { align: 'center' });
 
   // ----- page 2: executive dashboard ----------------------------------------

@@ -41,14 +41,14 @@ const ExtendedPending = ({ status, label, onRetry }: { status: string; label: st
     {status === 'loading' ? (
       <>
         <h3>Calculating {label}...</h3>
-        <p style={{ color: '#999', marginTop: '10px' }}>
+        <p style={{ color: '#8b9096', marginTop: '10px' }}>
           The extended analysis is still running. This usually takes under a minute.
         </p>
       </>
     ) : (
       <>
         <h3>{label} not available yet</h3>
-        <p style={{ color: '#999', marginTop: '10px' }}>
+        <p style={{ color: '#8b9096', marginTop: '10px' }}>
           This section needs the extended analysis to finish before it can show real data.
         </p>
         <button className="btn-secondary" style={{ marginTop: '16px' }} onClick={onRetry}>
@@ -72,8 +72,8 @@ const LogoIcon = ({ size = 24 }: { size?: number }) => (
 
     <defs>
       <linearGradient id="logoGradient" x1="0" y1="0" x2="24" y2="24">
-        <stop offset="0%" stopColor="#2563eb" />
-        <stop offset="100%" stopColor="#3b82f6" />
+        <stop offset="0%" stopColor="#5a6169" />
+        <stop offset="100%" stopColor="#5a6169" />
       </linearGradient>
     </defs>
   </svg>
@@ -81,7 +81,6 @@ const LogoIcon = ({ size = 24 }: { size?: number }) => (
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false)
   const [page, setPage] = useState<'home' | 'history' | 'qa'>('home')
   const [idea, setIdea] = useState('')
   const [analysis, setAnalysis] = useState<any>(null)
@@ -101,9 +100,8 @@ function App() {
   const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
     checkBackendHealth()
-  }, [isDarkMode])
+  }, [])
 
   const checkBackendHealth = async () => {
     try {
@@ -184,22 +182,22 @@ function App() {
 
   const exportToPDF = () => {
     if (!analysis) {
-      alert('No analysis to export')
+      alert('Run an analysis first, then download its report.')
       return
     }
     try {
       generateEnhancedPDF(analysis)
-      alert('Enterprise-grade PDF report generated successfully!')
+      alert('Report downloaded. Check your downloads folder.')
     } catch (err) {
       console.error('PDF export error:', err)
-      alert('Failed to export PDF. Please try again.')
+      alert('The report could not be generated. Try again, and if it keeps failing, reload the page.')
     }
   }
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!idea.trim() || idea.length < 10) {
-      setError('Enter at least 10 characters')
+      setError('Describe your idea in at least 10 characters so the analysis has something to work with.')
       return
     }
 
@@ -223,7 +221,7 @@ function App() {
         loadExtended(data.analysis_id)
       }
     } catch (err) {
-      setError('Failed to analyze idea')
+      setError('The analysis could not be completed. Check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -259,7 +257,7 @@ function App() {
       setHistory(data)
       setPage('history')
     } catch (err) {
-      setError('Failed to load history')
+      setError('Your history could not be loaded. Refresh the page to try again.')
     }
   }
 
@@ -272,7 +270,7 @@ function App() {
       setPage('home')
       setActiveTab('overview')
     } catch (err) {
-      setError('Failed to load analysis')
+      setError('That analysis could not be opened. Return to history and try again.')
     }
   }
 
@@ -293,7 +291,7 @@ function App() {
       setQAAnswer('')
       setPage('qa')
     } catch (err) {
-      setError('Failed to start Q&A')
+      setError('The interview could not be started. Try again in a moment.')
     }
   }
 
@@ -333,7 +331,7 @@ function App() {
         setQAAnswer('')
       }
     } catch (err) {
-      setError('Failed to submit answer')
+      setError('Your answer could not be submitted. It has not been lost, try submitting again.')
     }
   }
 
@@ -352,11 +350,7 @@ function App() {
               <button className="nav-link">Pricing</button>
               <button className="nav-link">About</button>
             </div>
-            <div className="landing-right">
-              <button onClick={() => setIsDarkMode(!isDarkMode)} className="landing-theme">
-                {isDarkMode ? 'Light' : 'Dark'}
-              </button>
-            </div>
+            <div className="landing-right"></div>
           </div>
         </div>
 
@@ -391,7 +385,7 @@ function App() {
                 onClick={() => document.getElementById('features-section')?.scrollIntoView({behavior: 'smooth'})}
                 className="hero-cta"
               >
-                Start Validating Free
+                Begin the assessment
               </button>
             </div>
           </section>
@@ -667,7 +661,7 @@ function App() {
                   />
                 </div>
 
-                {authError && <p style={{ color: '#e5484d', fontSize: '13px', marginBottom: '10px' }}>{authError}</p>}
+                {authError && <p style={{ color: '#9C6B1F', fontSize: '13px', marginBottom: '10px' }}>{authError}</p>}
 
                 <button type="submit" className="form-submit">
                   {authMode === 'register' ? 'Create Account' : 'Sign In'}
@@ -678,7 +672,7 @@ function App() {
                 <button
                   type="button"
                   onClick={() => { setAuthMode(authMode === 'register' ? 'login' : 'register'); setAuthError(null); }}
-                  style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', textDecoration: 'underline', fontSize: 'inherit', padding: 0 }}
+                  style={{ background: 'none', border: 'none', color: '#5a6169', cursor: 'pointer', textDecoration: 'underline', fontSize: 'inherit', padding: 0 }}
                 >
                   {authMode === 'register' ? 'Sign in' : 'Create an account'}
                 </button>
@@ -709,9 +703,6 @@ function App() {
             <button className="nav-item active">History</button>
           </nav>
           <div className="header-right">
-            <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-              {isDarkMode ? 'Light' : 'Dark'}
-            </button>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </header>
@@ -721,7 +712,7 @@ function App() {
             <div className="card">
               <h2>Analysis History</h2>
               {history.length === 0 ? (
-                <p className="empty-state">No analyses yet</p>
+                <p className="empty-state">No analyses yet. Run your first analysis and it will appear here.</p>
               ) : (
                 <div className="history-grid">
                   {history.map((item) => (
@@ -763,9 +754,6 @@ function App() {
             <button className="nav-item">Investor Q&A</button>
           </nav>
           <div className="header-right">
-            <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-              {isDarkMode ? 'Light' : 'Dark'}
-            </button>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </header>
@@ -799,11 +787,11 @@ function App() {
                 <h3 className="qa-question">{qaSession?.question}</h3>
 
                 {qaResults.length > 0 && (
-                  <div style={{ marginBottom: '16px', padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', fontSize: '13px' }}>
+                  <div style={{ marginBottom: '16px', padding: '12px', borderRadius: '8px', border: '1px solid var(--hairline)', fontSize: '13px' }}>
                     <p style={{ fontWeight: 'bold', marginBottom: '4px' }}>
                       Previous answer: {qaResults[qaResults.length - 1].score != null ? `${qaResults[qaResults.length - 1].score}/10` : 'Not scored'}
                     </p>
-                    <p style={{ color: '#999' }}>{qaResults[qaResults.length - 1].feedback}</p>
+                    <p style={{ color: '#8b9096' }}>{qaResults[qaResults.length - 1].feedback}</p>
                   </div>
                 )}
 
@@ -844,11 +832,8 @@ function App() {
         </nav>
         <div className="header-right">
           <span className={`status ${backendHealth ? 'online' : 'offline'}`}>
-            {backendHealth ? '● Online' : '● Offline'}
+            {backendHealth ? 'Backend connected' : 'Backend offline'}
           </span>
-          <button className="theme-toggle" onClick={() => setIsDarkMode(!isDarkMode)}>
-            {isDarkMode ? '' : ''}
-          </button>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </header>
@@ -875,7 +860,7 @@ function App() {
                 </div>
 
                 <button type="submit" disabled={loading || !idea.trim()} className="btn-primary btn-large">
-                  {loading ? '⏳ Analyzing...' : 'Analyze My Idea'}
+                  {loading ? 'Analyzing, this takes about a minute' : 'Run the analysis'}
                 </button>
               </form>
 
@@ -907,33 +892,68 @@ function App() {
                 }} className="btn-secondary">← New Analysis</button>
               </div>
 
+              {/* The signature element: readiness as a calibrated auditor's meter */}
               <div className="score-card-main">
-                <div className="score-circle" style={{background: `conic-gradient(var(--accent) ${(analysis.overall_readiness_score || 0) * 10}%, rgba(26, 37, 85, 0.8) 0)`}}>
-                  <div className="score-circle-inner">
-                    <span className="score-num">{analysis.overall_readiness_score != null ? analysis.overall_readiness_score.toFixed(1) : 'Pending'}</span>
-                    <span className="score-denom">/ 10</span>
+                <div className="gauge-block">
+                  <div className="gauge-readout">
+                    <span className="gauge-num">{analysis.overall_readiness_score != null ? analysis.overall_readiness_score.toFixed(1) : 'Pending'}</span>
+                    {analysis.overall_readiness_score != null && <span className="gauge-denom">/ 10</span>}
+                  </div>
+                  <p className="gauge-verdict">
+                    {analysis.overall_readiness_score == null ? 'Assessment incomplete'
+                      : analysis.overall_readiness_score >= 8 ? 'Verdict: Strong'
+                      : analysis.overall_readiness_score >= 6 ? 'Verdict: Moderate'
+                      : 'Verdict: Needs Work'}
+                  </p>
+                  <div className="gauge-rule" role="img" aria-label={`Readiness ${analysis.overall_readiness_score ?? 'pending'} out of 10`}>
+                    <div className="gauge-track"></div>
+                    <div className="gauge-ticks">
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((t) => (
+                        <div key={t} className="gauge-tick"></div>
+                      ))}
+                    </div>
+                    {[0, 5, 10].map((t) => (
+                      <span key={t} className="gauge-tick-label" style={{ left: `${t * 10}%` }}>{t}</span>
+                    ))}
+                    {analysis.overall_readiness_score != null && (
+                      <>
+                        <div className="gauge-fill" style={{ width: `${analysis.overall_readiness_score * 10}%` }}></div>
+                        <div className="gauge-needle" style={{ left: `${analysis.overall_readiness_score * 10}%` }}></div>
+                      </>
+                    )}
+                  </div>
+                  <div className="gauge-factors">
+                    <div className="factor-row">
+                      <span>Market demand</span>
+                      <span className="leader"></span>
+                      <span className="factor-val">{analysis.demand_analysis?.score != null ? `${Number(analysis.demand_analysis.score).toFixed(1)} / 10` : 'Pending'}</span>
+                    </div>
+                    <div className="factor-row">
+                      <span>Regulatory risk</span>
+                      <span className="leader"></span>
+                      <span className="factor-val">{analysis.regulatory_analysis?.risk_score != null ? `${Number(analysis.regulatory_analysis.risk_score).toFixed(1)} / 10` : 'Pending'}</span>
+                    </div>
+                    <div className="factor-row">
+                      <span>Business model review</span>
+                      <span className="leader"></span>
+                      <span className="factor-val">Included</span>
+                    </div>
                   </div>
                 </div>
                 <div className="score-info">
                   <h3>Readiness Score</h3>
-                  <p className="score-verdict">{analysis.overall_readiness_score >= 8 ? 'Strong' : analysis.overall_readiness_score >= 6 ? 'Moderate' : 'Needs Work'}</p>
-                  <p className="score-factors">
-                    Based on demand {analysis.demand_analysis?.score != null ? `${analysis.demand_analysis.score}/10` : 'pending'},
-                    regulatory risk {analysis.regulatory_analysis?.risk_score != null ? `${analysis.regulatory_analysis.risk_score}/10` : 'pending'},
-                    and business model review
-                  </p>
+                  <p>The overall assessment of this idea, driven by the factors listed on the left.</p>
                   <div className="action-buttons">
-                    <button onClick={exportToPDF} className="action-btn">Export Report</button>
+                    <button onClick={exportToPDF} className="action-btn">Download report</button>
                     <button onClick={() => {
-                      const text = `Check out this startup analysis: ${analysis.idea_extraction?.title}\n\nReadiness Score: ${analysis.overall_readiness_score}/10\n\nAnalyzed with FounderCheck - The startup validator for Bangladesh\nhttps://foundercheck.io`;
-                      navigator.share?.({ title: 'FounderCheck Analysis', text }) || alert('Share: ' + text);
-                    }} className="action-btn">Share</button>
-                    <button onClick={() => alert('Analysis saved to your history!')} className="action-btn">Save</button>
+                      const text = `Startup analysis: ${analysis.idea_extraction?.title}\n\nReadiness Score: ${analysis.overall_readiness_score}/10\n\nAnalyzed with FounderCheck`;
+                      navigator.share?.({ title: 'FounderCheck Analysis', text }) || alert('Copy this summary:\n\n' + text);
+                    }} className="action-btn">Share summary</button>
                   </div>
                 </div>
               </div>
 
-              <p style={{ fontSize: '12px', color: '#999', margin: '10px 0 20px' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', margin: '10px 0 20px' }}>
                 This is an AI-generated startup assessment for exploration and learning, not investment advice or a guarantee of outcome.
               </p>
 
@@ -992,31 +1012,31 @@ function App() {
                     <h3>Market Demand Analysis</h3>
 
                     <div className="grid-2" style={{marginBottom: '30px'}}>
-                      <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
-                        <h4 style={{color: '#2196F3', marginBottom: '8px'}}>Market Size</h4>
-                        <p style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41'}}>{analysis.demand_analysis?.market_size}</p>
+                      <div style={{padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                        <h4 style={{color: '#5a6169', marginBottom: '8px'}}>Market Size</h4>
+                        <p style={{fontSize: '18px', fontWeight: 'bold', color: '#5A6B48'}}>{analysis.demand_analysis?.market_size}</p>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
-                        <h4 style={{color: '#F44336', marginBottom: '8px'}}>Competition</h4>
-                        <p style={{fontSize: '16px', color: '#ccc'}}>{analysis.demand_analysis?.competition}</p>
+                      <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
+                        <h4 style={{color: '#9C6B1F', marginBottom: '8px'}}>Competition</h4>
+                        <p style={{fontSize: '16px', color: '#5a6169'}}>{analysis.demand_analysis?.competition}</p>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '8px'}}>Market Score</h4>
+                      <div style={{padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)'}}>
+                        <h4 style={{color: '#5A6B48', marginBottom: '8px'}}>Market Score</h4>
                         <svg viewBox="0 0 100 100" style={{width: '100%', height: '80px', margin: '10px 0'}}>
-                          <circle cx="50" cy="50" r="45" fill="none" stroke="#333" strokeWidth="8" opacity="0.2"/>
+                          <circle cx="50" cy="50" r="45" fill="none" stroke="#23282e" strokeWidth="8" opacity="0.2"/>
                           <circle
                             cx="50"
                             cy="50"
                             r="45"
                             fill="none"
-                            stroke="#4CAF50"
+                            stroke="#5A6B48"
                             strokeWidth="8"
                             strokeDasharray={`${(analysis.demand_analysis?.score || 0) * 28.27} 282.7`}
                             opacity="0.9"
                           />
-                          <text x="50" y="58" textAnchor="middle" fill="#4CAF50" fontSize="24" fontWeight="bold">
+                          <text x="50" y="58" textAnchor="middle" fill="#5A6B48" fontSize="24" fontWeight="bold">
                             {analysis.demand_analysis?.score}/10
                           </text>
                         </svg>
@@ -1024,26 +1044,26 @@ function App() {
                     </div>
 
                     <div className="grid-2">
-                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '16px'}}>
+                      <div style={{padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)'}}>
+                        <h4 style={{color: '#5A6B48', marginBottom: '16px'}}>
                           Key Opportunities
                         </h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
                           {analysis.demand_analysis?.opportunities?.map((o: string, i: number) => (
-                            <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
+                            <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '6px', borderLeft: '3px solid #5A6B48', color: '#5a6169', fontSize: '13'}}>
                               {o}
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
-                        <h4 style={{color: '#FF9800', marginBottom: '16px'}}>
+                      <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
+                        <h4 style={{color: '#9C6B1F', marginBottom: '16px'}}>
                           Key Threats
                         </h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
                           {analysis.demand_analysis?.threats?.map((t: string, i: number) => (
-                            <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '6px', borderLeft: '3px solid #FF9800', color: '#ccc', fontSize: '13'}}>
+                            <li key={i} style={{padding: '12px', marginBottom: '8px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '6px', borderLeft: '3px solid #9C6B1F', color: '#5a6169', fontSize: '13'}}>
                               {t}
                             </li>
                           ))}
@@ -1065,16 +1085,16 @@ function App() {
                 {activeTab === 'canvas' && (
                   <div className="section">
                     <h3>Business Model Canvas</h3>
-                    <div style={{background: 'rgba(15, 42, 71, 0.3)', padding: '20px', borderRadius: '12px', overflowX: 'auto', border: '1px solid var(--border)'}}>
+                    <div style={{background: 'rgba(35, 40, 46, 0.04)', padding: '20px', borderRadius: '12px', overflowX: 'auto', border: '1px solid var(--hairline)'}}>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px', minWidth: '1000px'}}>
 
                         {/* KEY PARTNERS */}
-                        <div style={{background: 'rgba(33, 150, 243, 0.08)', border: '2px solid #2196F3', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#2196F3', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Partners</h4>
-                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(35, 40, 46, 0.05)', border: '2px solid #5a6169', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#5a6169', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Partners</h4>
+                          <div style={{fontSize: '12px', color: '#5a6169', lineHeight: '1.6'}}>
                             {Array.isArray(analysis.business_canvas?.key_partners)
                               ? analysis.business_canvas.key_partners.slice(0, 4).map((p: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(33, 150, 243, 0.2)' : 'none'}}>
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(35, 40, 46, 0.05)' : 'none'}}>
                                     • {typeof p === 'string' ? p.substring(0, 40) : JSON.stringify(p).substring(0, 40)}
                                   </div>
                                 ))
@@ -1084,12 +1104,12 @@ function App() {
                         </div>
 
                         {/* KEY ACTIVITIES */}
-                        <div style={{background: 'rgba(76, 175, 80, 0.08)', border: '2px solid #4CAF50', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#4CAF50', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Activities</h4>
-                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(90, 107, 72, 0.10)', border: '2px solid #5A6B48', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#5A6B48', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Activities</h4>
+                          <div style={{fontSize: '12px', color: '#5a6169', lineHeight: '1.6'}}>
                             {Array.isArray(analysis.business_canvas?.key_activities)
                               ? analysis.business_canvas.key_activities.slice(0, 4).map((a: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(76, 175, 80, 0.2)' : 'none'}}>
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(90, 107, 72, 0.10)' : 'none'}}>
                                     • {typeof a === 'string' ? a.substring(0, 40) : JSON.stringify(a).substring(0, 40)}
                                   </div>
                                 ))
@@ -1099,9 +1119,9 @@ function App() {
                         </div>
 
                         {/* VALUE PROPOSITION - CENTER & LARGE */}
-                        <div style={{gridColumn: '2 / 4', background: 'rgba(255, 193, 7, 0.1)', border: '3px solid #FFC107', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', minHeight: '240px'}}>
-                          <h4 style={{color: '#FFC107', margin: '0 0 16px 0', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Value Proposition</h4>
-                          <p style={{fontSize: '13px', color: '#fff', lineHeight: '1.6', margin: 0}}>
+                        <div style={{gridColumn: '2 / 4', background: 'rgba(156, 107, 31, 0.10)', border: '3px solid #9C6B1F', borderRadius: '8px', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', minHeight: '240px'}}>
+                          <h4 style={{color: '#9C6B1F', margin: '0 0 16px 0', fontSize: '14px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Value Proposition</h4>
+                          <p style={{fontSize: '13px', color: '#23282e', lineHeight: '1.6', margin: 0}}>
                             {typeof analysis.business_canvas?.value_proposition === 'string'
                               ? analysis.business_canvas.value_proposition.substring(0, 150)
                               : typeof analysis.business_canvas?.value_proposition === 'object' && Array.isArray(analysis.business_canvas.value_proposition)
@@ -1111,12 +1131,12 @@ function App() {
                         </div>
 
                         {/* CUSTOMER SEGMENTS */}
-                        <div style={{background: 'rgba(244, 67, 54, 0.08)', border: '2px solid #F44336', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#F44336', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Segments</h4>
-                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(156, 107, 31, 0.10)', border: '2px solid #9C6B1F', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#9C6B1F', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Segments</h4>
+                          <div style={{fontSize: '12px', color: '#5a6169', lineHeight: '1.6'}}>
                             {Array.isArray(analysis.business_canvas?.customer_segments)
                               ? analysis.business_canvas.customer_segments.slice(0, 4).map((s: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(244, 67, 54, 0.2)' : 'none'}}>
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(156, 107, 31, 0.10)' : 'none'}}>
                                     • {typeof s === 'string' ? s.substring(0, 40) : JSON.stringify(s).substring(0, 40)}
                                   </div>
                                 ))
@@ -1126,12 +1146,12 @@ function App() {
                         </div>
 
                         {/* CHANNELS */}
-                        <div style={{background: 'rgba(156, 39, 176, 0.08)', border: '2px solid #9C27B0', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#9C27B0', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Channels</h4>
-                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(35, 40, 46, 0.05)', border: '2px solid #5a6169', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#5a6169', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Channels</h4>
+                          <div style={{fontSize: '12px', color: '#5a6169', lineHeight: '1.6'}}>
                             {Array.isArray(analysis.business_canvas?.channels)
                               ? analysis.business_canvas.channels.slice(0, 4).map((c: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(156, 39, 176, 0.2)' : 'none'}}>
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 3 ? '1px solid rgba(35, 40, 46, 0.05)' : 'none'}}>
                                     • {typeof c === 'string' ? c.substring(0, 40) : JSON.stringify(c).substring(0, 40)}
                                   </div>
                                 ))
@@ -1141,13 +1161,13 @@ function App() {
                         </div>
 
                         {/* COST STRUCTURE */}
-                        <div style={{background: 'rgba(255, 87, 34, 0.08)', border: '2px solid #FF5722', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#FF5722', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Cost Structure</h4>
-                          <div style={{fontSize: '11px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(156, 107, 31, 0.10)', border: '2px solid #9C6B1F', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#9C6B1F', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Cost Structure</h4>
+                          <div style={{fontSize: '11px', color: '#5a6169', lineHeight: '1.6'}}>
                             {typeof analysis.business_canvas?.cost_structure === 'object' && !Array.isArray(analysis.business_canvas.cost_structure)
                               ? Object.entries(analysis.business_canvas.cost_structure as any).slice(0, 3).map((item: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(255, 87, 34, 0.2)' : 'none'}}>
-                                    <span style={{color: '#FF5722', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(156, 107, 31, 0.10)' : 'none'}}>
+                                    <span style={{color: '#9C6B1F', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
                                   </div>
                                 ))
                               : <div>Cost data not available</div>
@@ -1156,12 +1176,12 @@ function App() {
                         </div>
 
                         {/* CUSTOMER RELATIONSHIPS */}
-                        <div style={{background: 'rgba(0, 188, 212, 0.08)', border: '2px solid #00BCD4', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#00BCD4', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Relationships</h4>
-                          <div style={{fontSize: '12px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(90, 107, 72, 0.10)', border: '2px solid #5a6169', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#5a6169', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Relationships</h4>
+                          <div style={{fontSize: '12px', color: '#5a6169', lineHeight: '1.6'}}>
                             {Array.isArray(analysis.business_canvas?.customer_relationships)
                               ? analysis.business_canvas.customer_relationships.slice(0, 3).map((r: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(0, 188, 212, 0.2)' : 'none'}}>
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(90, 107, 72, 0.10)' : 'none'}}>
                                     • {typeof r === 'string' ? r.substring(0, 35) : JSON.stringify(r).substring(0, 35)}
                                   </div>
                                 ))
@@ -1171,13 +1191,13 @@ function App() {
                         </div>
 
                         {/* KEY RESOURCES */}
-                        <div style={{background: 'rgba(103, 58, 183, 0.08)', border: '2px solid #673AB7', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#673AB7', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Resources</h4>
-                          <div style={{fontSize: '11px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(35, 40, 46, 0.05)', border: '2px solid #5a6169', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#5a6169', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Key Resources</h4>
+                          <div style={{fontSize: '11px', color: '#5a6169', lineHeight: '1.6'}}>
                             {typeof analysis.business_canvas?.key_resources === 'object' && !Array.isArray(analysis.business_canvas.key_resources)
                               ? Object.entries(analysis.business_canvas.key_resources as any).slice(0, 3).map((item: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(103, 58, 183, 0.2)' : 'none'}}>
-                                    <span style={{color: '#673AB7', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(35, 40, 46, 0.05)' : 'none'}}>
+                                    <span style={{color: '#5a6169', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
                                   </div>
                                 ))
                               : <div>Resources not available</div>
@@ -1186,13 +1206,13 @@ function App() {
                         </div>
 
                         {/* REVENUE STREAMS */}
-                        <div style={{background: 'rgba(0, 255, 65, 0.08)', border: '2px solid #00FF41', borderRadius: '8px', padding: '16px'}}>
-                          <h4 style={{color: '#00FF41', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Revenue Streams</h4>
-                          <div style={{fontSize: '11px', color: '#ccc', lineHeight: '1.6'}}>
+                        <div style={{background: 'rgba(90, 107, 72, 0.10)', border: '2px solid #5A6B48', borderRadius: '8px', padding: '16px'}}>
+                          <h4 style={{color: '#5A6B48', margin: '0 0 12px 0', fontSize: '13px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px'}}>Revenue Streams</h4>
+                          <div style={{fontSize: '11px', color: '#5a6169', lineHeight: '1.6'}}>
                             {typeof analysis.business_canvas?.revenue_streams === 'object' && !Array.isArray(analysis.business_canvas.revenue_streams)
                               ? Object.entries(analysis.business_canvas.revenue_streams as any).slice(0, 3).map((item: any, i: number) => (
-                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(0, 255, 65, 0.2)' : 'none'}}>
-                                    <span style={{color: '#00FF41', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
+                                  <div key={i} style={{marginBottom: '8px', paddingBottom: '8px', borderBottom: i < 2 ? '1px solid rgba(90, 107, 72, 0.10)' : 'none'}}>
+                                    <span style={{color: '#5A6B48', fontWeight: 'bold'}}>•</span> {typeof item[1] === 'object' ? JSON.stringify(item[1]).substring(0, 30) : String(item[1]).substring(0, 30)}
                                   </div>
                                 ))
                               : <div>Revenue data not available</div>
@@ -1209,29 +1229,29 @@ function App() {
                     <h3>Competitive Landscape Analysis</h3>
 
                     {!analysis.competitor_analysis ? (
-                      <div style={{padding: '30px', textAlign: 'center', background: 'rgba(33, 150, 243, 0.05)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
-                        <p style={{color: '#999', fontSize: '14px'}}>Competitor analysis data loading...</p>
+                      <div style={{padding: '30px', textAlign: 'center', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                        <p style={{color: '#8b9096', fontSize: '14px'}}>Competitor analysis data loading...</p>
                       </div>
                     ) : (
                       <>
                     {/* Market Overview */}
                     {analysis.competitor_analysis?.market_overview && (
                       <div style={{marginBottom: '30px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px'}}>
-                        <div style={{padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid #2196F3'}}>
-                          <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Market Overview</p>
-                          <p style={{fontSize: '16px', fontWeight: 'bold', color: '#2196F3'}}>
+                        <div style={{padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid #5a6169'}}>
+                          <p style={{color: '#8b9096', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Market Overview</p>
+                          <p style={{fontSize: '16px', fontWeight: 'bold', color: '#5a6169'}}>
                             {typeof analysis.competitor_analysis.market_overview === 'object'
                               ? JSON.stringify(analysis.competitor_analysis.market_overview).substring(0, 50)
                               : analysis.competitor_analysis.market_overview}
                           </p>
                         </div>
-                        <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid #4CAF50'}}>
-                          <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Key Insight</p>
-                          <p style={{fontSize: '14px', fontWeight: 'bold', color: '#4CAF50'}}>Growing Market</p>
+                        <div style={{padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid #5A6B48'}}>
+                          <p style={{color: '#8b9096', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Key Insight</p>
+                          <p style={{fontSize: '14px', fontWeight: 'bold', color: '#5A6B48'}}>Growing Market</p>
                         </div>
-                        <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '1px solid #FF9800'}}>
-                          <p style={{color: '#999', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Competition</p>
-                          <p style={{fontSize: '14px', fontWeight: 'bold', color: '#FF9800'}}>Moderate-High</p>
+                        <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid #9C6B1F'}}>
+                          <p style={{color: '#8b9096', fontSize: '11px', textTransform: 'uppercase', marginBottom: '4px'}}>Competition</p>
+                          <p style={{fontSize: '14px', fontWeight: 'bold', color: '#9C6B1F'}}>Moderate-High</p>
                         </div>
                       </div>
                     )}
@@ -1239,32 +1259,32 @@ function App() {
                     {/* Direct Competitors */}
                     {Array.isArray(analysis.competitor_analysis?.direct_competitors) && analysis.competitor_analysis.direct_competitors.length > 0 && (
                       <>
-                        <h4 style={{marginBottom: '20px', color: '#fff'}}>Direct Competitors</h4>
-                        <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)'}}>
+                        <h4 style={{marginBottom: '20px', color: '#23282e'}}>Direct Competitors</h4>
+                        <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '8px', border: '1px solid var(--hairline)'}}>
                           {analysis.competitor_analysis.direct_competitors.map((c: any, i: number) => (
                             <div key={i} style={{marginBottom: '20px'}}>
                               <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
                                 <div style={{display: 'flex', alignItems: 'center', gap: '8px', flex: 1}}>
-                                  <span style={{fontSize: '18px', fontWeight: 'bold', color: '#00ff41', width: '24px'}}>#{i + 1}</span>
+                                  <span style={{fontSize: '18px', fontWeight: 'bold', color: '#5A6B48', width: '24px'}}>#{i + 1}</span>
                                   <div>
-                                    <p style={{fontSize: '14px', fontWeight: 'bold', color: '#fff', margin: 0}}>{c.name || `Competitor ${i + 1}`}</p>
-                                    <p style={{fontSize: '11px', color: '#999', margin: '2px 0'}}>{c.market_share != null ? `${String(c.market_share).replace(/%+$/, '')}% market share` : 'Market share not available'}</p>
+                                    <p style={{fontSize: '14px', fontWeight: 'bold', color: '#23282e', margin: 0}}>{c.name || `Competitor ${i + 1}`}</p>
+                                    <p style={{fontSize: '11px', color: '#8b9096', margin: '2px 0'}}>{c.market_share != null ? `${String(c.market_share).replace(/%+$/, '')}% market share` : 'Market share not available'}</p>
                                   </div>
                                 </div>
                               </div>
 
                               {/* Competitor Info */}
-                              <div style={{padding: '12px', background: 'rgba(0, 255, 65, 0.05)', borderRadius: '6px', fontSize: '12px', color: '#ccc'}}>
+                              <div style={{padding: '12px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '6px', fontSize: '12px', color: '#5a6169'}}>
                                 <div style={{marginBottom: '8px'}}>
-                                  <strong style={{color: '#00ff41'}}>Strength:</strong> {c.strength || 'Strong market presence'}
+                                  <strong style={{color: '#5A6B48'}}>Strength:</strong> {c.strength || 'Strong market presence'}
                                 </div>
                                 <div>
-                                  <strong style={{color: '#FF9800'}}>Weakness:</strong> {c.weakness || 'Limited regional coverage'}
+                                  <strong style={{color: '#9C6B1F'}}>Weakness:</strong> {c.weakness || 'Limited regional coverage'}
                                 </div>
                               </div>
 
                               {i < analysis.competitor_analysis.direct_competitors.length - 1 && (
-                                <div style={{borderBottom: '1px solid rgba(255, 255, 255, 0.1)', margin: '16px 0'}}></div>
+                                <div style={{borderBottom: '1px solid rgba(35, 40, 46, 0.08)', margin: '16px 0'}}></div>
                               )}
                             </div>
                           ))}
@@ -1274,9 +1294,9 @@ function App() {
 
                     {/* Competitive Advantage */}
                     {analysis.competitor_analysis?.competitive_advantage && (
-                      <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '2px solid #00ff41'}}>
-                        <h4 style={{color: '#00ff41', marginBottom: '12px'}}>Your Competitive Advantage</h4>
-                        <p style={{color: '#ccc', fontSize: '14px', lineHeight: '1.6', margin: 0}}>
+                      <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '2px solid #5A6B48'}}>
+                        <h4 style={{color: '#5A6B48', marginBottom: '12px'}}>Your Competitive Advantage</h4>
+                        <p style={{color: '#5a6169', fontSize: '14px', lineHeight: '1.6', margin: 0}}>
                           {typeof analysis.competitor_analysis.competitive_advantage === 'string'
                             ? analysis.competitor_analysis.competitive_advantage
                             : 'Unique value proposition in the market'}
@@ -1286,11 +1306,11 @@ function App() {
 
                     {/* Market Gaps */}
                     {Array.isArray(analysis.competitor_analysis?.market_gaps) && analysis.competitor_analysis.market_gaps.length > 0 && (
-                      <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>Market Gaps & Opportunities</h4>
+                      <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)'}}>
+                        <h4 style={{color: '#5A6B48', marginBottom: '14px'}}>Market Gaps & Opportunities</h4>
                         <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
                           {analysis.competitor_analysis.market_gaps.map((gap: string, i: number) => (
-                            <li key={i} style={{padding: '10px', marginBottom: '8px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '6px', borderLeft: '3px solid #4CAF50', color: '#ccc', fontSize: '13'}}>
+                            <li key={i} style={{padding: '10px', marginBottom: '8px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '6px', borderLeft: '3px solid #5A6B48', color: '#5a6169', fontSize: '13'}}>
                               {gap}
                             </li>
                           ))}
@@ -1300,11 +1320,11 @@ function App() {
 
                     {/* Threat Assessment */}
                     {analysis.competitor_analysis?.threat_level && (
-                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '2px solid #FF9800'}}>
+                      <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '2px solid #9C6B1F'}}>
                         <div style={{display: 'flex', alignItems: 'center', gap: '12px'}}>
                           <div>
-                            <p style={{fontSize: '12px', color: '#999', margin: '0 0 4px 0', textTransform: 'uppercase'}}>Threat Level</p>
-                            <p style={{fontSize: '18px', fontWeight: 'bold', color: '#FF9800', margin: 0}}>
+                            <p style={{fontSize: '12px', color: '#8b9096', margin: '0 0 4px 0', textTransform: 'uppercase'}}>Threat Level</p>
+                            <p style={{fontSize: '18px', fontWeight: 'bold', color: '#9C6B1F', margin: 0}}>
                               {analysis.competitor_analysis.threat_level}
                             </p>
                           </div>
@@ -1323,51 +1343,51 @@ function App() {
                   <div className="section">
                     <h3>Bangladesh Market Impact Assessment</h3>
 
-                    <div style={{marginBottom: '30px', padding: '30px', background: 'linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(0, 255, 65, 0.1))', borderRadius: '12px', border: '2px solid #2196F3'}}>
+                    <div style={{marginBottom: '30px', padding: '30px', background: 'linear-gradient(135deg, rgba(35, 40, 46, 0.05), rgba(90, 107, 72, 0.10))', borderRadius: '12px', border: '2px solid #5a6169'}}>
                       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         <div>
-                          <p style={{color: '#999', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase'}}>Market Impact Score</p>
-                          <p style={{fontSize: '40px', fontWeight: 'bold', color: '#00ff41'}}>{analysis.bangladesh_impact?.impact_score}/10</p>
+                          <p style={{color: '#8b9096', fontSize: '12px', marginBottom: '8px', textTransform: 'uppercase'}}>Market Impact Score</p>
+                          <p style={{fontSize: '40px', fontWeight: 'bold', color: '#5A6B48'}}>{analysis.bangladesh_impact?.impact_score}/10</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid-2" style={{marginBottom: '30px'}}>
-                      <div style={{padding: '20px', background: 'rgba(244, 67, 54, 0.08)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
-                        <h4 style={{color: '#F44336', marginBottom: '14px'}}>Local Regulations</h4>
+                      <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
+                        <h4 style={{color: '#9C6B1F', marginBottom: '14px'}}>Local Regulations</h4>
                         <ul style={{listStyle: 'none', padding: 0}}>
                           {asList(analysis.bangladesh_impact?.local_regulations).map((r: any, i: number) => (
-                            <li key={i} style={{padding: '8px 0', borderBottom: '1px solid rgba(244, 67, 54, 0.2)', color: '#ccc', fontSize: '13'}}>
+                            <li key={i} style={{padding: '8px 0', borderBottom: '1px solid rgba(156, 107, 31, 0.10)', color: '#5a6169', fontSize: '13'}}>
                               {asText(r)}
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '14px'}}>Market Potential</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.market_potential)}</p>
+                      <div style={{padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)'}}>
+                        <h4 style={{color: '#5A6B48', marginBottom: '14px'}}>Market Potential</h4>
+                        <p style={{color: '#5a6169', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.market_potential)}</p>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
-                        <h4 style={{color: '#9C27B0', marginBottom: '14px'}}>Cultural Factors</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.cultural_factors)}</p>
+                      <div style={{padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                        <h4 style={{color: '#5a6169', marginBottom: '14px'}}>Cultural Factors</h4>
+                        <p style={{color: '#5a6169', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.cultural_factors)}</p>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
-                        <h4 style={{color: '#FF9800', marginBottom: '14px'}}>Economic Factors</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.economic_factors)}</p>
+                      <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
+                        <h4 style={{color: '#9C6B1F', marginBottom: '14px'}}>Economic Factors</h4>
+                        <p style={{color: '#5a6169', lineHeight: '1.6', fontSize: '13'}}>{asText(analysis.bangladesh_impact?.economic_factors)}</p>
                       </div>
                     </div>
 
-                    <div style={{padding: '24px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '12px', border: '2px solid #00ff41'}}>
-                      <h4 style={{color: '#00ff41', marginBottom: '16px'}}>
+                    <div style={{padding: '24px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '12px', border: '2px solid #5A6B48'}}>
+                      <h4 style={{color: '#5A6B48', marginBottom: '16px'}}>
                         Localization Strategy for Bangladesh
                       </h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px'}}>
                         {asList(analysis.bangladesh_impact?.localization_recommendations).map((r: any, i: number) => (
-                          <div key={i} style={{padding: '14px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '1px solid #00ff41'}}>
-                            <span style={{color: '#ccc', fontSize: '13', lineHeight: '1.5'}}>{asText(r)}</span>
+                          <div key={i} style={{padding: '14px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid #5A6B48'}}>
+                            <span style={{color: '#5a6169', fontSize: '13', lineHeight: '1.5'}}>{asText(r)}</span>
                           </div>
                         ))}
                       </div>
@@ -1383,35 +1403,35 @@ function App() {
                     <h3>SWOT Analysis</h3>
                     <svg viewBox="0 0 800 600" className="swot-matrix">
                       {/* Quadrants */}
-                      <rect x="10" y="10" width="390" height="280" fill="rgba(76, 175, 80, 0.08)" stroke="#4CAF50" strokeWidth="2" rx="6"/>
-                      <rect x="400" y="10" width="390" height="280" fill="rgba(255, 152, 0, 0.08)" stroke="#FF9800" strokeWidth="2" rx="6"/>
-                      <rect x="10" y="290" width="390" height="300" fill="rgba(33, 150, 243, 0.08)" stroke="#2196F3" strokeWidth="2" rx="6"/>
-                      <rect x="400" y="290" width="390" height="300" fill="rgba(244, 67, 54, 0.08)" stroke="#F44336" strokeWidth="2" rx="6"/>
+                      <rect x="10" y="10" width="390" height="280" fill="rgba(90, 107, 72, 0.10)" stroke="#5A6B48" strokeWidth="2" rx="6"/>
+                      <rect x="400" y="10" width="390" height="280" fill="rgba(156, 107, 31, 0.10)" stroke="#9C6B1F" strokeWidth="2" rx="6"/>
+                      <rect x="10" y="290" width="390" height="300" fill="rgba(35, 40, 46, 0.05)" stroke="#5a6169" strokeWidth="2" rx="6"/>
+                      <rect x="400" y="290" width="390" height="300" fill="rgba(156, 107, 31, 0.10)" stroke="#9C6B1F" strokeWidth="2" rx="6"/>
 
                       {/* Headers */}
-                      <text x="205" y="40" textAnchor="middle" fill="#4CAF50" fontSize="18" fontWeight="bold">STRENGTHS</text>
-                      <text x="595" y="40" textAnchor="middle" fill="#FF9800" fontSize="18" fontWeight="bold">WEAKNESSES</text>
-                      <text x="205" y="320" textAnchor="middle" fill="#2196F3" fontSize="18" fontWeight="bold">OPPORTUNITIES</text>
-                      <text x="595" y="320" textAnchor="middle" fill="#F44336" fontSize="18" fontWeight="bold">THREATS</text>
+                      <text x="205" y="40" textAnchor="middle" fill="#5A6B48" fontSize="18" fontWeight="bold">STRENGTHS</text>
+                      <text x="595" y="40" textAnchor="middle" fill="#9C6B1F" fontSize="18" fontWeight="bold">WEAKNESSES</text>
+                      <text x="205" y="320" textAnchor="middle" fill="#5a6169" fontSize="18" fontWeight="bold">OPPORTUNITIES</text>
+                      <text x="595" y="320" textAnchor="middle" fill="#9C6B1F" fontSize="18" fontWeight="bold">THREATS</text>
 
                       {/* Strengths content */}
                       {asList(analysis.swot_analysis?.strengths).slice(0, 3).map((s: any, i: number) => (
-                        <text key={i} x="30" y={70 + i * 60} fill="#ccc" fontSize="13">• {asText(s)}</text>
+                        <text key={i} x="30" y={70 + i * 60} fill="#5a6169" fontSize="13">• {asText(s)}</text>
                       ))}
 
                       {/* Weaknesses content */}
                       {asList(analysis.swot_analysis?.weaknesses).slice(0, 3).map((w: any, i: number) => (
-                        <text key={i} x="420" y={70 + i * 60} fill="#ccc" fontSize="13">• {asText(w)}</text>
+                        <text key={i} x="420" y={70 + i * 60} fill="#5a6169" fontSize="13">• {asText(w)}</text>
                       ))}
 
                       {/* Opportunities content */}
                       {asList(analysis.swot_analysis?.opportunities).slice(0, 3).map((o: any, i: number) => (
-                        <text key={i} x="30" y={350 + i * 60} fill="#ccc" fontSize="13">• {asText(o)}</text>
+                        <text key={i} x="30" y={350 + i * 60} fill="#5a6169" fontSize="13">• {asText(o)}</text>
                       ))}
 
                       {/* Threats content */}
                       {asList(analysis.swot_analysis?.threats).slice(0, 3).map((t: any, i: number) => (
-                        <text key={i} x="420" y={350 + i * 60} fill="#ccc" fontSize="13">• {asText(t)}</text>
+                        <text key={i} x="420" y={350 + i * 60} fill="#5a6169" fontSize="13">• {asText(t)}</text>
                       ))}
                     </svg>
                   </div>
@@ -1426,54 +1446,54 @@ function App() {
 
                     <svg viewBox="0 0 900 300" className="gtm-timeline">
                       {/* Timeline line */}
-                      <line x1="50" y1="150" x2="850" y2="150" stroke="#00ff41" strokeWidth="2"/>
+                      <line x1="50" y1="150" x2="850" y2="150" stroke="#5A6B48" strokeWidth="2"/>
 
                       {/* Phase 1 */}
-                      <circle cx="150" cy="150" r="30" fill="#2196F3" opacity="0.9"/>
+                      <circle cx="150" cy="150" r="30" fill="#5a6169" opacity="0.9"/>
                       <text x="150" y="160" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">1</text>
-                      <text x="150" y="220" textAnchor="middle" fill="#2196F3" fontSize="13" fontWeight="bold">LAUNCH</text>
-                      <text x="150" y="240" textAnchor="middle" fill="#ccc" fontSize="11">30 days</text>
-                      <rect x="30" y="260" width="240" height="30" fill="rgba(33, 150, 243, 0.1)" stroke="#2196F3" strokeWidth="1" rx="4"/>
-                      <text x="150" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{asText(analysis.go_to_market?.phase_1).substring(0, 40)}</text>
+                      <text x="150" y="220" textAnchor="middle" fill="#5a6169" fontSize="13" fontWeight="bold">LAUNCH</text>
+                      <text x="150" y="240" textAnchor="middle" fill="#5a6169" fontSize="11">30 days</text>
+                      <rect x="30" y="260" width="240" height="30" fill="rgba(35, 40, 46, 0.05)" stroke="#5a6169" strokeWidth="1" rx="4"/>
+                      <text x="150" y="278" textAnchor="middle" fill="#5a6169" fontSize="10">{asText(analysis.go_to_market?.phase_1).substring(0, 40)}</text>
 
                       {/* Phase 2 */}
-                      <circle cx="450" cy="150" r="30" fill="#FF9800" opacity="0.9"/>
+                      <circle cx="450" cy="150" r="30" fill="#9C6B1F" opacity="0.9"/>
                       <text x="450" y="160" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">2</text>
-                      <text x="450" y="220" textAnchor="middle" fill="#FF9800" fontSize="13" fontWeight="bold">GROWTH</text>
-                      <text x="450" y="240" textAnchor="middle" fill="#ccc" fontSize="11">60 days</text>
-                      <rect x="330" y="260" width="240" height="30" fill="rgba(255, 152, 0, 0.1)" stroke="#FF9800" strokeWidth="1" rx="4"/>
-                      <text x="450" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{asText(analysis.go_to_market?.phase_2).substring(0, 40)}</text>
+                      <text x="450" y="220" textAnchor="middle" fill="#9C6B1F" fontSize="13" fontWeight="bold">GROWTH</text>
+                      <text x="450" y="240" textAnchor="middle" fill="#5a6169" fontSize="11">60 days</text>
+                      <rect x="330" y="260" width="240" height="30" fill="rgba(156, 107, 31, 0.10)" stroke="#9C6B1F" strokeWidth="1" rx="4"/>
+                      <text x="450" y="278" textAnchor="middle" fill="#5a6169" fontSize="10">{asText(analysis.go_to_market?.phase_2).substring(0, 40)}</text>
 
                       {/* Phase 3 */}
-                      <circle cx="750" cy="150" r="30" fill="#4CAF50" opacity="0.9"/>
+                      <circle cx="750" cy="150" r="30" fill="#5A6B48" opacity="0.9"/>
                       <text x="750" y="160" textAnchor="middle" fill="#fff" fontSize="18" fontWeight="bold">3</text>
-                      <text x="750" y="220" textAnchor="middle" fill="#4CAF50" fontSize="13" fontWeight="bold">SCALE</text>
-                      <text x="750" y="240" textAnchor="middle" fill="#ccc" fontSize="11">90 days</text>
-                      <rect x="630" y="260" width="240" height="30" fill="rgba(76, 175, 80, 0.1)" stroke="#4CAF50" strokeWidth="1" rx="4"/>
-                      <text x="750" y="278" textAnchor="middle" fill="#ccc" fontSize="10">{asText(analysis.go_to_market?.phase_3).substring(0, 40)}</text>
+                      <text x="750" y="220" textAnchor="middle" fill="#5A6B48" fontSize="13" fontWeight="bold">SCALE</text>
+                      <text x="750" y="240" textAnchor="middle" fill="#5a6169" fontSize="11">90 days</text>
+                      <rect x="630" y="260" width="240" height="30" fill="rgba(90, 107, 72, 0.10)" stroke="#5A6B48" strokeWidth="1" rx="4"/>
+                      <text x="750" y="278" textAnchor="middle" fill="#5a6169" fontSize="10">{asText(analysis.go_to_market?.phase_3).substring(0, 40)}</text>
                     </svg>
 
                     <div className="grid-2" style={{marginTop: '40px'}}>
                       <div>
                         <h4>Customer Acquisition Channels</h4>
-                        <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
+                        <p style={{padding: '16px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '8px', border: '1px solid var(--hairline)', marginTop: '10px'}}>
                           {asText(analysis.go_to_market?.customer_acquisition)}
                         </p>
                       </div>
                       <div>
                         <h4>Pricing Strategy</h4>
-                        <p style={{padding: '16px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid var(--border)', marginTop: '10px'}}>
+                        <p style={{padding: '16px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '8px', border: '1px solid var(--hairline)', marginTop: '10px'}}>
                           {asText(analysis.go_to_market?.pricing_strategy)}
                         </p>
                       </div>
                     </div>
 
-                    <div style={{marginTop: '30px', padding: '20px', background: 'rgba(156, 39, 176, 0.08)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)'}}>
-                      <h4 style={{color: '#9C27B0', marginBottom: '16px'}}>Key Partnership Targets</h4>
+                    <div style={{marginTop: '30px', padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                      <h4 style={{color: '#5a6169', marginBottom: '16px'}}>Key Partnership Targets</h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
                         {asList(analysis.go_to_market?.partnership_targets).map((p: any, i: number) => (
-                          <div key={i} style={{padding: '12px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '6px', border: '1px solid rgba(156, 39, 176, 0.2)'}}>
-                            <span style={{color: '#ccc', fontSize: '13'}}>{asText(p)}</span>
+                          <div key={i} style={{padding: '12px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '6px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                            <span style={{color: '#5a6169', fontSize: '13'}}>{asText(p)}</span>
                           </div>
                         ))}
                       </div>
@@ -1488,11 +1508,11 @@ function App() {
                   <div className="section">
                     <h3>Risk Assessment & Heat Map</h3>
 
-                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid #FF9800'}}>
+                    <div style={{marginBottom: '30px', padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid #9C6B1F'}}>
                       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                         <div>
-                          <p style={{color: '#999', fontSize: '12px', marginBottom: '4px'}}>Overall Risk Score</p>
-                          <p style={{fontSize: '32px', fontWeight: 'bold', color: '#FF9800'}}>{analysis.risk_assessment?.overall_risk_score}/10</p>
+                          <p style={{color: '#8b9096', fontSize: '12px', marginBottom: '4px'}}>Overall Risk Score</p>
+                          <p style={{fontSize: '32px', fontWeight: 'bold', color: '#9C6B1F'}}>{analysis.risk_assessment?.overall_risk_score}/10</p>
                         </div>
                       </div>
                     </div>
@@ -1501,43 +1521,43 @@ function App() {
                       {/* Risk Matrix Grid */}
                       <defs>
                         <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="rgba(76, 175, 80, 0.3)"/>
-                          <stop offset="50%" stopColor="rgba(255, 152, 0, 0.3)"/>
-                          <stop offset="100%" stopColor="rgba(244, 67, 54, 0.3)"/>
+                          <stop offset="0%" stopColor="rgba(90, 107, 72, 0.10)"/>
+                          <stop offset="50%" stopColor="rgba(156, 107, 31, 0.10)"/>
+                          <stop offset="100%" stopColor="rgba(156, 107, 31, 0.10)"/>
                         </linearGradient>
                       </defs>
 
                       {/* Background */}
-                      <rect x="100" y="50" width="650" height="350" fill="url(#riskGradient)" stroke="#444" strokeWidth="1"/>
+                      <rect x="100" y="50" width="650" height="350" fill="url(#riskGradient)" stroke="#5a6169" strokeWidth="1"/>
 
                       {/* Grid lines */}
-                      <line x1="100" y1="216" x2="750" y2="216" stroke="#444" strokeWidth="1" opacity="0.5"/>
-                      <line x1="425" y1="50" x2="425" y2="400" stroke="#444" strokeWidth="1" opacity="0.5"/>
+                      <line x1="100" y1="216" x2="750" y2="216" stroke="#5a6169" strokeWidth="1" opacity="0.5"/>
+                      <line x1="425" y1="50" x2="425" y2="400" stroke="#5a6169" strokeWidth="1" opacity="0.5"/>
 
                       {/* Axes */}
-                      <text x="50" y="410" fontSize="12" fill="#999">Low</text>
-                      <text x="700" y="410" fontSize="12" fill="#999">High</text>
-                      <text x="50" y="70" fontSize="12" fill="#999">High</text>
-                      <text x="50" y="400" fontSize="12" fill="#999">Low</text>
-                      <text x="350" y="440" fontSize="12" fill="#999" textAnchor="middle">PROBABILITY →</text>
-                      <text x="20" y="220" fontSize="12" fill="#999" textAnchor="middle" transform="rotate(-90 20 220)">IMPACT ↑</text>
+                      <text x="50" y="410" fontSize="12" fill="#8b9096">Low</text>
+                      <text x="700" y="410" fontSize="12" fill="#8b9096">High</text>
+                      <text x="50" y="70" fontSize="12" fill="#8b9096">High</text>
+                      <text x="50" y="400" fontSize="12" fill="#8b9096">Low</text>
+                      <text x="350" y="440" fontSize="12" fill="#8b9096" textAnchor="middle">PROBABILITY →</text>
+                      <text x="20" y="220" fontSize="12" fill="#8b9096" textAnchor="middle" transform="rotate(-90 20 220)">IMPACT ↑</text>
 
                       {/* Quadrant Labels */}
-                      <text x="250" y="80" fontSize="11" fill="#4CAF50" fontWeight="bold" textAnchor="middle">Low Priority</text>
-                      <text x="600" y="80" fontSize="11" fill="#FF9800" fontWeight="bold" textAnchor="middle">Medium Priority</text>
-                      <text x="250" y="370" fontSize="11" fill="#FF9800" fontWeight="bold" textAnchor="middle">Medium Priority</text>
-                      <text x="600" y="370" fontSize="11" fill="#F44336" fontWeight="bold" textAnchor="middle">Critical</text>
+                      <text x="250" y="80" fontSize="11" fill="#5A6B48" fontWeight="bold" textAnchor="middle">Low Priority</text>
+                      <text x="600" y="80" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Medium Priority</text>
+                      <text x="250" y="370" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Medium Priority</text>
+                      <text x="600" y="370" fontSize="11" fill="#9C6B1F" fontWeight="bold" textAnchor="middle">Critical</text>
 
                       {/* Risk bubbles */}
                       {analysis.risk_assessment?.high_risks?.map((_: any, i: number) => (
                         <g key={i}>
-                          <circle cx={600 + (i * 20)} cy={120 + (i * 30)} r="25" fill="#F44336" opacity="0.7"/>
+                          <circle cx={600 + (i * 20)} cy={120 + (i * 30)} r="25" fill="#9C6B1F" opacity="0.7"/>
                           <text x={600 + (i * 20)} y={125 + (i * 30)} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">{i + 1}</text>
                         </g>
                       ))}
                       {analysis.risk_assessment?.medium_risks?.map((_: any, i: number) => (
                         <g key={i}>
-                          <circle cx={450 - (i * 25)} cy={250 + (i * 20)} r="22" fill="#FF9800" opacity="0.7"/>
+                          <circle cx={450 - (i * 25)} cy={250 + (i * 20)} r="22" fill="#9C6B1F" opacity="0.7"/>
                           <text x={450 - (i * 25)} y={255 + (i * 20)} textAnchor="middle" fill="#fff" fontSize="10" fontWeight="bold">{i + 4}</text>
                         </g>
                       ))}
@@ -1547,26 +1567,26 @@ function App() {
                       <div>
                         <h4>High Priority Risks</h4>
                         {analysis.risk_assessment?.high_risks?.map((r: any, i: number) => (
-                          <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(244, 67, 54, 0.12)', borderRadius: '6px', border: '1px solid rgba(244, 67, 54, 0.3)'}}>
+                          <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '6px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
-                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#F44336', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 1}</span>
-                              <strong style={{color: '#F44336'}}>{r.risk}</strong>
+                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#9C6B1F', color: '#23282e', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 1}</span>
+                              <strong style={{color: '#9C6B1F'}}>{r.risk}</strong>
                             </div>
-                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>{r.probability} probability | {r.impact}</p>
-                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
+                            <p style={{fontSize: '12px', margin: '4px 0', color: '#5a6169'}}>{r.probability} probability | {r.impact}</p>
+                            <p style={{fontSize: '12px', color: '#5A6B48', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
                           </div>
                         ))}
                       </div>
                       <div>
                         <h4>Medium Priority Risks</h4>
                         {analysis.risk_assessment?.medium_risks?.map((r: any, i: number) => (
-                          <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(255, 152, 0, 0.12)', borderRadius: '6px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
+                          <div key={i} style={{marginBottom: '16px', padding: '14px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '6px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px'}}>
-                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#FF9800', color: '#fff', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 4}</span>
-                              <strong style={{color: '#FF9800'}}>{r.risk}</strong>
+                              <span style={{display: 'inline-block', width: '24px', height: '24px', background: '#9C6B1F', color: '#23282e', borderRadius: '50%', textAlign: 'center', lineHeight: '24px', fontSize: '12px', fontWeight: 'bold'}}>{i + 4}</span>
+                              <strong style={{color: '#9C6B1F'}}>{r.risk}</strong>
                             </div>
-                            <p style={{fontSize: '12px', margin: '4px 0', color: '#ccc'}}>{r.probability} probability | {r.impact}</p>
-                            <p style={{fontSize: '12px', color: '#4CAF50', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
+                            <p style={{fontSize: '12px', margin: '4px 0', color: '#5a6169'}}>{r.probability} probability | {r.impact}</p>
+                            <p style={{fontSize: '12px', color: '#5A6B48', marginTop: '8px'}}>Mitigation: {r.mitigation}</p>
                           </div>
                         ))}
                       </div>
@@ -1582,37 +1602,37 @@ function App() {
                     <h3>Founder-Market Fit Assessment</h3>
 
                     <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '30px'}}>
-                      <div style={{textAlign: 'center', padding: '30px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '12px', border: '2px solid #00ff41'}}>
-                        <p style={{fontSize: '12px', color: '#999', marginBottom: '12px'}}>Founder Fit Score</p>
+                      <div style={{textAlign: 'center', padding: '30px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '12px', border: '2px solid #5A6B48'}}>
+                        <p style={{fontSize: '12px', color: '#8b9096', marginBottom: '12px'}}>Founder Fit Score</p>
                         <svg viewBox="0 0 200 200" style={{width: '180px', height: '180px'}}>
-                          <circle cx="100" cy="100" r="90" fill="none" stroke="#333" strokeWidth="8" opacity="0.2"/>
+                          <circle cx="100" cy="100" r="90" fill="none" stroke="#23282e" strokeWidth="8" opacity="0.2"/>
                           <circle
                             cx="100"
                             cy="100"
                             r="90"
                             fill="none"
-                            stroke="#00ff41"
+                            stroke="#5A6B48"
                             strokeWidth="8"
                             strokeDasharray={`${(analysis.founder_fit?.fit_score || 0) * 5.65} 565`}
                             opacity="0.9"
                             style={{transition: 'stroke-dasharray 0.3s'}}
                           />
-                          <text x="100" y="110" textAnchor="middle" fill="#00ff41" fontSize="48" fontWeight="bold">
+                          <text x="100" y="110" textAnchor="middle" fill="#5A6B48" fontSize="48" fontWeight="bold">
                             {analysis.founder_fit?.fit_score}
                           </text>
-                          <text x="100" y="140" textAnchor="middle" fill="#999" fontSize="14">/10</text>
+                          <text x="100" y="140" textAnchor="middle" fill="#8b9096" fontSize="14">/10</text>
                         </svg>
                       </div>
 
                       <div style={{padding: '20px'}}>
-                        <h4 style={{marginBottom: '16px', color: '#fff'}}>Required Skills</h4>
+                        <h4 style={{marginBottom: '16px', color: '#23282e'}}>Required Skills</h4>
                         {asList(analysis.founder_fit?.required_skills).map((s: any, i: number) => (
                           <div key={i} style={{marginBottom: '12px'}}>
                             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px'}}>
-                              <span style={{fontSize: '13px', color: '#ccc'}}>{asText(s)}</span>
+                              <span style={{fontSize: '13px', color: '#5a6169'}}>{asText(s)}</span>
                             </div>
-                            <div style={{height: '6px', background: 'rgba(22, 25, 47, 0.9)', borderRadius: '3px', overflow: 'hidden', border: '1px solid var(--border)'}}>
-                              <div style={{height: '100%', background: 'linear-gradient(90deg, #00ff41, #00ffee)', width: `${50 + i * 15}%`, transition: 'width 0.3s'}}></div>
+                            <div style={{height: '6px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '3px', overflow: 'hidden', border: '1px solid var(--hairline)'}}>
+                              <div style={{height: '100%', background: 'linear-gradient(90deg, #5A6B48, #5a6169)', width: `${50 + i * 15}%`, transition: 'width 0.3s'}}></div>
                             </div>
                           </div>
                         ))}
@@ -1620,23 +1640,23 @@ function App() {
                     </div>
 
                     <div className="grid-2">
-                      <div style={{padding: '20px', background: 'rgba(255, 152, 0, 0.08)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)'}}>
-                        <h4 style={{color: '#FF9800', marginBottom: '12px'}}>Experience Gaps</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.experience_gaps)}</p>
+                      <div style={{padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)'}}>
+                        <h4 style={{color: '#9C6B1F', marginBottom: '12px'}}>Experience Gaps</h4>
+                        <p style={{color: '#5a6169', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.experience_gaps)}</p>
                       </div>
 
-                      <div style={{padding: '20px', background: 'rgba(76, 175, 80, 0.08)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)'}}>
-                        <h4 style={{color: '#4CAF50', marginBottom: '12px'}}>Team Recommendations</h4>
-                        <p style={{color: '#ccc', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.team_recommendations)}</p>
+                      <div style={{padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)'}}>
+                        <h4 style={{color: '#5A6B48', marginBottom: '12px'}}>Team Recommendations</h4>
+                        <p style={{color: '#5a6169', lineHeight: '1.6'}}>{asText(analysis.founder_fit?.team_recommendations)}</p>
                       </div>
                     </div>
 
-                    <div style={{marginTop: '30px', padding: '20px', background: 'rgba(33, 150, 243, 0.08)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)'}}>
-                      <h4 style={{color: '#2196F3', marginBottom: '16px'}}>How to Improve Your Fit</h4>
+                    <div style={{marginTop: '30px', padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                      <h4 style={{color: '#5a6169', marginBottom: '16px'}}>How to Improve Your Fit</h4>
                       <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px'}}>
                         {asList(analysis.founder_fit?.improvement_areas).map((a: any, i: number) => (
-                          <div key={i} style={{padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.2)'}}>
-                            <span style={{color: '#ccc', fontSize: '13'}}>{asText(a)}</span>
+                          <div key={i} style={{padding: '12px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '6px', border: '1px solid rgba(35, 40, 46, 0.05)'}}>
+                            <span style={{color: '#5a6169', fontSize: '13'}}>{asText(a)}</span>
                           </div>
                         ))}
                       </div>

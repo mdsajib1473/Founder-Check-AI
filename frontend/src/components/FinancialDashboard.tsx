@@ -66,37 +66,37 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{ color: '#fff', marginBottom: '30px' }}>Financial Projections & Analysis</h2>
+      <h2 style={{ color: '#23282e', marginBottom: '30px' }}>Financial Projections & Analysis</h2>
 
       {/* Key Metrics Overview */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '30px' }}>
-        <div style={{ padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-          <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>3-Year Total Revenue</p>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#2196F3' }}>{formatCurrency(financial.revenue_projections.total_3_year)}</p>
-          <p style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>Year 1: {formatCurrency(financial.revenue_projections.year_1_total)}</p>
+        <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+          <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>3-Year Total Revenue</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5a6169' }}>{formatCurrency(financial.revenue_projections.total_3_year)}</p>
+          <p style={{ fontSize: '11px', color: '#5a6169', marginTop: '4px' }}>Year 1: {formatCurrency(financial.revenue_projections.year_1_total)}</p>
         </div>
 
-        <div style={{ padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
-          <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>Revenue CAGR</p>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#4CAF50' }}>{financial.key_metrics.revenue_cagr_pct}%</p>
-          <p style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>Compound Annual Growth</p>
+        <div style={{ padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)' }}>
+          <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>Revenue CAGR</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5A6B48' }}>{financial.key_metrics.revenue_cagr_pct}%</p>
+          <p style={{ fontSize: '11px', color: '#5a6169', marginTop: '4px' }}>Compound Annual Growth</p>
         </div>
 
-        <div style={{ padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '1px solid rgba(0, 255, 65, 0.3)' }}>
-          <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>Year 3 Net Margin</p>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#00ff41' }}>{financial.key_metrics.net_margin_year_3}%</p>
-          <p style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>Profitability trajectory</p>
+        <div style={{ padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)' }}>
+          <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>Year 3 Net Margin</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5A6B48' }}>{financial.key_metrics.net_margin_year_3}%</p>
+          <p style={{ fontSize: '11px', color: '#5a6169', marginTop: '4px' }}>Profitability trajectory</p>
         </div>
 
-        <div style={{ padding: '20px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)' }}>
-          <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>LTV:CAC Ratio</p>
-          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#9C27B0' }}>{financial.unit_economics.ltv_cac_ratio}x</p>
-          <p style={{ fontSize: '11px', color: '#666', marginTop: '4px' }}>Unit economics health</p>
+        <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+          <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>LTV:CAC Ratio</p>
+          <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#5a6169' }}>{financial.unit_economics.ltv_cac_ratio}x</p>
+          <p style={{ fontSize: '11px', color: '#5a6169', marginTop: '4px' }}>Unit economics health</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', borderBottom: '1px solid rgba(35, 40, 46, 0.08)', paddingBottom: '16px', flexWrap: 'wrap' }}>
         {[
           { id: 'overview' as const, label: 'Overview' },
           { id: 'pnl' as const, label: 'P&L Statement' },
@@ -109,9 +109,9 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
             onClick={() => setActiveTab(tab.id)}
             style={{
               padding: '10px 16px',
-              background: activeTab === tab.id ? 'rgba(0,255,65,0.2)' : 'transparent',
-              border: activeTab === tab.id ? '1px solid #00ff41' : '1px solid rgba(255,255,255,0.1)',
-              color: activeTab === tab.id ? '#00ff41' : '#ccc',
+              background: activeTab === tab.id ? 'rgba(90, 107, 72, 0.10)' : 'transparent',
+              border: activeTab === tab.id ? '1px solid #5A6B48' : '1px solid rgba(35, 40, 46, 0.08)',
+              color: activeTab === tab.id ? '#5A6B48' : '#5a6169',
               borderRadius: '6px',
               cursor: 'pointer',
               fontSize: '13px',
@@ -127,17 +127,17 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
       {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#fff', marginBottom: '20px', fontSize: '16px', fontWeight: '700' }}>Revenue Projection (3 Years)</h3>
-          <div style={{ padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <h3 style={{ color: '#23282e', marginBottom: '20px', fontSize: '16px', fontWeight: '700' }}>Revenue Projection (3 Years)</h3>
+          <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.08)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
               {[
                 { year: 'Year 1', amount: financial.revenue_projections.year_1_total },
                 { year: 'Year 2', amount: financial.revenue_projections.year_2_total },
                 { year: 'Year 3', amount: financial.revenue_projections.year_3_total }
               ].map((year_data, i) => (
-                <div key={i} style={{ padding: '16px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-                  <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>{year_data.year}</p>
-                  <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#2196F3' }}>{formatCurrency(year_data.amount)}</p>
+                <div key={i} style={{ padding: '16px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '6px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+                  <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>{year_data.year}</p>
+                  <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#5a6169' }}>{formatCurrency(year_data.amount)}</p>
                 </div>
               ))}
             </div>
@@ -157,13 +157,13 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
                       style={{
                         width: '100%',
                         height: `${height}%`,
-                        background: 'linear-gradient(180deg, #00ff41 0%, #2196F3 100%)',
+                        background: 'linear-gradient(180deg, #5A6B48 0%, #5a6169 100%)',
                         borderRadius: '4px',
                         display: 'flex',
                         alignItems: 'flex-end',
                         justifyContent: 'center',
                         paddingBottom: '8px',
-                        color: '#000',
+                        color: '#23282e',
                         fontSize: '11px',
                         fontWeight: 'bold',
                         minHeight: '20px'
@@ -178,19 +178,19 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
           </div>
 
           {/* Break-even Analysis */}
-          <h3 style={{ color: '#fff', marginBottom: '20px', marginTop: '30px', fontSize: '16px', fontWeight: '700' }}>Break-Even Analysis</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '20px', marginTop: '30px', fontSize: '16px', fontWeight: '700' }}>Break-Even Analysis</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-            <div style={{ padding: '20px', background: 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: '1px solid rgba(255, 152, 0, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>Break-Even Monthly Revenue</p>
-              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#FF9800' }}>{formatCurrency(financial.break_even.breakeven_monthly_revenue)}</p>
-              <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>Fixed Costs: {formatCurrency(financial.break_even.fixed_costs_monthly)}</p>
-              <p style={{ fontSize: '11px', color: '#666' }}>Contribution Margin: {financial.break_even.contribution_margin_pct}%</p>
+            <div style={{ padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>Break-Even Monthly Revenue</p>
+              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#9C6B1F' }}>{formatCurrency(financial.break_even.breakeven_monthly_revenue)}</p>
+              <p style={{ fontSize: '11px', color: '#5a6169', marginTop: '8px' }}>Fixed Costs: {formatCurrency(financial.break_even.fixed_costs_monthly)}</p>
+              <p style={{ fontSize: '11px', color: '#5a6169' }}>Contribution Margin: {financial.break_even.contribution_margin_pct}%</p>
             </div>
 
-            <div style={{ padding: '20px', background: 'rgba(76, 175, 80, 0.1)', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>Profitability Timeline</p>
-              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#4CAF50' }}>{financial.key_metrics.month_to_profitability}</p>
-              <p style={{ fontSize: '11px', color: '#666', marginTop: '8px' }}>Strong trajectory</p>
+            <div style={{ padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>Profitability Timeline</p>
+              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#5A6B48' }}>{financial.key_metrics.month_to_profitability}</p>
+              <p style={{ fontSize: '11px', color: '#5a6169', marginTop: '8px' }}>Strong trajectory</p>
             </div>
           </div>
         </div>
@@ -199,10 +199,10 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
       {/* P&L Tab */}
       {activeTab === 'pnl' && (
         <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#fff', marginBottom: '20px' }}>Profit & Loss Statement</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '20px' }}>Profit & Loss Statement</h3>
           <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
             <thead>
-              <tr style={{ background: 'linear-gradient(135deg, #0f2a47 0%, #1a3a5c 100%)', color: '#fff' }}>
+              <tr style={{ background: '#23282e', color: '#ffffff' }}>
                 <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Metric</th>
                 <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600' }}>Year 1</th>
                 <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600' }}>Year 2</th>
@@ -221,13 +221,13 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
                 { label: 'Net Income', key: 'net_income' },
                 { label: 'Net Margin %', key: 'net_margin_pct' }
               ].map((row, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
-                  <td style={{ padding: '12px', color: '#ccc', fontWeight: '600' }}>{row.label}</td>
+                <tr key={i} style={{ borderBottom: '1px solid rgba(35, 40, 46, 0.08)', background: i % 2 === 0 ? 'rgba(35, 40, 46, 0.08)' : 'transparent' }}>
+                  <td style={{ padding: '12px', color: '#5a6169', fontWeight: '600' }}>{row.label}</td>
                   {[0, 1, 2].map(year => {
                     const value = financial.pnl_statement.annual_summary[year][row.key];
                     const isPercentage = row.key.includes('_pct');
                     return (
-                      <td key={year} style={{ padding: '12px', textAlign: 'right', color: '#999' }}>
+                      <td key={year} style={{ padding: '12px', textAlign: 'right', color: '#8b9096' }}>
                         {isPercentage ? `${value}%` : formatCurrency(value)}
                       </td>
                     );
@@ -242,30 +242,30 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
       {/* Cash Flow Tab */}
       {activeTab === 'cashflow' && (
         <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#fff', marginBottom: '20px' }}>Cash Flow Analysis</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '20px' }}>Cash Flow Analysis</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
-            <div style={{ padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Initial Capital</p>
-              <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#2196F3' }}>{formatCurrency(financial.cash_flow.initial_capital)}</p>
+            <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Initial Capital</p>
+              <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#5a6169' }}>{formatCurrency(financial.cash_flow.initial_capital)}</p>
             </div>
 
-            <div style={{ padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '1px solid rgba(0, 255, 65, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Year 3 Cash Position</p>
-              <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#00ff41' }}>{formatCurrency(financial.cash_flow.final_cash_position)}</p>
+            <div style={{ padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Year 3 Cash Position</p>
+              <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#5A6B48' }}>{formatCurrency(financial.cash_flow.final_cash_position)}</p>
             </div>
 
-            <div style={{ padding: '20px', background: financial.cash_flow.cash_breakeven_month ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 152, 0, 0.1)', borderRadius: '8px', border: `1px solid ${financial.cash_flow.cash_breakeven_month ? 'rgba(76, 175, 80, 0.3)' : 'rgba(255, 152, 0, 0.3)'}` }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Cash Break-Even</p>
-              <p style={{ fontSize: '20px', fontWeight: 'bold', color: financial.cash_flow.cash_breakeven_month ? '#4CAF50' : '#FF9800' }}>
+            <div style={{ padding: '20px', background: financial.cash_flow.cash_breakeven_month ? 'rgba(90, 107, 72, 0.10)' : 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: `1px solid ${financial.cash_flow.cash_breakeven_month ? 'rgba(90, 107, 72, 0.10)' : 'rgba(156, 107, 31, 0.10)'}` }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Cash Break-Even</p>
+              <p style={{ fontSize: '20px', fontWeight: 'bold', color: financial.cash_flow.cash_breakeven_month ? '#5A6B48' : '#9C6B1F' }}>
                 {financial.cash_flow.cash_breakeven_month ? `Month ${financial.cash_flow.cash_breakeven_month}` : 'Requires funding'}
               </p>
             </div>
           </div>
 
-          <div style={{ padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'auto', maxHeight: '400px' }}>
+          <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.08)', overflow: 'auto', maxHeight: '400px' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
               <thead>
-                <tr style={{ background: 'rgba(0,255,65,0.1)', color: '#00ff41', position: 'sticky', top: 0 }}>
+                <tr style={{ background: 'rgba(90, 107, 72, 0.10)', color: '#5A6B48', position: 'sticky', top: 0 }}>
                   <th style={{ padding: '8px', textAlign: 'left' }}>Month</th>
                   <th style={{ padding: '8px', textAlign: 'right' }}>Revenue</th>
                   <th style={{ padding: '8px', textAlign: 'right' }}>Costs</th>
@@ -275,12 +275,12 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
               </thead>
               <tbody>
                 {financial.cash_flow.monthly_cashflow.slice(0, 12).map((month, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', background: month.cumulative_cash > 0 ? 'rgba(76, 175, 80, 0.05)' : 'rgba(244, 67, 54, 0.05)' }}>
-                    <td style={{ padding: '8px', color: '#ccc' }}>M{month.month}</td>
-                    <td style={{ padding: '8px', textAlign: 'right', color: '#999' }}>{formatCurrency(month.revenue)}</td>
-                    <td style={{ padding: '8px', textAlign: 'right', color: '#999' }}>{formatCurrency(month.costs)}</td>
-                    <td style={{ padding: '8px', textAlign: 'right', color: month.net_cash_flow > 0 ? '#00ff41' : '#ff4444' }}>{formatCurrency(month.net_cash_flow)}</td>
-                    <td style={{ padding: '8px', textAlign: 'right', color: month.cumulative_cash > 0 ? '#4CAF50' : '#F44336', fontWeight: '600' }}>{formatCurrency(month.cumulative_cash)}</td>
+                  <tr key={i} style={{ borderBottom: '1px solid rgba(35, 40, 46, 0.08)', background: month.cumulative_cash > 0 ? 'rgba(90, 107, 72, 0.10)' : 'rgba(156, 107, 31, 0.10)' }}>
+                    <td style={{ padding: '8px', color: '#5a6169' }}>M{month.month}</td>
+                    <td style={{ padding: '8px', textAlign: 'right', color: '#8b9096' }}>{formatCurrency(month.revenue)}</td>
+                    <td style={{ padding: '8px', textAlign: 'right', color: '#8b9096' }}>{formatCurrency(month.costs)}</td>
+                    <td style={{ padding: '8px', textAlign: 'right', color: month.net_cash_flow > 0 ? '#5A6B48' : '#9C6B1F' }}>{formatCurrency(month.net_cash_flow)}</td>
+                    <td style={{ padding: '8px', textAlign: 'right', color: month.cumulative_cash > 0 ? '#5A6B48' : '#9C6B1F', fontWeight: '600' }}>{formatCurrency(month.cumulative_cash)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -292,37 +292,37 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
       {/* Unit Economics Tab */}
       {activeTab === 'uniteconomics' && (
         <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#fff', marginBottom: '20px' }}>Unit Economics</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '20px' }}>Unit Economics</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '20px' }}>
-            <div style={{ padding: '20px', background: 'rgba(244, 67, 54, 0.1)', borderRadius: '8px', border: '1px solid rgba(244, 67, 54, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Customer Acquisition Cost</p>
-              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#F44336' }}>{formatCurrency(financial.unit_economics.customer_acquisition_cost)}</p>
+            <div style={{ padding: '20px', background: 'rgba(156, 107, 31, 0.10)', borderRadius: '8px', border: '1px solid rgba(156, 107, 31, 0.10)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Customer Acquisition Cost</p>
+              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#9C6B1F' }}>{formatCurrency(financial.unit_economics.customer_acquisition_cost)}</p>
             </div>
 
-            <div style={{ padding: '20px', background: 'rgba(0, 255, 65, 0.1)', borderRadius: '8px', border: '1px solid rgba(0, 255, 65, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Lifetime Value</p>
-              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#00ff41' }}>{formatCurrency(financial.unit_economics.lifetime_value)}</p>
+            <div style={{ padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '1px solid rgba(90, 107, 72, 0.10)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Lifetime Value</p>
+              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#5A6B48' }}>{formatCurrency(financial.unit_economics.lifetime_value)}</p>
             </div>
 
-            <div style={{ padding: '20px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '8px', border: '1px solid rgba(33, 150, 243, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Payback Period</p>
-              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#2196F3' }}>{financial.unit_economics.payback_period_months} months</p>
+            <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Payback Period</p>
+              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#5a6169' }}>{financial.unit_economics.payback_period_months} months</p>
             </div>
 
-            <div style={{ padding: '20px', background: 'rgba(156, 39, 176, 0.1)', borderRadius: '8px', border: '1px solid rgba(156, 39, 176, 0.3)' }}>
-              <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px' }}>Monthly Revenue/Customer</p>
-              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#9C27B0' }}>{formatCurrency(financial.unit_economics.revenue_per_customer_monthly)}</p>
+            <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.05)' }}>
+              <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px' }}>Monthly Revenue/Customer</p>
+              <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#5a6169' }}>{formatCurrency(financial.unit_economics.revenue_per_customer_monthly)}</p>
             </div>
           </div>
 
-          <h4 style={{ color: '#fff', marginBottom: '16px', marginTop: '30px' }}>CAC Trend (Improving Over Time)</h4>
-          <div style={{ padding: '20px', background: 'rgba(22, 25, 47, 0.7)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <h4 style={{ color: '#23282e', marginBottom: '16px', marginTop: '30px' }}>CAC Trend (Improving Over Time)</h4>
+          <div style={{ padding: '20px', background: 'rgba(35, 40, 46, 0.04)', borderRadius: '8px', border: '1px solid rgba(35, 40, 46, 0.08)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px' }}>
               {financial.unit_economics.cac_trend.map((point, i) => (
-                <div key={i} style={{ padding: '12px', background: 'rgba(33, 150, 243, 0.1)', borderRadius: '6px', border: '1px solid rgba(33, 150, 243, 0.2)', textAlign: 'center' }}>
-                  <p style={{ fontSize: '11px', color: '#999', marginBottom: '4px' }}>Month {point.month}</p>
-                  <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#2196F3' }}>{formatCurrency(point.cac)}</p>
-                  <p style={{ fontSize: '10px', color: '#4CAF50' }}>-{point.reduction_vs_initial}% vs initial</p>
+                <div key={i} style={{ padding: '12px', background: 'rgba(35, 40, 46, 0.05)', borderRadius: '6px', border: '1px solid rgba(35, 40, 46, 0.05)', textAlign: 'center' }}>
+                  <p style={{ fontSize: '11px', color: '#8b9096', marginBottom: '4px' }}>Month {point.month}</p>
+                  <p style={{ fontSize: '16px', fontWeight: 'bold', color: '#5a6169' }}>{formatCurrency(point.cac)}</p>
+                  <p style={{ fontSize: '10px', color: '#5A6B48' }}>-{point.reduction_vs_initial}% vs initial</p>
                 </div>
               ))}
             </div>
@@ -333,35 +333,35 @@ const FinancialDashboard: React.FC<Props> = ({ financial }) => {
       {/* Sensitivity Tab */}
       {activeTab === 'sensitivity' && (
         <div style={{ marginBottom: '30px' }}>
-          <h3 style={{ color: '#fff', marginBottom: '20px' }}>Sensitivity Analysis (Growth Rate Scenarios)</h3>
+          <h3 style={{ color: '#23282e', marginBottom: '20px' }}>Sensitivity Analysis (Growth Rate Scenarios)</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '30px' }}>
             {financial.sensitivity.scenarios.map((scenario, i) => (
               <div
                 key={i}
                 style={{
                   padding: '20px',
-                  background: scenario.scenario === 'Conservative' ? 'rgba(255, 152, 0, 0.1)' : scenario.scenario === 'Base' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(0, 255, 65, 0.1)',
+                  background: scenario.scenario === 'Conservative' ? 'rgba(156, 107, 31, 0.10)' : scenario.scenario === 'Base' ? 'rgba(90, 107, 72, 0.10)' : 'rgba(90, 107, 72, 0.10)',
                   borderRadius: '8px',
-                  border: `2px solid ${scenario.scenario === 'Conservative' ? 'rgba(255, 152, 0, 0.3)' : scenario.scenario === 'Base' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(0, 255, 65, 0.3)'}`
+                  border: `2px solid ${scenario.scenario === 'Conservative' ? 'rgba(156, 107, 31, 0.10)' : scenario.scenario === 'Base' ? 'rgba(90, 107, 72, 0.10)' : 'rgba(90, 107, 72, 0.10)'}`
                 }}
               >
-                <p style={{ fontSize: '12px', color: '#999', marginBottom: '8px', textTransform: 'uppercase' }}>
+                <p style={{ fontSize: '12px', color: '#8b9096', marginBottom: '8px', textTransform: 'uppercase' }}>
                   {scenario.scenario === 'Conservative' ? '⬇ Conservative' : scenario.scenario === 'Base' ? 'Base Case' : '⬆Optimistic'}
                 </p>
-                <p style={{ fontSize: '14px', fontWeight: '600', color: '#ccc', marginBottom: '4px' }}>Growth: {scenario.growth_rate_pct}%/month</p>
-                <p style={{ fontSize: '20px', fontWeight: 'bold', color: scenario.scenario === 'Conservative' ? '#FF9800' : scenario.scenario === 'Base' ? '#4CAF50' : '#00ff41' }}>
+                <p style={{ fontSize: '14px', fontWeight: '600', color: '#5a6169', marginBottom: '4px' }}>Growth: {scenario.growth_rate_pct}%/month</p>
+                <p style={{ fontSize: '20px', fontWeight: 'bold', color: scenario.scenario === 'Conservative' ? '#9C6B1F' : scenario.scenario === 'Base' ? '#5A6B48' : '#5A6B48' }}>
                   {formatCurrency(scenario.total_3_year_revenue)}
                 </p>
-                <p style={{ fontSize: '11px', color: scenario.variance_from_base_pct >= 0 ? '#00ff41' : '#ff4444', marginTop: '8px' }}>
+                <p style={{ fontSize: '11px', color: scenario.variance_from_base_pct >= 0 ? '#5A6B48' : '#9C6B1F', marginTop: '8px' }}>
                   {scenario.variance_from_base_pct >= 0 ? '+' : ''}{scenario.variance_from_base_pct}% vs base
                 </p>
               </div>
             ))}
           </div>
 
-          <div style={{ padding: '20px', background: 'rgba(0, 255, 65, 0.08)', borderRadius: '8px', border: '2px solid #00ff41' }}>
-            <h4 style={{ color: '#00ff41', marginBottom: '12px' }}>What This Means</h4>
-            <ul style={{ color: '#ccc', fontSize: '13px', lineHeight: '1.8', margin: 0, paddingLeft: '20px' }}>
+          <div style={{ padding: '20px', background: 'rgba(90, 107, 72, 0.10)', borderRadius: '8px', border: '2px solid #5A6B48' }}>
+            <h4 style={{ color: '#5A6B48', marginBottom: '12px' }}>What This Means</h4>
+            <ul style={{ color: '#5a6169', fontSize: '13px', lineHeight: '1.8', margin: 0, paddingLeft: '20px' }}>
               <li>Scenario planning helps understand key drivers</li>
               <li>Conservative: 1% monthly growth (low acquisition)</li>
               <li>Base Case: 3% monthly growth (moderate growth)</li>

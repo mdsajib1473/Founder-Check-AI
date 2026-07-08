@@ -88,17 +88,17 @@ const EducationResourcesDashboard = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch(difficulty) {
-      case 'beginner': return '#00ff41';
-      case 'intermediate': return '#ffaa44';
-      case 'advanced': return '#ff4444';
-      default: return '#00ffee';
+      case 'beginner': return '#5A6B48';
+      case 'intermediate': return '#9C6B1F';
+      case 'advanced': return '#9C6B1F';
+      default: return '#5a6169';
     }
   };
 
   const renderModulesTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Learning Modules</h3>
+        <h3 style={{ color: '#5A6B48', marginBottom: '1.5rem' }}>Learning Modules</h3>
         <button
           onClick={() => {
             loadModules();
@@ -106,8 +106,8 @@ const EducationResourcesDashboard = () => {
           }}
           style={{
             padding: '0.75rem 1.5rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -120,17 +120,17 @@ const EducationResourcesDashboard = () => {
 
       {selectedModule ? (
         <div style={{
-          backgroundColor: 'rgba(0, 255, 238, 0.1)',
+          backgroundColor: 'rgba(90, 107, 72, 0.10)',
           padding: '2rem',
           borderRadius: '8px',
-          border: '1px solid rgba(0, 255, 238, 0.3)'
+          border: '1px solid rgba(90, 107, 72, 0.10)'
         }}>
           <button
             onClick={() => setSelectedModule(null)}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: '#666',
-              color: '#fff',
+              backgroundColor: '#5a6169',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -139,11 +139,11 @@ const EducationResourcesDashboard = () => {
           >
             ← Back
           </button>
-          <h2 style={{ color: '#00ffee', marginTop: 0 }}>{selectedModule.title}</h2>
-          <div style={{ color: '#aaa', marginBottom: '1rem' }}>
+          <h2 style={{ color: '#5a6169', marginTop: 0 }}>{selectedModule.title}</h2>
+          <div style={{ color: '#8b9096', marginBottom: '1rem' }}>
             {selectedModule.difficulty} • {selectedModule.duration_minutes} mins
           </div>
-          <div style={{ color: '#fff', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+          <div style={{ color: '#23282e', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
             {selectedModule.content}
           </div>
         </div>
@@ -158,28 +158,28 @@ const EducationResourcesDashboard = () => {
                 setSelectedModule(data.module);
               }}
               style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1.5rem',
                 borderRadius: '8px',
-                border: '1px solid rgba(0, 255, 238, 0.3)',
+                border: '1px solid rgba(90, 107, 72, 0.10)',
                 cursor: 'pointer',
                 transition: 'all 0.3s'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 255, 238, 0.15)';
+                e.currentTarget.style.backgroundColor = 'rgba(90, 107, 72, 0.10)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0)';
               }}
             >
-              <h4 style={{ color: '#00ffee', margin: '0 0 0.5rem 0' }}>{module.title}</h4>
-              <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0.5rem 0' }}>
+              <h4 style={{ color: '#5a6169', margin: '0 0 0.5rem 0' }}>{module.title}</h4>
+              <p style={{ color: '#8b9096', fontSize: '0.9rem', margin: '0.5rem 0' }}>
                 {module.description}
               </p>
               <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginTop: '1rem' }}>
                 <span style={{
                   backgroundColor: getDifficultyColor(module.difficulty),
-                  color: '#0f2a47',
+                  color: '#23282e',
                   padding: '0.25rem 0.75rem',
                   borderRadius: '4px',
                   fontSize: '0.8rem',
@@ -187,11 +187,11 @@ const EducationResourcesDashboard = () => {
                 }}>
                   {module.difficulty}
                 </span>
-                <span style={{ color: '#aaa', fontSize: '0.8rem' }}>
+                <span style={{ color: '#8b9096', fontSize: '0.8rem' }}>
                   {module.duration_minutes} mins
                 </span>
               </div>
-              <div style={{ marginTop: '0.75rem', color: '#00ffee', fontSize: '0.8rem' }}>
+              <div style={{ marginTop: '0.75rem', color: '#5a6169', fontSize: '0.8rem' }}>
                 {module.topics_covered.join(' • ')}
               </div>
             </div>
@@ -204,7 +204,7 @@ const EducationResourcesDashboard = () => {
   const renderArticlesTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Articles & Case Studies</h3>
+        <h3 style={{ color: '#5A6B48', marginBottom: '1.5rem' }}>Articles & Case Studies</h3>
         <button
           onClick={() => {
             loadArticles();
@@ -212,8 +212,8 @@ const EducationResourcesDashboard = () => {
           }}
           style={{
             padding: '0.75rem 1.5rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -226,17 +226,17 @@ const EducationResourcesDashboard = () => {
 
       {selectedArticle ? (
         <div style={{
-          backgroundColor: 'rgba(0, 255, 238, 0.1)',
+          backgroundColor: 'rgba(90, 107, 72, 0.10)',
           padding: '2rem',
           borderRadius: '8px',
-          border: '1px solid rgba(0, 255, 238, 0.3)'
+          border: '1px solid rgba(90, 107, 72, 0.10)'
         }}>
           <button
             onClick={() => setSelectedArticle(null)}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: '#666',
-              color: '#fff',
+              backgroundColor: '#5a6169',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -245,11 +245,11 @@ const EducationResourcesDashboard = () => {
           >
             ← Back
           </button>
-          <h2 style={{ color: '#00ffee', marginTop: 0 }}>{selectedArticle.title}</h2>
-          <div style={{ color: '#aaa', marginBottom: '1rem' }}>
+          <h2 style={{ color: '#5a6169', marginTop: 0 }}>{selectedArticle.title}</h2>
+          <div style={{ color: '#8b9096', marginBottom: '1rem' }}>
             By {selectedArticle.author} • {selectedArticle.reading_time_minutes} min read
           </div>
-          <div style={{ color: '#fff', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+          <div style={{ color: '#23282e', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
             {selectedArticle.content}
           </div>
         </div>
@@ -264,24 +264,24 @@ const EducationResourcesDashboard = () => {
                 setSelectedArticle(data.article);
               }}
               style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1.5rem',
                 borderRadius: '8px',
-                border: '1px solid rgba(255, 165, 0, 0.3)',
+                border: '1px solid rgba(156, 107, 31, 0.10)',
                 cursor: 'pointer'
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                 <div>
-                  <h4 style={{ color: '#ffaa44', margin: '0 0 0.5rem 0' }}>{article.title}</h4>
-                  <p style={{ color: '#aaa', margin: 0, fontSize: '0.9rem' }}>
+                  <h4 style={{ color: '#9C6B1F', margin: '0 0 0.5rem 0' }}>{article.title}</h4>
+                  <p style={{ color: '#8b9096', margin: 0, fontSize: '0.9rem' }}>
                     By {article.author} • {article.reading_time_minutes} min read
                   </p>
                 </div>
                 {article.featured && (
                   <span style={{
-                    backgroundColor: 'rgba(255, 215, 0, 0.2)',
-                    color: '#ffd700',
+                    backgroundColor: 'rgba(156, 107, 31, 0.10)',
+                    color: '#9C6B1F',
                     padding: '0.25rem 0.75rem',
                     borderRadius: '4px',
                     fontSize: '0.8rem',
@@ -301,7 +301,7 @@ const EducationResourcesDashboard = () => {
   const renderGlossaryTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Glossary</h3>
+        <h3 style={{ color: '#5A6B48', marginBottom: '1.5rem' }}>Glossary</h3>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <input
             type="text"
@@ -311,9 +311,9 @@ const EducationResourcesDashboard = () => {
             style={{
               flex: 1,
               padding: '0.75rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid #00ffee',
-              color: '#fff',
+              backgroundColor: 'rgba(35, 40, 46, 0.08)',
+              border: '1px solid #5a6169',
+              color: '#23282e',
               borderRadius: '4px'
             }}
           />
@@ -329,8 +329,8 @@ const EducationResourcesDashboard = () => {
             }}
             style={{
               padding: '0.75rem 1.5rem',
-              backgroundColor: '#00ff41',
-              color: '#0f2a47',
+              backgroundColor: '#5A6B48',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -345,25 +345,25 @@ const EducationResourcesDashboard = () => {
       <div style={{ display: 'grid', gap: '0.75rem' }}>
         {glossaryTerms.map(term => (
           <div key={term.id} style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1.25rem',
             borderRadius: '8px',
-            borderLeft: '3px solid #00ffee'
+            borderLeft: '3px solid #5a6169'
           }}>
-            <h4 style={{ color: '#00ffee', margin: '0 0 0.5rem 0' }}>{term.term}</h4>
-            <p style={{ color: '#fff', margin: '0.5rem 0', lineHeight: '1.5' }}>
+            <h4 style={{ color: '#5a6169', margin: '0 0 0.5rem 0' }}>{term.term}</h4>
+            <p style={{ color: '#23282e', margin: '0.5rem 0', lineHeight: '1.5' }}>
               {term.definition}
             </p>
             {term.example && (
               <div style={{
-                backgroundColor: 'rgba(0, 255, 65, 0.1)',
+                backgroundColor: 'rgba(90, 107, 72, 0.10)',
                 padding: '0.75rem',
                 borderRadius: '4px',
                 marginTop: '0.75rem',
-                color: '#aaa',
+                color: '#8b9096',
                 fontSize: '0.9rem'
               }}>
-                <strong style={{ color: '#00ff41' }}>Example:</strong> {term.example}
+                <strong style={{ color: '#5A6B48' }}>Example:</strong> {term.example}
               </div>
             )}
           </div>
@@ -374,13 +374,13 @@ const EducationResourcesDashboard = () => {
 
   const renderFAQsTab = () => (
     <div style={{ padding: '2rem' }}>
-      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Frequently Asked Questions</h3>
+      <h3 style={{ color: '#5A6B48', marginBottom: '1.5rem' }}>Frequently Asked Questions</h3>
       <button
         onClick={loadFAQs}
         style={{
           padding: '0.75rem 1.5rem',
-          backgroundColor: '#00ff41',
-          color: '#0f2a47',
+          backgroundColor: '#5A6B48',
+          color: '#ffffff',
           border: 'none',
           borderRadius: '4px',
           cursor: 'pointer',
@@ -394,17 +394,17 @@ const EducationResourcesDashboard = () => {
       <div style={{ display: 'grid', gap: '0.75rem' }}>
         {faqs.map(faq => (
           <div key={faq.id} style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1.25rem',
             borderRadius: '8px',
-            borderLeft: '3px solid #00ff41'
+            borderLeft: '3px solid #5A6B48'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-              <h4 style={{ color: '#fff', margin: '0 0 0.5rem 0' }}>{faq.question}</h4>
+              <h4 style={{ color: '#23282e', margin: '0 0 0.5rem 0' }}>{faq.question}</h4>
               {faq.has_video && (
                 <span style={{
-                  backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                  color: '#ff4444',
+                  backgroundColor: 'rgba(156, 107, 31, 0.10)',
+                  color: '#9C6B1F',
                   padding: '0.25rem 0.75rem',
                   borderRadius: '4px',
                   fontSize: '0.8rem',
@@ -414,7 +414,7 @@ const EducationResourcesDashboard = () => {
                 </span>
               )}
             </div>
-            <p style={{ color: '#aaa', margin: '0.5rem 0', lineHeight: '1.5' }}>
+            <p style={{ color: '#8b9096', margin: '0.5rem 0', lineHeight: '1.5' }}>
               {faq.helpful_count} people found this helpful
             </p>
           </div>
@@ -425,84 +425,84 @@ const EducationResourcesDashboard = () => {
 
   const renderHelpTab = () => (
     <div style={{ padding: '2rem' }}>
-      <h3 style={{ color: '#00ff41', marginBottom: '1.5rem' }}>Help & Support</h3>
+      <h3 style={{ color: '#5A6B48', marginBottom: '1.5rem' }}>Help & Support</h3>
 
       <div style={{
-        backgroundColor: 'rgba(0, 255, 238, 0.1)',
+        backgroundColor: 'rgba(90, 107, 72, 0.10)',
         padding: '1.5rem',
         borderRadius: '8px',
-        border: '1px solid rgba(0, 255, 238, 0.3)',
+        border: '1px solid rgba(90, 107, 72, 0.10)',
         marginBottom: '2rem'
       }}>
-        <h4 style={{ color: '#00ffee', marginTop: 0 }}>Dashboard Features Help</h4>
+        <h4 style={{ color: '#5a6169', marginTop: 0 }}>Dashboard Features Help</h4>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
           <button
             style={{
               padding: '1rem',
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              color: '#fff',
-              border: '1px solid #00ffee',
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              color: '#23282e',
+              border: '1px solid #5a6169',
               borderRadius: '4px',
               cursor: 'pointer',
               textAlign: 'left'
             }}
           >
             <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Financial Dashboard</div>
-            <small style={{ color: '#aaa' }}>Revenue projections & unit economics</small>
+            <small style={{ color: '#8b9096' }}>Revenue projections & unit economics</small>
           </button>
           <button
             style={{
               padding: '1rem',
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              color: '#fff',
-              border: '1px solid #00ffee',
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              color: '#23282e',
+              border: '1px solid #5a6169',
               borderRadius: '4px',
               cursor: 'pointer',
               textAlign: 'left'
             }}
           >
             <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Market Intel</div>
-            <small style={{ color: '#aaa' }}>Market data & competitor analysis</small>
+            <small style={{ color: '#8b9096' }}>Market data & competitor analysis</small>
           </button>
           <button
             style={{
               padding: '1rem',
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              color: '#fff',
-              border: '1px solid #00ffee',
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              color: '#23282e',
+              border: '1px solid #5a6169',
               borderRadius: '4px',
               cursor: 'pointer',
               textAlign: 'left'
             }}
           >
             <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Product Validation</div>
-            <small style={{ color: '#aaa' }}>Feature prioritization & MVP planning</small>
+            <small style={{ color: '#8b9096' }}>Feature prioritization & MVP planning</small>
           </button>
           <button
             style={{
               padding: '1rem',
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-              color: '#fff',
-              border: '1px solid #00ffee',
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+              color: '#23282e',
+              border: '1px solid #5a6169',
               borderRadius: '4px',
               cursor: 'pointer',
               textAlign: 'left'
             }}
           >
             <div style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Integrations</div>
-            <small style={{ color: '#aaa' }}>Connect Slack, Notion, and more</small>
+            <small style={{ color: '#8b9096' }}>Connect Slack, Notion, and more</small>
           </button>
         </div>
       </div>
 
       <div style={{
-        backgroundColor: 'rgba(0, 255, 65, 0.1)',
+        backgroundColor: 'rgba(90, 107, 72, 0.10)',
         padding: '1.5rem',
         borderRadius: '8px',
-        border: '1px solid rgba(0, 255, 65, 0.3)'
+        border: '1px solid rgba(90, 107, 72, 0.10)'
       }}>
-        <h4 style={{ color: '#00ff41', marginTop: 0 }}>Getting Started</h4>
-        <ol style={{ color: '#aaa', lineHeight: '1.8' }}>
+        <h4 style={{ color: '#5A6B48', marginTop: 0 }}>Getting Started</h4>
+        <ol style={{ color: '#8b9096', lineHeight: '1.8' }}>
           <li>Start with the learning modules to understand key concepts</li>
           <li>Read success stories to learn from Bangladesh startups</li>
           <li>Use glossary to understand startup terminology</li>
@@ -515,16 +515,16 @@ const EducationResourcesDashboard = () => {
 
   return (
     <div style={{
-      backgroundColor: '#0f2a47',
-      color: '#fff',
+      backgroundColor: '#ffffff',
+      color: '#23282e',
       borderRadius: '8px',
       overflow: 'hidden',
-      border: '1px solid #00ffee'
+      border: '1px solid #5a6169'
     }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(5, 1fr)',
-        borderBottom: '1px solid #00ffee'
+        borderBottom: '1px solid #5a6169'
       }}>
         {[
           { key: 'modules', label: 'Modules', icon: '' },
@@ -538,8 +538,8 @@ const EducationResourcesDashboard = () => {
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             style={{
               padding: '1rem',
-              backgroundColor: activeTab === tab.key ? 'rgba(0, 255, 238, 0.2)' : 'transparent',
-              color: activeTab === tab.key ? '#00ffee' : '#888',
+              backgroundColor: activeTab === tab.key ? 'rgba(90, 107, 72, 0.10)' : 'transparent',
+              color: activeTab === tab.key ? '#5a6169' : '#8b9096',
               border: 'none',
               cursor: 'pointer',
               fontWeight: activeTab === tab.key ? 'bold' : 'normal',

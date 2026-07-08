@@ -165,7 +165,7 @@ const ProductValidationDashboard = () => {
   const renderPriorityTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>Feature Priority Matrix</h3>
+        <h3 style={{ margin: 0, color: '#5A6B48' }}>Feature Priority Matrix</h3>
         <button
           onClick={() => {
             setShowAddFeature(!showAddFeature);
@@ -173,8 +173,8 @@ const ProductValidationDashboard = () => {
           }}
           style={{
             padding: '0.5rem 1rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -187,13 +187,13 @@ const ProductValidationDashboard = () => {
 
       {showAddFeature && (
         <div style={{
-          backgroundColor: 'rgba(15, 42, 71, 0.5)',
+          backgroundColor: 'rgba(35, 40, 46, 0.04)',
           padding: '1.5rem',
           borderRadius: '8px',
           marginBottom: '2rem',
-          border: '1px solid #00ffee'
+          border: '1px solid #5a6169'
         }}>
-          <h4 style={{ color: '#00ffee', marginTop: 0 }}>Add New Feature</h4>
+          <h4 style={{ color: '#5a6169', marginTop: 0 }}>Add New Feature</h4>
           <div style={{ display: 'grid', gap: '1rem' }}>
             <input
               type="text"
@@ -202,9 +202,9 @@ const ProductValidationDashboard = () => {
               onChange={(e) => setNewFeature({ ...newFeature, name: e.target.value })}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px'
               }}
             />
@@ -214,9 +214,9 @@ const ProductValidationDashboard = () => {
               onChange={(e) => setNewFeature({ ...newFeature, description: e.target.value })}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px',
                 minHeight: '60px'
               }}
@@ -227,16 +227,16 @@ const ProductValidationDashboard = () => {
                 onChange={(e) => setNewFeature({ ...newFeature, moscow: e.target.value })}
                 style={{
                   padding: '0.5rem',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid #00ffee',
-                  color: '#fff',
+                  backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                  border: '1px solid #5a6169',
+                  color: '#23282e',
                   borderRadius: '4px'
                 }}
               >
-                <option value="must" style={{ color: '#000' }}>Must Have</option>
-                <option value="should" style={{ color: '#000' }}>Should Have</option>
-                <option value="could" style={{ color: '#000' }}>Could Have</option>
-                <option value="wont" style={{ color: '#000' }}>Won't Have</option>
+                <option value="must" style={{ color: '#23282e' }}>Must Have</option>
+                <option value="should" style={{ color: '#23282e' }}>Should Have</option>
+                <option value="could" style={{ color: '#23282e' }}>Could Have</option>
+                <option value="wont" style={{ color: '#23282e' }}>Won't Have</option>
               </select>
               <input
                 type="range"
@@ -247,7 +247,7 @@ const ProductValidationDashboard = () => {
                 style={{ cursor: 'pointer' }}
               />
               <div style={{ textAlign: 'center' }}>
-                <small style={{ color: '#00ffee' }}>Effort: {newFeature.effort}</small>
+                <small style={{ color: '#5a6169' }}>Effort: {newFeature.effort}</small>
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
@@ -261,15 +261,15 @@ const ProductValidationDashboard = () => {
                 style={{ cursor: 'pointer' }}
               />
               <div style={{ textAlign: 'center' }}>
-                <small style={{ color: '#00ffee' }}>Impact: {newFeature.impact}</small>
+                <small style={{ color: '#5a6169' }}>Impact: {newFeature.impact}</small>
               </div>
             </div>
             <button
               onClick={addFeature}
               style={{
                 padding: '0.75rem',
-                backgroundColor: '#00ff41',
-                color: '#0f2a47',
+                backgroundColor: '#5A6B48',
+                color: '#ffffff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
@@ -286,24 +286,24 @@ const ProductValidationDashboard = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           {/* Must Haves */}
           <div style={{
-            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+            backgroundColor: 'rgba(156, 107, 31, 0.10)',
             padding: '1rem',
             borderRadius: '8px',
-            border: '1px solid rgba(255, 0, 0, 0.3)'
+            border: '1px solid rgba(156, 107, 31, 0.10)'
           }}>
-            <h4 style={{ color: '#ff4444', margin: '0 0 1rem 0' }}>
+            <h4 style={{ color: '#9C6B1F', margin: '0 0 1rem 0' }}>
               Must Have ({priorityMatrix.must_haves.length})
             </h4>
             {priorityMatrix.must_haves.map(f => (
               <div key={f.id} style={{
                 marginBottom: '0.75rem',
                 padding: '0.75rem',
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 borderRadius: '4px',
-                borderLeft: '3px solid #ff4444'
+                borderLeft: '3px solid #9C6B1F'
               }}>
-                <div style={{ fontWeight: 'bold', color: '#fff' }}>{f.name}</div>
-                <div style={{ fontSize: '0.85rem', color: '#aaa', marginTop: '0.25rem' }}>
+                <div style={{ fontWeight: 'bold', color: '#23282e' }}>{f.name}</div>
+                <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>
                   Score: {f.priority_score} | Effort: {f.effort} | Impact: {f.impact}
                 </div>
               </div>
@@ -312,24 +312,24 @@ const ProductValidationDashboard = () => {
 
           {/* Should Haves */}
           <div style={{
-            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+            backgroundColor: 'rgba(156, 107, 31, 0.10)',
             padding: '1rem',
             borderRadius: '8px',
-            border: '1px solid rgba(255, 165, 0, 0.3)'
+            border: '1px solid rgba(156, 107, 31, 0.10)'
           }}>
-            <h4 style={{ color: '#ffaa44', margin: '0 0 1rem 0' }}>
+            <h4 style={{ color: '#9C6B1F', margin: '0 0 1rem 0' }}>
               Should Have ({priorityMatrix.should_haves.length})
             </h4>
             {priorityMatrix.should_haves.map(f => (
               <div key={f.id} style={{
                 marginBottom: '0.75rem',
                 padding: '0.75rem',
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 borderRadius: '4px',
-                borderLeft: '3px solid #ffaa44'
+                borderLeft: '3px solid #9C6B1F'
               }}>
-                <div style={{ fontWeight: 'bold', color: '#fff' }}>{f.name}</div>
-                <div style={{ fontSize: '0.85rem', color: '#aaa', marginTop: '0.25rem' }}>
+                <div style={{ fontWeight: 'bold', color: '#23282e' }}>{f.name}</div>
+                <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>
                   Score: {f.priority_score} | Effort: {f.effort} | Impact: {f.impact}
                 </div>
               </div>
@@ -338,24 +338,24 @@ const ProductValidationDashboard = () => {
 
           {/* Could Haves */}
           <div style={{
-            backgroundColor: 'rgba(0, 255, 255, 0.1)',
+            backgroundColor: 'rgba(90, 107, 72, 0.10)',
             padding: '1rem',
             borderRadius: '8px',
-            border: '1px solid rgba(0, 255, 255, 0.3)'
+            border: '1px solid rgba(90, 107, 72, 0.10)'
           }}>
-            <h4 style={{ color: '#00ffee', margin: '0 0 1rem 0' }}>
+            <h4 style={{ color: '#5a6169', margin: '0 0 1rem 0' }}>
               Could Have ({priorityMatrix.could_haves.length})
             </h4>
             {priorityMatrix.could_haves.map(f => (
               <div key={f.id} style={{
                 marginBottom: '0.75rem',
                 padding: '0.75rem',
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 borderRadius: '4px',
-                borderLeft: '3px solid #00ffee'
+                borderLeft: '3px solid #5a6169'
               }}>
-                <div style={{ fontWeight: 'bold', color: '#fff' }}>{f.name}</div>
-                <div style={{ fontSize: '0.85rem', color: '#aaa', marginTop: '0.25rem' }}>
+                <div style={{ fontWeight: 'bold', color: '#23282e' }}>{f.name}</div>
+                <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>
                   Score: {f.priority_score} | Effort: {f.effort} | Impact: {f.impact}
                 </div>
               </div>
@@ -364,24 +364,24 @@ const ProductValidationDashboard = () => {
 
           {/* Won't Haves */}
           <div style={{
-            backgroundColor: 'rgba(100, 100, 100, 0.1)',
+            backgroundColor: 'rgba(35, 40, 46, 0.04)',
             padding: '1rem',
             borderRadius: '8px',
-            border: '1px solid rgba(100, 100, 100, 0.3)'
+            border: '1px solid rgba(35, 40, 46, 0.04)'
           }}>
-            <h4 style={{ color: '#aaa', margin: '0 0 1rem 0' }}>
+            <h4 style={{ color: '#8b9096', margin: '0 0 1rem 0' }}>
               Won't Have ({priorityMatrix.wont_haves.length})
             </h4>
             {priorityMatrix.wont_haves.map(f => (
               <div key={f.id} style={{
                 marginBottom: '0.75rem',
                 padding: '0.75rem',
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 borderRadius: '4px',
-                borderLeft: '3px solid #888'
+                borderLeft: '3px solid #8b9096'
               }}>
-                <div style={{ fontWeight: 'bold', color: '#fff' }}>{f.name}</div>
-                <div style={{ fontSize: '0.85rem', color: '#aaa', marginTop: '0.25rem' }}>
+                <div style={{ fontWeight: 'bold', color: '#23282e' }}>{f.name}</div>
+                <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>
                   Score: {f.priority_score}
                 </div>
               </div>
@@ -389,7 +389,7 @@ const ProductValidationDashboard = () => {
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: 'center', padding: '2rem', color: '#aaa' }}>
+        <div style={{ textAlign: 'center', padding: '2rem', color: '#8b9096' }}>
           <p>Add features to see the priority matrix</p>
         </div>
       )}
@@ -399,13 +399,13 @@ const ProductValidationDashboard = () => {
   const renderCustomerTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>Customer Development Framework</h3>
+        <h3 style={{ margin: 0, color: '#5A6B48' }}>Customer Development Framework</h3>
         <button
           onClick={() => setShowCreateInterview(!showCreateInterview)}
           style={{
             padding: '0.5rem 1rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -418,28 +418,28 @@ const ProductValidationDashboard = () => {
 
       {showCreateInterview && (
         <div style={{
-          backgroundColor: 'rgba(15, 42, 71, 0.5)',
+          backgroundColor: 'rgba(35, 40, 46, 0.04)',
           padding: '1.5rem',
           borderRadius: '8px',
           marginBottom: '2rem',
-          border: '1px solid #00ffee'
+          border: '1px solid #5a6169'
         }}>
-          <h4 style={{ color: '#00ffee', marginTop: 0 }}>Create Interview</h4>
+          <h4 style={{ color: '#5a6169', marginTop: 0 }}>Create Interview</h4>
           <div style={{ display: 'grid', gap: '1rem' }}>
             <select
               value={selectedTemplate}
               onChange={(e) => setSelectedTemplate(e.target.value)}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px'
               }}
             >
-              <option value="customer_discovery" style={{ color: '#000' }}>Customer Discovery</option>
-              <option value="problem_validation" style={{ color: '#000' }}>Problem Validation</option>
-              <option value="solution_validation" style={{ color: '#000' }}>Solution Validation</option>
+              <option value="customer_discovery" style={{ color: '#23282e' }}>Customer Discovery</option>
+              <option value="problem_validation" style={{ color: '#23282e' }}>Problem Validation</option>
+              <option value="solution_validation" style={{ color: '#23282e' }}>Solution Validation</option>
             </select>
             <input
               type="text"
@@ -448,9 +448,9 @@ const ProductValidationDashboard = () => {
               onChange={(e) => setRespondentName(e.target.value)}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px'
               }}
             />
@@ -458,8 +458,8 @@ const ProductValidationDashboard = () => {
               onClick={createInterview}
               style={{
                 padding: '0.75rem',
-                backgroundColor: '#00ff41',
-                color: '#0f2a47',
+                backgroundColor: '#5A6B48',
+                color: '#ffffff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
@@ -473,53 +473,53 @@ const ProductValidationDashboard = () => {
       )}
 
       <div style={{
-        backgroundColor: 'rgba(0, 255, 238, 0.1)',
+        backgroundColor: 'rgba(90, 107, 72, 0.10)',
         padding: '1.5rem',
         borderRadius: '8px',
-        border: '1px solid rgba(0, 255, 238, 0.3)',
+        border: '1px solid rgba(90, 107, 72, 0.10)',
         marginBottom: '2rem'
       }}>
-        <h4 style={{ color: '#00ffee', marginTop: 0 }}>Interview Templates</h4>
+        <h4 style={{ color: '#5a6169', marginTop: 0 }}>Interview Templates</h4>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
           <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1rem',
             borderRadius: '4px',
-            borderLeft: '3px solid #00ff41'
+            borderLeft: '3px solid #5A6B48'
           }}>
-            <div style={{ fontWeight: 'bold', color: '#00ff41', marginBottom: '0.5rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#5A6B48', marginBottom: '0.5rem' }}>
               Customer Discovery
             </div>
-            <small style={{ color: '#aaa' }}>7 questions • ~21 minutes</small>
-            <div style={{ color: '#aaa', marginTop: '0.5rem', fontSize: '0.8rem' }}>
+            <small style={{ color: '#8b9096' }}>7 questions • ~21 minutes</small>
+            <div style={{ color: '#8b9096', marginTop: '0.5rem', fontSize: '0.8rem' }}>
               Understand customer problems and needs
             </div>
           </div>
           <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1rem',
             borderRadius: '4px',
-            borderLeft: '3px solid #00ffee'
+            borderLeft: '3px solid #5a6169'
           }}>
-            <div style={{ fontWeight: 'bold', color: '#00ffee', marginBottom: '0.5rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#5a6169', marginBottom: '0.5rem' }}>
               Problem Validation
             </div>
-            <small style={{ color: '#aaa' }}>6 questions • ~18 minutes</small>
-            <div style={{ color: '#aaa', marginTop: '0.5rem', fontSize: '0.8rem' }}>
+            <small style={{ color: '#8b9096' }}>6 questions • ~18 minutes</small>
+            <div style={{ color: '#8b9096', marginTop: '0.5rem', fontSize: '0.8rem' }}>
               Validate that the problem is real
             </div>
           </div>
           <div style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1rem',
             borderRadius: '4px',
-            borderLeft: '3px solid #ffaa44'
+            borderLeft: '3px solid #9C6B1F'
           }}>
-            <div style={{ fontWeight: 'bold', color: '#ffaa44', marginBottom: '0.5rem' }}>
+            <div style={{ fontWeight: 'bold', color: '#9C6B1F', marginBottom: '0.5rem' }}>
               Solution Validation
             </div>
-            <small style={{ color: '#aaa' }}>6 questions • ~18 minutes</small>
-            <div style={{ color: '#aaa', marginTop: '0.5rem', fontSize: '0.8rem' }}>
+            <small style={{ color: '#8b9096' }}>6 questions • ~18 minutes</small>
+            <div style={{ color: '#8b9096', marginTop: '0.5rem', fontSize: '0.8rem' }}>
               Test if your solution resonates
             </div>
           </div>
@@ -528,17 +528,17 @@ const ProductValidationDashboard = () => {
 
       {interviews.length > 0 && (
         <div>
-          <h4 style={{ color: '#00ff41', marginBottom: '1rem' }}>Completed Interviews ({interviews.length})</h4>
+          <h4 style={{ color: '#5A6B48', marginBottom: '1rem' }}>Completed Interviews ({interviews.length})</h4>
           <div style={{ display: 'grid', gap: '0.75rem' }}>
             {interviews.map(interview => (
               <div key={interview.id} style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1rem',
                 borderRadius: '4px',
-                borderLeft: '3px solid #00ff41'
+                borderLeft: '3px solid #5A6B48'
               }}>
-                <div style={{ fontWeight: 'bold', color: '#fff' }}>{interview.respondent}</div>
-                <div style={{ fontSize: '0.85rem', color: '#aaa', marginTop: '0.25rem' }}>
+                <div style={{ fontWeight: 'bold', color: '#23282e' }}>{interview.respondent}</div>
+                <div style={{ fontSize: '0.85rem', color: '#8b9096', marginTop: '0.25rem' }}>
                   {interview.template} • {interview.questions_total} questions • {new Date(interview.date).toLocaleDateString()}
                 </div>
               </div>
@@ -552,13 +552,13 @@ const ProductValidationDashboard = () => {
   const renderMVPTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>MVP Definition Helper</h3>
+        <h3 style={{ margin: 0, color: '#5A6B48' }}>MVP Definition Helper</h3>
         <button
           onClick={() => setShowDefineMVP(!showDefineMVP)}
           style={{
             padding: '0.5rem 1rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -571,13 +571,13 @@ const ProductValidationDashboard = () => {
 
       {showDefineMVP && (
         <div style={{
-          backgroundColor: 'rgba(15, 42, 71, 0.5)',
+          backgroundColor: 'rgba(35, 40, 46, 0.04)',
           padding: '1.5rem',
           borderRadius: '8px',
           marginBottom: '2rem',
-          border: '1px solid #00ffee'
+          border: '1px solid #5a6169'
         }}>
-          <h4 style={{ color: '#00ffee', marginTop: 0 }}>Define Your MVP</h4>
+          <h4 style={{ color: '#5a6169', marginTop: 0 }}>Define Your MVP</h4>
           <div style={{ display: 'grid', gap: '1rem' }}>
             <input
               type="text"
@@ -586,9 +586,9 @@ const ProductValidationDashboard = () => {
               onChange={(e) => setMvpData({ ...mvpData, productName: e.target.value })}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px'
               }}
             />
@@ -598,9 +598,9 @@ const ProductValidationDashboard = () => {
               onChange={(e) => setMvpData({ ...mvpData, coreFeatures: e.target.value })}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px',
                 minHeight: '60px'
               }}
@@ -611,15 +611,15 @@ const ProductValidationDashboard = () => {
               onChange={(e) => setMvpData({ ...mvpData, niceToHave: e.target.value })}
               style={{
                 padding: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00ffee',
-                color: '#fff',
+                backgroundColor: 'rgba(35, 40, 46, 0.08)',
+                border: '1px solid #5a6169',
+                color: '#23282e',
                 borderRadius: '4px',
                 minHeight: '60px'
               }}
             />
             <div>
-              <label style={{ color: '#00ffee', display: 'block', marginBottom: '0.5rem' }}>
+              <label style={{ color: '#5a6169', display: 'block', marginBottom: '0.5rem' }}>
                 Launch Timeline: {mvpData.launchWeeks} weeks
               </label>
               <input
@@ -635,8 +635,8 @@ const ProductValidationDashboard = () => {
               onClick={defineMVP}
               style={{
                 padding: '0.75rem',
-                backgroundColor: '#00ff41',
-                color: '#0f2a47',
+                backgroundColor: '#5A6B48',
+                color: '#ffffff',
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
@@ -651,31 +651,31 @@ const ProductValidationDashboard = () => {
 
       {mvpPlan && (
         <div style={{
-          backgroundColor: 'rgba(0, 255, 238, 0.1)',
+          backgroundColor: 'rgba(90, 107, 72, 0.10)',
           padding: '1.5rem',
           borderRadius: '8px',
-          border: '1px solid rgba(0, 255, 238, 0.3)'
+          border: '1px solid rgba(90, 107, 72, 0.10)'
         }}>
-          <h4 style={{ color: '#00ffee', marginTop: 0 }}>{mvpPlan.product_name}</h4>
+          <h4 style={{ color: '#5a6169', marginTop: 0 }}>{mvpPlan.product_name}</h4>
           <div style={{ marginBottom: '1.5rem' }}>
             <div style={{ marginBottom: '1rem' }}>
-              <small style={{ color: '#aaa' }}>Timeline: {mvpPlan.timeline_weeks} weeks</small>
+              <small style={{ color: '#8b9096' }}>Timeline: {mvpPlan.timeline_weeks} weeks</small>
             </div>
-            <div style={{ color: '#00ff41', fontWeight: 'bold', marginBottom: '1rem' }}>
+            <div style={{ color: '#5A6B48', fontWeight: 'bold', marginBottom: '1rem' }}>
               {mvpPlan.recommendation}
             </div>
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>
-            <h5 style={{ color: '#00ffee', marginTop: 0 }}>Core Features</h5>
+            <h5 style={{ color: '#5a6169', marginTop: 0 }}>Core Features</h5>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
               {mvpPlan.mvp_features.map((feature, i) => (
                 <div key={i} style={{
-                  backgroundColor: 'rgba(0, 255, 65, 0.1)',
+                  backgroundColor: 'rgba(90, 107, 72, 0.10)',
                   padding: '0.75rem',
                   borderRadius: '4px',
-                  borderLeft: '2px solid #00ff41',
-                  color: '#fff'
+                  borderLeft: '2px solid #5A6B48',
+                  color: '#23282e'
                 }}>
                   {feature}
                 </div>
@@ -685,15 +685,15 @@ const ProductValidationDashboard = () => {
 
           {mvpPlan.excluded_features.length > 0 && (
             <div style={{ marginBottom: '1.5rem' }}>
-              <h5 style={{ color: '#ffaa44', marginTop: 0 }}>Excluded Features (Phase 2)</h5>
+              <h5 style={{ color: '#9C6B1F', marginTop: 0 }}>Excluded Features (Phase 2)</h5>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem' }}>
                 {mvpPlan.excluded_features.map((feature, i) => (
                   <div key={i} style={{
-                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                    backgroundColor: 'rgba(156, 107, 31, 0.10)',
                     padding: '0.75rem',
                     borderRadius: '4px',
-                    borderLeft: '2px solid #ffaa44',
-                    color: '#fff'
+                    borderLeft: '2px solid #9C6B1F',
+                    color: '#23282e'
                   }}>
                     ○ {feature}
                   </div>
@@ -703,22 +703,22 @@ const ProductValidationDashboard = () => {
           )}
 
           <div>
-            <h5 style={{ color: '#00ffee', marginTop: 0 }}>Development Phases</h5>
+            <h5 style={{ color: '#5a6169', marginTop: 0 }}>Development Phases</h5>
             {mvpPlan.phases.map((phase, i) => (
               <div key={i} style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                backgroundColor: 'rgba(0, 0, 0, 0)',
                 padding: '1rem',
                 marginBottom: '0.75rem',
                 borderRadius: '4px',
-                borderLeft: '3px solid #00ffee'
+                borderLeft: '3px solid #5a6169'
               }}>
-                <div style={{ fontWeight: 'bold', color: '#fff', marginBottom: '0.5rem' }}>
+                <div style={{ fontWeight: 'bold', color: '#23282e', marginBottom: '0.5rem' }}>
                   {phase.phase}
                 </div>
-                <div style={{ fontSize: '0.85rem', color: '#aaa', marginBottom: '0.5rem' }}>
+                <div style={{ fontSize: '0.85rem', color: '#8b9096', marginBottom: '0.5rem' }}>
                   Effort: {Math.round(phase.effort_hours)} hours
                 </div>
-                <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', color: '#aaa' }}>
+                <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', color: '#8b9096' }}>
                   {phase.tasks.map((task, j) => (
                     <li key={j} style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>{task}</li>
                   ))}
@@ -733,16 +733,16 @@ const ProductValidationDashboard = () => {
 
   return (
     <div style={{
-      backgroundColor: '#0f2a47',
-      color: '#fff',
+      backgroundColor: '#ffffff',
+      color: '#23282e',
       borderRadius: '8px',
       overflow: 'hidden',
-      border: '1px solid #00ffee'
+      border: '1px solid #5a6169'
     }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr 1fr',
-        borderBottom: '1px solid #00ffee'
+        borderBottom: '1px solid #5a6169'
       }}>
         {[
           { key: 'priority', label: 'Feature Matrix', icon: '' },
@@ -754,8 +754,8 @@ const ProductValidationDashboard = () => {
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             style={{
               padding: '1rem',
-              backgroundColor: activeTab === tab.key ? 'rgba(0, 255, 238, 0.2)' : 'transparent',
-              color: activeTab === tab.key ? '#00ffee' : '#888',
+              backgroundColor: activeTab === tab.key ? 'rgba(90, 107, 72, 0.10)' : 'transparent',
+              color: activeTab === tab.key ? '#5a6169' : '#8b9096',
               border: 'none',
               cursor: 'pointer',
               fontWeight: activeTab === tab.key ? 'bold' : 'normal',

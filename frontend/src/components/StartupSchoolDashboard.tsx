@@ -39,10 +39,10 @@ const StartupSchoolDashboard = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch(difficulty) {
-      case 'beginner': return '#00ff41';
-      case 'intermediate': return '#ffaa44';
-      case 'advanced': return '#ff4444';
-      default: return '#00ffee';
+      case 'beginner': return '#5A6B48';
+      case 'intermediate': return '#9C6B1F';
+      case 'advanced': return '#9C6B1F';
+      default: return '#5a6169';
     }
   };
 
@@ -79,13 +79,13 @@ const StartupSchoolDashboard = () => {
   const renderAcademyTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>Founder Academy</h3>
+        <h3 style={{ margin: 0, color: '#5A6B48' }}>Founder Academy</h3>
         <button
           onClick={loadCourses}
           style={{
             padding: '0.75rem 1.5rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -99,16 +99,16 @@ const StartupSchoolDashboard = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
         {courses.map(course => (
           <div key={course.id} style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1.5rem',
             borderRadius: '8px',
-            border: '1px solid rgba(0, 255, 238, 0.3)'
+            border: '1px solid rgba(90, 107, 72, 0.10)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
-              <h4 style={{ color: '#00ffee', margin: 0 }}>{course.title}</h4>
+              <h4 style={{ color: '#5a6169', margin: 0 }}>{course.title}</h4>
               <span style={{
                 backgroundColor: getDifficultyColor(course.difficulty),
-                color: '#0f2a47',
+                color: '#23282e',
                 padding: '0.25rem 0.75rem',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
@@ -117,10 +117,10 @@ const StartupSchoolDashboard = () => {
                 {course.difficulty}
               </span>
             </div>
-            <p style={{ color: '#aaa', fontSize: '0.9rem', margin: '0.5rem 0' }}>
+            <p style={{ color: '#8b9096', fontSize: '0.9rem', margin: '0.5rem 0' }}>
               {course.description}
             </p>
-            <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+            <div style={{ color: '#8b9096', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
               <div>By {course.instructor}</div>
               <div>{course.duration_hours} hours • {course.enrolled} enrolled</div>
               <div>Completion: {course.completion_rate}%</div>
@@ -128,8 +128,8 @@ const StartupSchoolDashboard = () => {
             <button style={{
               width: '100%',
               padding: '0.75rem',
-              backgroundColor: '#0055ff',
-              color: '#fff',
+              backgroundColor: '#5a6169',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -146,13 +146,13 @@ const StartupSchoolDashboard = () => {
   const renderCommunityTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>Peer Community</h3>
+        <h3 style={{ margin: 0, color: '#5A6B48' }}>Peer Community</h3>
         <button
           onClick={loadThreads}
           style={{
             padding: '0.75rem 1.5rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -166,16 +166,16 @@ const StartupSchoolDashboard = () => {
       <div style={{ display: 'grid', gap: '1rem' }}>
         {threads.map(thread => (
           <div key={thread.id} style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1.25rem',
             borderRadius: '8px',
-            borderLeft: '3px solid #00ffee'
+            borderLeft: '3px solid #5a6169'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
-              <h4 style={{ color: '#fff', margin: '0 0 0.25rem 0' }}>{thread.title}</h4>
+              <h4 style={{ color: '#23282e', margin: '0 0 0.25rem 0' }}>{thread.title}</h4>
               <span style={{
-                backgroundColor: 'rgba(0, 255, 238, 0.2)',
-                color: '#00ffee',
+                backgroundColor: 'rgba(90, 107, 72, 0.10)',
+                color: '#5a6169',
                 padding: '0.25rem 0.75rem',
                 borderRadius: '4px',
                 fontSize: '0.8rem'
@@ -183,10 +183,10 @@ const StartupSchoolDashboard = () => {
                 {thread.category}
               </span>
             </div>
-            <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+            <div style={{ color: '#8b9096', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
               Posted by {thread.author}
             </div>
-            <div style={{ display: 'flex', gap: '1.5rem', color: '#aaa', fontSize: '0.8rem' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', color: '#8b9096', fontSize: '0.8rem' }}>
               <span>{thread.views} views</span>
               <span>{thread.replies} replies</span>
               <span>{thread.votes} votes</span>
@@ -200,13 +200,13 @@ const StartupSchoolDashboard = () => {
   const renderMentorshipTab = () => (
     <div style={{ padding: '2rem' }}>
       <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3 style={{ margin: 0, color: '#00ff41' }}>Mentorship Program</h3>
+        <h3 style={{ margin: 0, color: '#5A6B48' }}>Mentorship Program</h3>
         <button
           onClick={loadMentors}
           style={{
             padding: '0.75rem 1.5rem',
-            backgroundColor: '#00ff41',
-            color: '#0f2a47',
+            backgroundColor: '#5A6B48',
+            color: '#ffffff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
@@ -220,16 +220,16 @@ const StartupSchoolDashboard = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
         {mentors.map(mentor => (
           <div key={mentor.id} style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
             padding: '1.5rem',
             borderRadius: '8px',
-            border: '1px solid rgba(255, 165, 0, 0.3)'
+            border: '1px solid rgba(156, 107, 31, 0.10)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '0.75rem' }}>
-              <h4 style={{ color: '#ffaa44', margin: 0 }}>{mentor.name}</h4>
+              <h4 style={{ color: '#9C6B1F', margin: 0 }}>{mentor.name}</h4>
               <div style={{
-                backgroundColor: 'rgba(255, 215, 0, 0.2)',
-                color: '#ffd700',
+                backgroundColor: 'rgba(156, 107, 31, 0.10)',
+                color: '#9C6B1F',
                 padding: '0.25rem 0.5rem',
                 borderRadius: '4px',
                 fontSize: '0.8rem',
@@ -238,13 +238,13 @@ const StartupSchoolDashboard = () => {
                 {mentor.rating}
               </div>
             </div>
-            <div style={{ color: '#aaa', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+            <div style={{ color: '#8b9096', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
               <div><strong>Expertise:</strong></div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
                 {mentor.expertise.map((exp, i) => (
                   <span key={i} style={{
-                    backgroundColor: 'rgba(255, 165, 0, 0.2)',
-                    color: '#ffaa44',
+                    backgroundColor: 'rgba(156, 107, 31, 0.10)',
+                    color: '#9C6B1F',
                     padding: '0.1rem 0.5rem',
                     borderRadius: '3px',
                     fontSize: '0.75rem'
@@ -261,8 +261,8 @@ const StartupSchoolDashboard = () => {
             <button style={{
               width: '100%',
               padding: '0.75rem',
-              backgroundColor: '#0055ff',
-              color: '#fff',
+              backgroundColor: '#5a6169',
+              color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -278,16 +278,16 @@ const StartupSchoolDashboard = () => {
 
   return (
     <div style={{
-      backgroundColor: '#0f2a47',
-      color: '#fff',
+      backgroundColor: '#ffffff',
+      color: '#23282e',
       borderRadius: '8px',
       overflow: 'hidden',
-      border: '1px solid #00ffee'
+      border: '1px solid #5a6169'
     }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        borderBottom: '1px solid #00ffee'
+        borderBottom: '1px solid #5a6169'
       }}>
         {[
           { key: 'academy', label: 'Academy', icon: '' },
@@ -299,8 +299,8 @@ const StartupSchoolDashboard = () => {
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             style={{
               padding: '1rem',
-              backgroundColor: activeTab === tab.key ? 'rgba(0, 255, 238, 0.2)' : 'transparent',
-              color: activeTab === tab.key ? '#00ffee' : '#888',
+              backgroundColor: activeTab === tab.key ? 'rgba(90, 107, 72, 0.10)' : 'transparent',
+              color: activeTab === tab.key ? '#5a6169' : '#8b9096',
               border: 'none',
               cursor: 'pointer',
               fontWeight: activeTab === tab.key ? 'bold' : 'normal'
