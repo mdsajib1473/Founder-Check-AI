@@ -494,6 +494,16 @@ function App() {
               </div>
 
               <div className="feature-card">
+                <h3>Risk Assessment</h3>
+                <p>An overall risk score, with high and medium priority risks each carrying a likelihood, impact, and mitigation, plotted on a likelihood-impact heat map.</p>
+                <ul className="feature-list">
+                  <li>Overall risk score</li>
+                  <li>Likelihood, impact, mitigation per risk</li>
+                  <li>Likelihood-impact heat map</li>
+                </ul>
+              </div>
+
+              <div className="feature-card">
                 <h3>Founder Fit</h3>
                 <p>Assess your startup idea against founder expertise, identify gaps, and get improvement recommendations.</p>
                 <ul className="feature-list">
@@ -606,6 +616,10 @@ function App() {
               <div className="module">
                 <h3>Go-to-Market</h3>
                 <p>Phased GTM strategy, customer acquisition, pricing approach</p>
+              </div>
+              <div className="module">
+                <h3>Risk Assessment</h3>
+                <p>Overall risk score, high and medium risks with likelihood, impact, and mitigation, on a heat map</p>
               </div>
               <div className="module">
                 <h3>Founder Fit</h3>
