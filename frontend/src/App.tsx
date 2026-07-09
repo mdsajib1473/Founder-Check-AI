@@ -395,11 +395,11 @@ function App() {
             <div className="features-grid">
               <div className="feature-card">
                 <h3>Market Demand</h3>
-                <p>Deep-dive analysis with TAM/SAM/SOM breakdown, customer needs assessment, and competitive landscape evaluation.</p>
+                <p>Demand assessment for your idea with a market size estimate, a 1 to 10 demand score, and the competition it faces.</p>
                 <ul className="feature-list">
-                  <li>Market size estimation</li>
-                  <li>Customer pain points</li>
-                  <li>Competitive analysis</li>
+                  <li>Market size estimate</li>
+                  <li>Demand score, 1 to 10</li>
+                  <li>Opportunities and threats</li>
                 </ul>
               </div>
 
@@ -494,16 +494,6 @@ function App() {
               </div>
 
               <div className="feature-card">
-                <h3>Risk Assessment</h3>
-                <p>Identify critical risks with probability analysis, impact assessment, and mitigation strategies.</p>
-                <ul className="feature-list">
-                  <li>Risk prioritization</li>
-                  <li>Impact analysis</li>
-                  <li>Mitigation plans</li>
-                </ul>
-              </div>
-
-              <div className="feature-card">
                 <h3>Founder Fit</h3>
                 <p>Assess your startup idea against founder expertise, identify gaps, and get improvement recommendations.</p>
                 <ul className="feature-list">
@@ -587,7 +577,7 @@ function App() {
             <div className="modules-grid">
               <div className="module">
                 <h3>Market Demand</h3>
-                <p>TAM/SAM/SOM analysis, customer needs, competitive landscape</p>
+                <p>Market size estimate, demand score, opportunities and threats</p>
               </div>
               <div className="module">
                 <h3>Regulatory Risk</h3>
@@ -618,10 +608,6 @@ function App() {
                 <p>Phased GTM strategy, customer acquisition, pricing approach</p>
               </div>
               <div className="module">
-                <h3>Risk Assessment</h3>
-                <p>High/medium priority risks with mitigation strategies</p>
-              </div>
-              <div className="module">
                 <h3>Founder Fit</h3>
                 <p>Skills assessment, experience gaps, team recommendations</p>
               </div>
@@ -631,7 +617,7 @@ function App() {
               </div>
               <div className="module">
                 <h3>Readiness Score</h3>
-                <p>Overall startup readiness with 5-10 actionable improvements</p>
+                <p>Overall readiness with the factors that drove the score</p>
               </div>
             </div>
           </section>
