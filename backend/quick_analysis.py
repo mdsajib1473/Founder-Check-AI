@@ -54,12 +54,24 @@ async def quick_analyze(idea: str) -> dict:
     questions_data = results["questions"]
     competitor_data = results["competitors"]
 
-    # Calculate overall readiness score
-    overall_score = (
-        demand_data.get("score", 5) +
-        (10 - regulatory_data.get("risk_score", 5)) +
-        7.0
-    ) / 3
+    # Overall readiness averages three real, higher-is-better factors:
+    # demand, regulatory health (10 - risk), and business model viability.
+    # The viability score is now computed by the canvas LLM call, not a
+    # hardcoded constant. If any factor is missing or out of range, the
+    # score is left as None (honest incomplete) rather than guessed (rule 9).
+    def _valid(v):
+        return isinstance(v, (int, float)) and 1 <= v <= 10
+
+    demand_score = demand_data.get("score")
+    regulatory_risk = regulatory_data.get("risk_score")
+    business_viability = canvas_data.get("viability_score")
+
+    if _valid(demand_score) and _valid(regulatory_risk) and _valid(business_viability):
+        overall_score = round(
+            (demand_score + (10 - regulatory_risk) + business_viability) / 3, 1
+        )
+    else:
+        overall_score = None
 
     # Quick financial estimate (not full 3-year projection)
     financial_data = {
@@ -83,7 +95,7 @@ async def quick_analyze(idea: str) -> dict:
         "investor_questions": questions_data,
         "competitor_analysis": competitor_data,
         "financial_projections": financial_data,
-        "overall_readiness_score": round(overall_score, 1),
+        "overall_readiness_score": overall_score,
         "analysis_status": "completed",
         "analysis_mode": "quick"
     }

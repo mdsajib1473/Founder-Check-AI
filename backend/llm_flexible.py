@@ -93,7 +93,8 @@ DEMO_RESPONSES = {
         "channels": ["Mobile app", "Website", "Phone orders"],
         "customer_relationships": ["24/7 support", "Loyalty program"],
         "revenue_streams": {"per_order": 50, "bulk_contracts": 5000},
-        "cost_structure": {"rent": 80000, "ingredients": 40, "labor": 120000, "delivery": 50000}
+        "cost_structure": {"rent": 80000, "ingredients": 40, "labor": 120000, "delivery": 50000},
+        "viability_score": 6.5
     },
     "investor_questions": [
         {"question": "What is your target market size in Dhaka?", "category": "market"},
@@ -422,7 +423,8 @@ def generate_business_canvas(idea_text: str, sector: str) -> dict:
     Create a Business Model Canvas for this startup:
     {idea_text} ({sector})
 
-    Return JSON with: key_partners, key_activities, key_resources, value_proposition, customer_segments, channels, customer_relationships, revenue_streams, cost_structure.
+    Return JSON with: key_partners, key_activities, key_resources, value_proposition, customer_segments, channels, customer_relationships, revenue_streams, cost_structure, viability_score.
+    viability_score is a number from 1 to 10 rating how coherent and strong this business model is: a clear value proposition, realistic revenue streams, and a reasonable cost structure score high; vague, unrealistic, or incoherent models score low.
     All costs in BDT.
     RETURN ONLY JSON.
     """

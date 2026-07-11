@@ -978,9 +978,9 @@ function App() {
                       <span className="factor-val">{analysis.regulatory_analysis?.risk_score != null ? `${Number(analysis.regulatory_analysis.risk_score).toFixed(1)} / 10` : 'Pending'}</span>
                     </div>
                     <div className="factor-row">
-                      <span>Business model review</span>
+                      <span>Business model</span>
                       <span className="leader"></span>
-                      <span className="factor-val">Included</span>
+                      <span className="factor-val">{analysis.business_canvas?.viability_score != null ? `${Number(analysis.business_canvas.viability_score).toFixed(1)} / 10` : 'Pending'}</span>
                     </div>
                   </div>
                 </div>
