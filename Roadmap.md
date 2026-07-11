@@ -14,7 +14,7 @@ Decisions locked in:
 
 Work through phases in order. Do not start a phase before the previous one is verified working.
 
-## Phase 0: Environment Setup and Audit (30 to 45 min)
+## Phase 0: Environment Setup and Audit 
 
 - Confirm `.env` is in place with `DATABASE_URL` pointed at the real Neon connection string (pooled).
 - Test the OpenAI key with a small direct call before touching any app code.
@@ -23,7 +23,7 @@ Work through phases in order. Do not start a phase before the previous one is ve
 
 Exit condition: both servers run locally, and you know for certain which LLM keys are usable.
 
-## Phase 1: Critical Bug Fixes (1.5 to 2 hours)
+## Phase 1: Critical Bug Fixes
 
 1. Add a React error boundary around the results tabs so one broken tab never takes down the whole app.
 2. Fix the Financial tab crash: either make the frontend tolerant of the placeholder structure from quick analysis, or make sure the extended data is loaded before that tab renders.
@@ -33,7 +33,7 @@ Exit condition: both servers run locally, and you know for certain which LLM key
 
 Exit condition: full analyze flow works end to end in the browser, all tabs render real data, no console errors, production build succeeds.
 
-## Phase 2: Database Migration to Neon (2 to 2.5 hours)
+## Phase 2: Database Migration to Neon 
 
 1. Resolve the duplicate model definitions between `database.py` and `models.py`. Pick one clean schema, drop the other.
 2. Point `DATABASE_URL` at Neon and run `alembic upgrade head` (or generate a fresh migration if the existing one does not match the new clean schema).
@@ -43,7 +43,7 @@ Exit condition: full analyze flow works end to end in the browser, all tabs rend
 
 Exit condition: backend restart does not lose data, analyses are stored in Neon, confirmed by checking the Neon SQL Editor.
 
-## Phase 3: Authentication (2 to 2.5 hours)
+## Phase 3: Authentication 
 
 1. Add a `User` table (email, hashed password, role: founder or admin, created_at).
 2. Implement register and login endpoints using JWT (short-lived access token).
@@ -54,7 +54,7 @@ Exit condition: backend restart does not lose data, analyses are stored in Neon,
 
 Exit condition: registering, logging in, and logging out all work against the real backend, and a logged-in user only sees their own analyses.
 
-## Phase 4: Security Baseline (1 to 1.5 hours)
+## Phase 4: Security Baseline
 
 1. Restrict CORS to the actual frontend origin, remove any wildcard.
 2. Confirm no secrets are hardcoded anywhere in the codebase, everything reads from `.env`.
@@ -63,13 +63,13 @@ Exit condition: registering, logging in, and logging out all work against the re
 
 Exit condition: no secrets in source, CORS locked down, auth inputs validated.
 
-## Phase 5: Frontend Polish (1 hour)
+## Phase 5: Frontend Polish 
 
 Apply the frontend design rules from Agent.md (make the readiness score the visual focal point, clean layout, no unnecessary flashiness, gentle reminders for incomplete states). Remove emojis and em dashes from all frontend copy, markdown files, and code comments.
 
 Exit condition: UI looks intentional and calm on camera, no placeholder or crash states visible during a normal walkthrough.
 
-## Phase 6: End to End Testing (45 min to 1 hour)
+## Phase 6: End to End Testing
 
 1. Full flow: register, login, submit an idea, view every tab including the extended ones, complete the Q&A flow, log out.
 2. Restart the backend mid-test to confirm persistence holds.
