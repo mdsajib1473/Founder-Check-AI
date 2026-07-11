@@ -9,7 +9,7 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5--turbo-412991?style=flat-square&logo=openai&logoColor=white)
 
 ## Live Demo
-[Add live deployment link here]
+https://founder-check-ai-ivory.vercel.app
 
 ## Overview
 
