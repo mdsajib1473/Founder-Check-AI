@@ -7,18 +7,27 @@
 
 :root {
   /* Color tokens */
-  --paper: #f2f0e9;        /* Archive: page ground */
-  --panel: #ffffff;        /* card surface */
-  --ink: #23282e;          /* Iron Ink: text, structure */
-  --ink-2: #5a6169;        /* secondary text (ink at ~62%) */
-  --ink-3: #8b9096;        /* tertiary text, captions */
+  --paper: #f2f0e9;
+  /* Archive: page ground */
+  --panel: #ffffff;
+  /* card surface */
+  --ink: #23282e;
+  /* Iron Ink: text, structure */
+  --ink-2: #5a6169;
+  /* secondary text (ink at ~62%) */
+  --ink-3: #8b9096;
+  /* tertiary text, captions */
   --hairline: rgba(35, 40, 46, 0.16);
   --hairline-soft: rgba(35, 40, 46, 0.09);
-  --accent: #8a2e33;       /* Ledger Red: score + primary action only */
-  --accent-ink: #6e2429;   /* pressed state */
-  --moss: #5a6b48;         /* status: strong / pass */
+  --accent: #8a2e33;
+  /* Ledger Red: score + primary action only */
+  --accent-ink: #6e2429;
+  /* pressed state */
+  --moss: #5a6b48;
+  /* status: strong / pass */
   --moss-wash: rgba(90, 107, 72, 0.09);
-  --ochre: #9c6b1f;        /* status: caution / risk */
+  --ochre: #9c6b1f;
+  /* status: caution / risk */
   --ochre-wash: rgba(156, 107, 31, 0.09);
 
   /* Type roles */
@@ -58,7 +67,9 @@ body {
   font-size: 15px;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-display);
   font-weight: 600;
   color: var(--ink);
@@ -75,7 +86,10 @@ a:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
   }
@@ -202,7 +216,7 @@ a:focus-visible {
   padding: var(--s4) var(--s3);
 }
 
-.stat + .stat {
+.stat+.stat {
   border-left: 1px solid var(--hairline-soft);
 }
 
@@ -985,7 +999,9 @@ a:focus-visible {
 }
 
 @keyframes gauge-fill-in {
-  from { width: 0; }
+  from {
+    width: 0;
+  }
 }
 
 .gauge-needle {
@@ -1061,7 +1077,7 @@ a:focus-visible {
   margin-bottom: var(--s2);
 }
 
-.score-info > p {
+.score-info>p {
   font-size: 13px;
   color: var(--ink-2);
   margin-bottom: var(--s3);
@@ -1415,7 +1431,7 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .stat + .stat {
+  .stat+.stat {
     border-left: none;
     border-top: 1px solid var(--hairline-soft);
   }
@@ -1458,5 +1474,36 @@ a:focus-visible {
 
   .landing-nav-links {
     display: none;
+  }
+
+  /* Tab bar: one horizontal-scrolling row instead of wrapping and
+     overflowing. Tabs keep the ledger type scale, just no wrap. */
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+/* Phones: the header status chip pushes the row past the viewport, which
+   shifts the centered content and clips it on the left. Drop the chip and
+   tighten the header so everything fits within the viewport. */
+@media (max-width: 480px) {
+  .header {
+    gap: var(--s2);
+  }
+
+  .status {
+    display: none;
+  }
+
+  .tab {
+    padding: 10px 12px;
+    font-size: 12.5px;
   }
 }
